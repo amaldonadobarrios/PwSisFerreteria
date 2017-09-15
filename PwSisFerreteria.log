@@ -1,0 +1,5 @@
+2017-09-07 20:24:55 ERROR ClienteDaoImpl:289 - com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '.'44263869'.'%'' at line 1
+2017-09-07 20:25:35 ERROR ClienteDaoImpl:289 - java.sql.SQLException: Parameter index out of range (1 > number of parameters, which is 0).
+2017-09-07 20:28:26 ERROR ClienteDaoImpl:289 - com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+'44263587'+'%'' at line 1
+2017-09-07 20:33:02 ERROR ClienteDaoImpl:289 - com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+'44263587'+'%'' at line 1
+2017-09-07 20:43:45 ERROR ClienteDaoImpl:344 - java.sql.SQLException: No value specified for parameter 2
