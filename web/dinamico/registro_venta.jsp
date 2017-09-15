@@ -17,6 +17,28 @@
         document.getElementById("fecha").value = fechaImprimible
         setTimeout("mueveReloj()", 1000)
     }
+
+    //***************************************************************************
+    //VENTA
+    function fn_registrar_Venta() {
+        var doc = $("#cbxdoc").val();
+        var num = $("#numero").val();
+        var idcli = $("#txtidcliente").val();
+        var total = $("#total").val();
+        alert(doc);
+        var val = mensajeConfirmacion();
+        $("#total").val(val);
+
+
+    }
+
+
+
+
+
+
+
+
     //***************************************************************************
     //PRODUCTO
 
@@ -107,6 +129,35 @@
             showConfirmButton: false
         });
     }
+    function  mensajeConfirmacion() {
+        var val = 'NOT';
+        swal({
+            title: "¿Deseas unirte al lado oscuro?",
+            text: "Este paso marcará el resto de tu vida...",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "¡Claro!",
+            cancelButtonText: "No, jamás",
+            closeOnConfirm: true,
+            closeOnCancel: true},
+                function (isConfirm) {
+                    if (isConfirm) {
+                        swal("¡Hecho!",
+                                "Ahora eres uno de los nuestros",
+                                "success");
+                        val = 'OK';
+                    } else {
+                        swal("¡Gallina!",
+                                "Tu te lo pierdes...",
+                                "error");
+                        val = 'NOT';
+                    }
+                });
+        if (val != '') {
+            return val;
+        }
+    }
     function mostrarStock(id) {
         var vruta = '/ServProducto';
         var vevento = 'GetProductoDetallesAjax';
@@ -149,7 +200,7 @@
                 } else if (idtipo == '3') {
                     precio = pv3;
                 }
-                document.getElementById("precio").value = precio;
+                document.getElementById("precio").value = Number(precio).toFixed(2);
                 document.getElementById("stock").value = stock;
                 document.getElementById("cantidad").value = '';
                 if (imagen != 'null') {
@@ -523,7 +574,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Documento</label>
                         <div class="col-sm-9">
-                            <select class="chosen-select form-control col-xs-10 col-sm-8" id="form-field-1" name="unidad"   data-placeholder="Unidad de Medida">
+                            <select class="chosen-select form-control col-xs-10 col-sm-8" id="cbxdoc" name="cbxdoc"   data-placeholder="Unidad de Medida">
                                 <option value="">Seleccione</option>
                                 <option value="1">Boleta de Venta</option>
                                 <option value="2">Factura</option>
@@ -534,7 +585,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Número</label>
                         <div class="col-sm-9">
-                            <input type="text" id="form-field-1" name="nombre" placeholder="Número de comprobante" onkeypress="return solo_numeros(event)" class="col-xs-10 col-sm-9" />
+                            <input type="text" id="numero" name="numero" placeholder="Número de comprobante" onkeypress="return solo_numeros(event)" class="col-xs-10 col-sm-9" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -670,16 +721,16 @@
 <!-- PAGE CONTENT BEGINS -->
 <div class="clearfix form-actions">
     <div class="col-md-12" align="center">
-        <button class="btn btn-info" type="submit">
+        <button class="btn btn-info" type="button" onclick="fn_registrar_Venta();">
             <i class="ace-icon fa fa-check bigger-110"></i>
             Registrar
         </button>
 
         &nbsp; &nbsp; &nbsp;
-        <button class="btn" type="reset">
-            <i class="ace-icon fa fa-undo bigger-110"></i>
-            Limpiar
-        </button>
+        <a href="SMenu?action=pageRegistroVenta">  <button class="btn" type="reset">
+                <i class="ace-icon fa fa-undo bigger-110"></i>
+                Limpiar
+            </button></a>
     </div>
 </div>
 <script>
@@ -717,7 +768,7 @@
                                         </div>
                                         <div class="form-group"><label  id="lblaperazbusc">Apellido o Razon social</label>
                                             <div class="input-group" >
-                                                <input type="text" class="form-control" id="txtape_raz" placeholder="Dni o Ruc">
+                                                <input type="text" class="form-control" id="txtape_raz" placeholder="Apellido o Razon Social">
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-primary btn-sm" onclick="fn_buscar_cli_aperaz(document.getElementById('txtape_raz').value);" type="button">Buscar</button>
                                                 </span>
