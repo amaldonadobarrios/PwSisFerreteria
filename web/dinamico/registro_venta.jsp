@@ -25,18 +25,55 @@
         var num = $("#numero").val();
         var idcli = $("#txtidcliente").val();
         var total = $("#total").val();
-        alert(doc);
-        var val = mensajeConfirmacion();
-        $("#total").val(val);
+        confirmar = confirm("¿Desea Registrar la Venta?");
+        if (confirmar) {
+            if (validarventa()) {
+                var jdatos={
+                  documento: doc,
+                  numero: num,
+                  id_cliente: idcli,
+                  total:total
+                };
+                
+            }
+
+
+
+
+
+
+        }
 
 
     }
-
-
-
-
-
-
+    function validarventa() {
+        var doc = $("#cbxdoc").val();
+        var num = $("#numero").val();
+        var idcli = $("#txtidcliente").val();
+        var total = $("#total").val();
+        var val = true;
+        if (doc == '') {
+            mensaje('ERROR', 'SELECCIONE UN COMPROBANTE');
+            val = false;
+        }
+        if (num == '') {
+            mensaje('ERROR', 'INGRESE UN NÚMERO DE COMPROBANTE');
+            val = false;
+        }
+        if (idcli == '') {
+            mensaje('ERROR', 'SELECCIONE UN CLIENTE');
+            val = false;
+        }
+        if (total == '') {
+            mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
+            val = false;
+        }
+        if (total == '0.00') {
+            mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
+            val = false;
+        }
+        return val;
+    }
 
 
     //***************************************************************************
@@ -129,35 +166,7 @@
             showConfirmButton: false
         });
     }
-    function  mensajeConfirmacion() {
-        var val = 'NOT';
-        swal({
-            title: "¿Deseas unirte al lado oscuro?",
-            text: "Este paso marcará el resto de tu vida...",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "¡Claro!",
-            cancelButtonText: "No, jamás",
-            closeOnConfirm: true,
-            closeOnCancel: true},
-                function (isConfirm) {
-                    if (isConfirm) {
-                        swal("¡Hecho!",
-                                "Ahora eres uno de los nuestros",
-                                "success");
-                        val = 'OK';
-                    } else {
-                        swal("¡Gallina!",
-                                "Tu te lo pierdes...",
-                                "error");
-                        val = 'NOT';
-                    }
-                });
-        if (val != '') {
-            return val;
-        }
-    }
+
     function mostrarStock(id) {
         var vruta = '/ServProducto';
         var vevento = 'GetProductoDetallesAjax';
