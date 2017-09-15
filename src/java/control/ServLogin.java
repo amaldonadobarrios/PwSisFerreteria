@@ -34,7 +34,7 @@ public class ServLogin extends HttpServletConf {
         Usuario usuarioBean = null;
         usuarioBean=new Usuario();
         LogicUsuario logicusu=new LogicUsuario();
-        usuarioBean= logicusu.validarUsuario(usuario.trim(), clave.trim());
+        usuarioBean= logicusu.validarUsuario(usuario, clave);
         
         if (usuarioBean != null) {
             final String ID = request.getSession().getId();

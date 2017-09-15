@@ -63,7 +63,7 @@ public class LogicUsuario {
         Usuario usu=null;
         try {
           UsuarioDao dao = new UsuarioDaoImpl();   
-           usu= dao.validarAcceso(usuario, clave);
+           usu= dao.validarAcceso(usuario.trim(), clave.trim());
         } catch (Exception e) {
             System.out.println("logica.LogicUsuario.validarUsuario()"+e);
         }

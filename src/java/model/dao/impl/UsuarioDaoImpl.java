@@ -32,11 +32,6 @@ public class UsuarioDaoImpl implements UsuarioDao {
     ConectaDB db=new ConectaDB();
     
   //  Datasource db = new Datasource();
-
-    public UsuarioDaoImpl() {
-    }
-
-
     @Override
     public String insertarUsuario(Usuario usuario) throws Exception {
 
@@ -151,38 +146,6 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
         return mensaje;
     }
-
-    @Override
-    public String eliminarUsuario(int id) {
-
-        String mensaje = "";
-
-//        String sql = "UPDATE `usuario` SET "
-//                + " `estado`= 'I',"
-//                + " WHERE idusuario = ?";
-//
-//        try {
-//            Connection conn = Datasource.getConnection();
-//            PreparedStatement ps = conn.prepareStatement(sql);
-//
-//            ps.setInt(11, id);
-//
-//            int result = ps.executeUpdate();
-//
-//            if (result > 0) {
-//                mensaje = "Usuario Eliminado Correctamente.";
-//
-//            } else {
-//                mensaje = "Usuario No Eliminado.";
-//            }
-//
-//        } catch (SQLException ex) {
-//            mensaje = "Error de Sistema.";
-//        }
-        return mensaje;
-
-    }
-
     @Override
     public List<Usuario> getUsuarios() throws Exception  {
 

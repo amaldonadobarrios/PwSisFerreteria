@@ -18,8 +18,6 @@ public interface UsuarioDao {
     
     public String actualizarUsuario(Usuario usuario)throws  Exception;
 
-    public String eliminarUsuario(int id);
-
     public List<Usuario> getUsuarios() throws Exception;
 
     public Usuario getUsuarioXid(int id) throws Exception;
