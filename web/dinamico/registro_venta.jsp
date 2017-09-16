@@ -20,31 +20,52 @@
 
     //***************************************************************************
     //VENTA
+    function fn_pintaRegVenta(response) {
+        if (response == 'NOSESION') {
+            mensaje('ERROR', 'SESION EXPIRADA');
+            location.href = "login.jsp";
+        } else {
+            var v_resultado = response + "";
+            var respuesta = v_resultado.split('%');
+            var estado = respuesta[0];
+            var MSJ = respuesta[1];
+            if (estado == 'ERROR') {
+                $('#modalLoaging').modal('hide');
+                mensaje('ERROR', MSJ);
+            } else {
+
+                mensajeOK('VALIDADO', MSJ);
+                
+            }
+        }
+    }
+    function fn_registrarVentaAjax(jdatos) {
+        var vruta = '/ServVenta';
+        var vevento = 'RegistrarVentaAJAX';
+        var jqdata = jdatos;
+        fnEjecutarPeticion(vruta, jqdata, vevento);
+    }
+
     function fn_registrar_Venta() {
         var doc = $("#cbxdoc").val();
         var num = $("#numero").val();
         var idcli = $("#txtidcliente").val();
         var total = $("#total").val();
         confirmar = confirm("¿Desea Registrar la Venta?");
+
         if (confirmar) {
             if (validarventa()) {
-                var jdatos={
-                  documento: doc,
-                  numero: num,
-                  id_cliente: idcli,
-                  total:total
+                $('#modalLoaging').modal('show');
+                var jdatos = {
+                    evento: 'RegistrarVentaAJAX',
+                    documento: doc,
+                    numero: num,
+                    id_cliente: idcli,
+                    total: total
                 };
-                
+                fn_registrarVentaAjax(jdatos);
             }
-
-
-
-
-
-
         }
-
-
     }
     function validarventa() {
         var doc = $("#cbxdoc").val();
@@ -53,22 +74,27 @@
         var total = $("#total").val();
         var val = true;
         if (doc == '') {
+
             mensaje('ERROR', 'SELECCIONE UN COMPROBANTE');
             val = false;
         }
         if (num == '') {
+
             mensaje('ERROR', 'INGRESE UN NÚMERO DE COMPROBANTE');
             val = false;
         }
         if (idcli == '') {
+
             mensaje('ERROR', 'SELECCIONE UN CLIENTE');
             val = false;
         }
         if (total == '') {
+
             mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
             val = false;
         }
         if (total == '0.00') {
+
             mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
             val = false;
         }
@@ -133,7 +159,6 @@
         var stock = document.getElementById("stock").value;
         var id_cliente = document.getElementById('txtidcliente').value;
         var id_producto = document.getElementById('cbxprod').value;
-
         if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '') {
             cantidad = parseFloat(cantidad);
             price = parseFloat(price);
@@ -162,8 +187,17 @@
             type: 'warning',
             title: titulo,
             text: mensaje,
-            timer: 1000,
-            showConfirmButton: false
+            timer: 2000,
+            showConfirmButton: false,
+        });
+    }
+    function mensajeOK(titulo, mensaje) {
+        swal({
+            type: 'success',
+            title: titulo,
+            text: mensaje,
+            timer: 2000,
+            showConfirmButton: true
         });
     }
 
@@ -410,6 +444,10 @@
         if (vevento == 'EliminarProductoAJAX') {
             fn_pintacarrito(vvrespuesta);
         }
+        if (vevento == 'RegistrarVentaAJAX') {
+            fn_pintaRegVenta(vvrespuesta);
+        }
+
 
 
     }
@@ -585,9 +623,9 @@
                         <div class="col-sm-9">
                             <select class="chosen-select form-control col-xs-10 col-sm-8" id="cbxdoc" name="cbxdoc"   data-placeholder="Unidad de Medida">
                                 <option value="">Seleccione</option>
-                                <option value="1">Boleta de Venta</option>
-                                <option value="2">Factura</option>
-                                <option value="3">Guía de venta</option>
+                                <option value="BOL">Boleta de Venta</option>
+                                <option value="FAC">Factura</option>
+                                <option value="GV">Guía de venta</option>
                             </select>
                         </div>
                     </div>
@@ -741,10 +779,10 @@
                 Limpiar
             </button></a>
     </div>
+    <div id="spin"></div>
 </div>
 <script>
-    mueveReloj();
-</script>
+    mueveReloj();</script>
 
 
 
@@ -899,4 +937,30 @@
                 <button type="reset"  id="btnclose" class="btn btn-sm btn-default" data-dismiss="modal" Onclick="">CERRAR</button>
 
             </div></div></div>
-</div>		
+</div>	
+
+
+<div class="modal fade container-fluid" id="modalLoaging" role="dialog" data-backdrop="static" data-keyboard="false" >
+    <div class="modal-dialog modal-sm container-fluid">
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div class="loader  container-fluid">
+                    </div>
+    </div>
+</div>
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        text-align: center;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+</style>

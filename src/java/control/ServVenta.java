@@ -7,7 +7,6 @@ package control;
 
 import com.mi.diredu.util.DirTexto;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -63,6 +62,9 @@ public class ServVenta extends HttpServlet {
                     } else if (evento.equals("EliminarProductoAJAX")) {
                         System.out.println("control.ServVenta.processRequest()" + " SERVLET VENTA - ELIMINANDO PRODUCTO");
                         EliminarProductoAJAX(request, response);
+                    } else if (evento.equals("RegistrarVentaAJAX")) {
+                        System.out.println("control.ServVenta.processRequest()"+ "REGISTRANDO VENTA");
+                        RegistrarVentaAJAX(request, response);
                     }
 
                 }
@@ -126,7 +128,7 @@ public class ServVenta extends HttpServlet {
                 respuesta = 0;
                 session.invalidate();
                 request.setAttribute("msg", "Sesion Expirada");
-                HtmlUtil.getInstance().escrituraHTML(response, "NOSESION"); 
+                HtmlUtil.getInstance().escrituraHTML(response, "NOSESION");
 
             }
 
@@ -134,7 +136,7 @@ public class ServVenta extends HttpServlet {
             respuesta = 0;
             session.invalidate();
             request.setAttribute("msg", "Sesion Expirada");
-            HtmlUtil.getInstance().escrituraHTML(response, "NOSESION"); 
+            HtmlUtil.getInstance().escrituraHTML(response, "NOSESION");
         }
 
         return respuesta;
@@ -328,6 +330,58 @@ public class ServVenta extends HttpServlet {
         }
         HtmlUtil.getInstance().escrituraHTML(response, "OK%" + subtotal + "%" + respuesta);
 
+    }
+
+    private void RegistrarVentaAJAX(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        String doc = request.getParameter("documento");
+        String numero = request.getParameter("numero");
+        String id_cliente = request.getParameter("id_cliente");
+        String total = request.getParameter("total");
+        List<ListaVenta> listatemp = new ArrayList<ListaVenta>();
+        List<ListaVenta> lista = new ArrayList<ListaVenta>();
+        try {
+            lista = (List<ListaVenta>) session.getAttribute("listaventa");
+        } catch (Exception e) {
+        }
+        if (lista != null) {
+            listatemp = lista;
+        }
+        //verificar cliente
+        String msg;
+        if (listatemp.size() > 0) {
+            for (ListaVenta listaVenta : listatemp) {
+                if (listaVenta.getId_cliente().equals(id_cliente)) {
+                    Producto prod = new Producto();
+                    prod = LogicProducto.getInstance().buscarProductoID(Integer.parseInt(listaVenta.getId_producto()));
+                    if (prod.getExistencia() >= listaVenta.getCantidad()) {
+                        
+                    } else {
+                        msg = "ERROR%" + "NO SE CUENTA CON SUFICIENTES PRODUCTOS: " + listaVenta.getDescripcion().concat(" ").concat(listaVenta.getMarca());
+                        HtmlUtil.getInstance().escrituraHTML(response, msg);
+                        return;
+                    }
+                } else {
+                    msg = "ERROR%" + "HA CAMBIADO CLIENTE DURANTE LA TRANSACCION";
+                    HtmlUtil.getInstance().escrituraHTML(response, msg);
+                    return;
+                }
+            }
+        }
+        grabarComprobante();
+        grabardetalle_comprobante();
+        
+        msg = "OK%" + "VALIDADO ";
+        HtmlUtil.getInstance().escrituraHTML(response, msg);
+
+    }
+
+    private void grabarComprobante() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void grabardetalle_comprobante() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

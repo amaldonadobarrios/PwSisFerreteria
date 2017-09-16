@@ -173,3 +173,49 @@ INSERT INTO `perfil` (`id_perfil`, `codigo`, `tipo`, `descripcion`, `estado`) VA
 
 INSERT INTO `usuario` (`id_usuario`, `usuario`, `password`, `dni`, `apellido_paterno`, `apellido_materno`, `nombres`, `telefono`, `estado`, `fecha_reg`, `fecha_mod`, `usuario_mod`, `usuario_reg`, `perfil_idperfil`) VALUES
 (3, 'ferreteria', '120c11210a181006000e', '45206131', 'MALDONADO', 'BARRIOS', 'ALEXANDER', '333333333', 'A', '2017-08-15', '2017-08-18', 3, 1, 3);
+
+
+
+delimiter //
+CREATE PROCEDURE  GrabarVenta
+(
+in numero_detalle varchar(50),
+in numero_comprobante varchar(50),
+in id_producto int,
+in cantidad float,
+in precio float,
+in id_usuario int,
+in tipo varchar(50),
+in id_cliente int
+)
+BEGIN
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+SELECT 1 as error; 
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+SELECT 1 as error; 
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+/*Primer INSERT datos ACTA*/ 
+INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg) VALUES(numero_comprobante,tipo,now(),id_cliente,'VENDIDO',id_usuario,now());
+/*SECOND INSERT datos ACTA*/ 
+INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg)VALUES(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,now());
+
+/*Fin de transaccion*/ 
+COMMIT; 
+
+
+/*Mandamos 0 si todo salio bien*/ 
+SELECT 0 as error; 
+
+END
+//
