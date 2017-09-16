@@ -159,7 +159,7 @@
         var stock = document.getElementById("stock").value;
         var id_cliente = document.getElementById('txtidcliente').value;
         var id_producto = document.getElementById('cbxprod').value;
-        if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '') {
+        if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '' && cantidad>0) {
             cantidad = parseFloat(cantidad);
             price = parseFloat(price);
             stock = parseFloat(stock);
@@ -942,7 +942,7 @@
 
 <div class="modal fade container-fluid" id="modalLoaging" role="dialog" data-backdrop="static" data-keyboard="false" >
     <div class="modal-dialog modal-sm container-fluid">
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div class="loader  container-fluid">
                     </div>
     </div>

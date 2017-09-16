@@ -219,3 +219,22 @@ SELECT 0 as error;
 
 END
 //
+
+CREATE FUNCTION strSplit (cadena VARCHAR(255), delimitador VARCHAR(12), posicion INT) RETURNS VARCHAR(255) 
+BEGIN
+     RETURN ltrim(replace(substring(substring_index(cadena, delimitador, posicion), length(substring_index(cadena, delimitador, posicion - 1)) + 1), delimitador, ''));
+END
+
+
+CREATE  PROCEDURE `test`(
+in texto varchar(50)
+)
+begin
+DECLARE prod float DEFAULT 0;
+DECLARE v1 int DEFAULT 1;
+WHILE v1 <= 2 DO
+    SET prod = (SELECT strSplit (texto, '@', v1));
+    INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg)VALUES(v1,'hola',1,prod,1,1,now());    
+    SET v1 = v1+1;
+  END WHILE;
+END
