@@ -1,6 +1,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="util.ConstanteSystem"%>
+<%double igv=ConstanteSystem.getIgv();%>
 <c:set var="context" value="${pageContext.request.contextPath}" />
 <input type="hidden" id="contexto" value="${context}">
+<input type="hidden" id="igvConstante" value="<%=igv%>">
 <script language="JavaScript">
     function mueveReloj() {
         momentoActual = new Date()
@@ -29,12 +32,14 @@
             var respuesta = v_resultado.split('%');
             var estado = respuesta[0];
             var MSJ = respuesta[1];
+            var rpta = respuesta[2];
             if (estado == 'ERROR') {
                 $('#modalLoaging').modal('hide');
                 mensaje('ERROR', MSJ);
             } else {
 
-                mensajeOK('VALIDADO', MSJ);
+                mensajeOK('VALIDADO', MSJ,rpta);
+                 $('#modalLoaging').modal('hide');
                 
             }
         }
@@ -116,7 +121,8 @@
         fnEjecutarPeticion(vruta, jqdata, vevento);
     }
     function  fn_pintacarrito(response) {
-        if (response == 'NOSESION') {
+        var constIGV=document.getElementById("igvConstante").value;
+            if (response === 'NOSESION') {
             mensaje('ERROR', 'SESION EXPIRADA');
             location.href = "login.jsp";
         } else {
@@ -131,7 +137,7 @@
             if (estado == 'ERROR') {
                 mensaje('ERROR', datos);
             } else {
-                igv = subtotal * 0.18;
+                igv = subtotal * constIGV;
                 neto = subtotal - igv;
                 total = neto + igv;
                 document.getElementById("neto").value = Number(neto).toFixed(2);
@@ -188,14 +194,14 @@
             title: titulo,
             text: mensaje,
             timer: 2000,
-            showConfirmButton: false,
+            showConfirmButton: false
         });
     }
-    function mensajeOK(titulo, mensaje) {
+    function mensajeOK(titulo, mensaje,rpta) {
         swal({
             type: 'success',
             title: titulo,
-            text: mensaje,
+            text: mensaje +' Venta :'+rpta+ ' REGISTRADA',
             timer: 2000,
             showConfirmButton: true
         });
@@ -750,7 +756,7 @@
                 </div>
             </div> 
             <div class="form-group col-md-offset-6">
-                <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> IGV (18%)</label>
+                <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> IGV (<%=igv*100%>%)</label>
                 <div class="col-sm-9">
                     <input type="text" id="igv" name="igv" placeholder="IGV" class="col-xs-10 col-sm-4"disabled />
                 </div>

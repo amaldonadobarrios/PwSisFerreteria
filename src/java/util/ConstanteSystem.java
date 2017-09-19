@@ -9,7 +9,33 @@ package util;
  *
  * @author Admin-amb
  */
+
 public class ConstanteSystem {
-    String ruc="20551501176";
-    String Razon_social="Novafonte del Peru S.A.C.";
+    	private static ConstanteSystem instance = null;
+	//************************************
+	public ConstanteSystem() 
+	{		}
+			
+	public static synchronized ConstanteSystem getInstance() 
+	{
+		if (instance == null) {		instance = new ConstanteSystem();		}
+		return instance;
+	}
+        
+    static String ruc="20551501176";
+    static String Razon_social="Novafonte del Peru S.A.C.";
+    static double igv=0.18;
+
+    public static String getRuc() {
+        return ruc;
+    }
+
+    public static String getRazon_social() {
+        return Razon_social;
+    }
+
+    public static double getIgv() {
+        return igv;
+    }
+    
 }

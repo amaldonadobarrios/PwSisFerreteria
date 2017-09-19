@@ -22,6 +22,7 @@ import logica.LogicVenta;
 import logica.grilla.LogicTablaCliente;
 import logica.grilla.LogicTablaVenta;
 import model.dto.Cliente;
+import model.dto.ComprobanteVenta;
 import model.dto.ListaVenta;
 import model.dto.Producto;
 import model.dto.Usuario;
@@ -63,7 +64,7 @@ public class ServVenta extends HttpServlet {
                         System.out.println("control.ServVenta.processRequest()" + " SERVLET VENTA - ELIMINANDO PRODUCTO");
                         EliminarProductoAJAX(request, response);
                     } else if (evento.equals("RegistrarVentaAJAX")) {
-                        System.out.println("control.ServVenta.processRequest()"+ "REGISTRANDO VENTA");
+                        System.out.println("control.ServVenta.processRequest()" + "REGISTRANDO VENTA");
                         RegistrarVentaAJAX(request, response);
                     }
 
@@ -347,15 +348,22 @@ public class ServVenta extends HttpServlet {
         if (lista != null) {
             listatemp = lista;
         }
+        //declaro variables locales;
+        String precio = "";
+        String id_producto = "";
+        String cantidad = "";
+        int contador = 0;
         //verificar cliente
         String msg;
+        ComprobanteVenta venta = ComprobanteVenta.getInstance();
         if (listatemp.size() > 0) {
+
             for (ListaVenta listaVenta : listatemp) {
                 if (listaVenta.getId_cliente().equals(id_cliente)) {
                     Producto prod = new Producto();
                     prod = LogicProducto.getInstance().buscarProductoID(Integer.parseInt(listaVenta.getId_producto()));
                     if (prod.getExistencia() >= listaVenta.getCantidad()) {
-                        
+
                     } else {
                         msg = "ERROR%" + "NO SE CUENTA CON SUFICIENTES PRODUCTOS: " + listaVenta.getDescripcion().concat(" ").concat(listaVenta.getMarca());
                         HtmlUtil.getInstance().escrituraHTML(response, msg);
@@ -366,22 +374,28 @@ public class ServVenta extends HttpServlet {
                     HtmlUtil.getInstance().escrituraHTML(response, msg);
                     return;
                 }
+
+                precio = precio + String.valueOf(listaVenta.getPrecio() + "@");
+                id_producto = id_producto + String.valueOf(listaVenta.getId_producto() + "@");
+                cantidad = cantidad + String.valueOf(listaVenta.getCantidad() + "@");
+                contador++;
             }
+            Usuario usuario = usuario = new Usuario();
+            usuario = (Usuario) session.getAttribute("usuario");
+            int usuario_mod = usuario.getIdUsuario();
+            venta.setCantProductos(contador);
+            venta.setCantidad(cantidad);
+            venta.setEstado("PAGADO");
+            venta.setId_cliente(Integer.parseInt(id_cliente));
+            venta.setId_producto(id_producto);
+            venta.setNumero_comprobante(numero);
+            venta.setPrecio(precio);
+            venta.setTipo(doc);
+            venta.setId_usuario(usuario_mod);
         }
-        grabarComprobante();
-        grabardetalle_comprobante();
-        
-        msg = "OK%" + "VALIDADO ";
+        String respuesta = LogicVenta.getInstance().grabarVenta(venta);
+        msg = "OK%" + "VALIDADO% " + respuesta;
         HtmlUtil.getInstance().escrituraHTML(response, msg);
 
     }
-
-    private void grabarComprobante() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void grabardetalle_comprobante() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

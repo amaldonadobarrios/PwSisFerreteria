@@ -47,9 +47,9 @@ CREATE TABLE `comprobante_venta` (
   `id_cliente` int(11) DEFAULT NULL,
   `estado` varchar(45) DEFAULT NULL,
   `id_usuario` int(11) DEFAULT NULL,
-  `fecha_reg` date DEFAULT NULL,
+  `fecha_reg` datetime DEFAULT NULL,
   PRIMARY KEY (`id_comprobante`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `detalle_comprobante_venta` (
   `id_detalle_comprobante_venta` int(11) NOT NULL AUTO_INCREMENT,
@@ -59,9 +59,10 @@ CREATE TABLE `detalle_comprobante_venta` (
   `cantidad` float NOT NULL,
   `precio` float NOT NULL,
   `id_usuario` int(11) DEFAULT NULL,
-  `fecha_reg` date DEFAULT NULL,
+  `fecha_reg` datetime DEFAULT NULL,
   PRIMARY KEY (`id_detalle_comprobante_venta`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `perfil` (
   `id_perfil` int(11) NOT NULL AUTO_INCREMENT,
@@ -175,55 +176,64 @@ INSERT INTO `usuario` (`id_usuario`, `usuario`, `password`, `dni`, `apellido_pat
 (3, 'ferreteria', '120c11210a181006000e', '45206131', 'MALDONADO', 'BARRIOS', 'ALEXANDER', '333333333', 'A', '2017-08-15', '2017-08-18', 3, 1, 3);
 
 
-
-delimiter //
-CREATE PROCEDURE  GrabarVenta
-(
-in numero_detalle varchar(50),
-in numero_comprobante varchar(50),
-in id_producto int,
-in cantidad float,
-in precio float,
-in id_usuario int,
-in tipo varchar(50),
-in id_cliente int
-)
+DELIMITER $$
+CREATE  PROCEDURE `GrabarVenta`(
+in numero varchar(45),
+in productox varchar(1000), 
+in cantidadx varchar(1000),
+in preciox varchar(1000),
+in usuario int,
+in tipocomprobante varchar(45),
+in cliente int,
+in registros int,
+out rpta int)
 BEGIN
+DECLARE v1 INT DEFAULT 1;
+DECLARE prod int DEFAULT 0;
+DECLARE prec float DEFAULT 0;
+DECLARE cant float DEFAULT 0;
+
 /*Handler para error SQL*/ 
 DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 BEGIN 
-SELECT 1 as error; 
+set rpta =0;
 ROLLBACK; 
 END; 
 
 /*Handler para error SQL*/ 
 DECLARE EXIT HANDLER FOR SQLWARNING 
 BEGIN 
-SELECT 1 as error; 
+set rpta =0;
 ROLLBACK; 
 END; 
 
 /*Inicia transaccion*/ 
 START TRANSACTION; 
 /*Primer INSERT datos ACTA*/ 
-INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg) VALUES(numero_comprobante,tipo,now(),id_cliente,'VENDIDO',id_usuario,now());
+INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg) VALUES(numero,tipocomprobante,now(),cliente,'VENDIDO',usuario,now());
 /*SECOND INSERT datos ACTA*/ 
-INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg)VALUES(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,now());
-
+WHILE v1 <= registros DO
+SET prod = (SELECT strSplit (productox, '@', v1));
+SET prec = (SELECT strSplit (preciox, '@', v1));
+SET cant = (SELECT strSplit (cantidadx, '@', v1));
+ INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg)VALUES(v1,numero,prod,cant,prec,usuario,now());    
+    SET v1 = v1+1;
+  END WHILE;
 /*Fin de transaccion*/ 
 COMMIT; 
-
-
 /*Mandamos 0 si todo salio bien*/ 
-SELECT 0 as error; 
+set rpta =1;
+END$$
+DELIMITER ;
 
-END
-//
 
-CREATE FUNCTION strSplit (cadena VARCHAR(255), delimitador VARCHAR(12), posicion INT) RETURNS VARCHAR(255) 
+DELIMITER $$
+CREATE FUNCTION `strSplit`(cadena VARCHAR(255), delimitador VARCHAR(12), posicion INT) RETURNS varchar(255) CHARSET utf8
 BEGIN
      RETURN ltrim(replace(substring(substring_index(cadena, delimitador, posicion), length(substring_index(cadena, delimitador, posicion - 1)) + 1), delimitador, ''));
-END
+END$$
+DELIMITER ;
+
 
 
 CREATE  PROCEDURE `test`(

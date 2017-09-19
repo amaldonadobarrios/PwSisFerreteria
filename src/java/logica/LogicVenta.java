@@ -8,10 +8,13 @@ package logica;
 import com.google.gson.Gson;
 import java.util.List;
 import model.dao.ClienteDao;
+import model.dao.ComprobanteVentaDao;
 import model.dao.ProductoDao;
 import model.dao.impl.ClienteDaoImpl;
+import model.dao.impl.ComprobanteVentaDaoImpl;
 import model.dao.impl.ProductoDaoImpl;
 import model.dto.Cliente;
+import model.dto.ComprobanteVenta;
 import model.dto.Producto;
 
 /**
@@ -57,12 +60,18 @@ public class LogicVenta {
         }
         return json;
     }
-    
-    public List<Producto> listarproductoscomboventa() throws Exception{
-        List<Producto> list=null;
-        ProductoDao dao=new ProductoDaoImpl();
-        list=dao.listarproductoscomboventa();
+
+    public List<Producto> listarproductoscomboventa() throws Exception {
+        List<Producto> list = null;
+        ProductoDao dao = new ProductoDaoImpl();
+        list = dao.listarproductoscomboventa();
         return list;
     }
 
+    public String grabarVenta(ComprobanteVenta venta) throws Exception {
+        String rpta = null;
+        ComprobanteVentaDao dao = new ComprobanteVentaDaoImpl();
+        rpta = dao.GrabarVenta(venta);
+        return rpta;
+    }
 }
