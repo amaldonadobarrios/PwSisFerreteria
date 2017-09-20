@@ -56,12 +56,13 @@ CREATE TABLE `detalle_comprobante_venta` (
   `numero_detalle` int(11) NOT NULL,
   `numero_comprobante` varchar(45) NOT NULL,
   `id_producto` int(11) NOT NULL,
-  `cantidad` float NOT NULL,
-  `precio` float NOT NULL,
+  `cantidad` double NOT NULL,
+  `precio` double NOT NULL,
   `id_usuario` int(11) DEFAULT NULL,
   `fecha_reg` datetime DEFAULT NULL,
   PRIMARY KEY (`id_detalle_comprobante_venta`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 
 
 CREATE TABLE `perfil` (
@@ -80,19 +81,20 @@ CREATE TABLE `producto` (
   `presentacion` varchar(45) NOT NULL,
   `medida` varchar(45) NOT NULL,
   `producto_insumo` varchar(45) NOT NULL,
-  `pv1` float DEFAULT NULL,
-  `pv2` float DEFAULT NULL,
-  `pv3` float DEFAULT NULL,
-  `existencia` float DEFAULT NULL,
+  `pv1` double DEFAULT NULL,
+  `pv2` double DEFAULT NULL,
+  `pv3` double DEFAULT NULL,
+  `existencia` double DEFAULT NULL,
   `foto` mediumblob,
   `type` varchar(45) DEFAULT NULL,
   `estado` varchar(2) DEFAULT NULL,
-  `fecha_reg` date DEFAULT NULL,
-  `fecha_mod` date DEFAULT NULL,
+  `fecha_reg` datetime DEFAULT NULL,
+  `fecha_mod` datetime DEFAULT NULL,
   `usuario_reg` int(11) DEFAULT NULL,
   `usuario_mod` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_producto`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `proveedor` (
   `id_proveedor` int(11) NOT NULL AUTO_INCREMENT,
@@ -216,14 +218,15 @@ WHILE v1 <= registros DO
 SET prod = (SELECT strSplit (productox, '@', v1));
 SET prec = (SELECT strSplit (preciox, '@', v1));
 SET cant = (SELECT strSplit (cantidadx, '@', v1));
- INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg)VALUES(v1,numero,prod,cant,prec,usuario,now());    
+UPDATE producto SET existencia = (existencia -cant), fecha_mod = now(), usuario_mod = usuario WHERE id_producto = prod;
+INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg)VALUES(v1,numero,prod,FORMAT(cant, 2),FORMAT(prec, 2),usuario,now());    
     SET v1 = v1+1;
   END WHILE;
 /*Fin de transaccion*/ 
 COMMIT; 
 /*Mandamos 0 si todo salio bien*/ 
 set rpta =1;
-END$$
+END
 DELIMITER ;
 
 
