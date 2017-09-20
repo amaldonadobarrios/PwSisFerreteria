@@ -8,11 +8,8 @@ package control;
 import com.mi.diredu.util.DirTexto;
 import java.io.IOException;
 import java.io.*;
-import java.sql.Connection;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -24,17 +21,12 @@ import javax.servlet.http.HttpSession;
 import logica.LogicProducto;
 import model.dto.Producto;
 import model.dto.Usuario;
-import net.sf.jasperreports.engine.JRExporter;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import util.HtmlUtil;
-import util.jdbc.ConectaDB;
 
 /**
  *
@@ -202,9 +194,9 @@ public class ServProducto extends HttpServlet {
                 if (id_producto != null) {
                     pro = new Producto();
                     pro.setId_producto(Integer.parseInt(id_producto));
-                    pro.setPv1(Float.parseFloat(pv1));
-                    pro.setPv2(Float.parseFloat(pv2));
-                    pro.setPv3(Float.parseFloat(pv3));
+                    pro.setPv1(Double.parseDouble(pv1));
+                    pro.setPv2(Double.parseDouble(pv2));
+                    pro.setPv3(Double.parseDouble(pv3));
                     pro.setUsuario_mod(usuario_mod);
                 }
                 String respuesta = LogicProducto.getInstance().registrarPrecioVenta(pro);

@@ -27,6 +27,10 @@
         <servlet-name>ServVenta</servlet-name>
         <servlet-class>control.ServVenta</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ServReporte</servlet-name>
+        <servlet-class>control.ServReporte</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ServletMenu</servlet-name>
         <url-pattern>/SMenu</url-pattern>
@@ -58,6 +62,10 @@
     <servlet-mapping>
         <servlet-name>ServVenta</servlet-name>
         <url-pattern>/ServVenta</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServReporte</servlet-name>
+        <url-pattern>/ServReporte</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

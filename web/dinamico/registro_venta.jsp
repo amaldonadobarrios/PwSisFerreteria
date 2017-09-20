@@ -1,6 +1,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="util.ConstanteSystem"%>
-<%double igv=ConstanteSystem.getIgv();%>
+<%double igv = ConstanteSystem.getIgv();%>
 <c:set var="context" value="${pageContext.request.contextPath}" />
 <input type="hidden" id="contexto" value="${context}">
 <input type="hidden" id="igvConstante" value="<%=igv%>">
@@ -20,6 +20,9 @@
         document.getElementById("fecha").value = fechaImprimible
         setTimeout("mueveReloj()", 1000)
     }
+    function limpiar_formVenta() {
+
+    }
 
     //***************************************************************************
     //VENTA
@@ -37,10 +40,11 @@
                 $('#modalLoaging').modal('hide');
                 mensaje('ERROR', MSJ);
             } else {
+                $('#modalLoaging').modal('hide');
+                mensajeOK('VALIDADO', MSJ, rpta);
 
-                mensajeOK('VALIDADO', MSJ,rpta);
-                 $('#modalLoaging').modal('hide');
                 
+                setTimeout("redireccionarPagina()", 5000);window.open('ServReporte?evento=venta&num='+rpta, '_blank');
             }
         }
     }
@@ -121,8 +125,8 @@
         fnEjecutarPeticion(vruta, jqdata, vevento);
     }
     function  fn_pintacarrito(response) {
-        var constIGV=document.getElementById("igvConstante").value;
-            if (response === 'NOSESION') {
+        var constIGV = document.getElementById("igvConstante").value;
+        if (response === 'NOSESION') {
             mensaje('ERROR', 'SESION EXPIRADA');
             location.href = "login.jsp";
         } else {
@@ -165,7 +169,7 @@
         var stock = document.getElementById("stock").value;
         var id_cliente = document.getElementById('txtidcliente').value;
         var id_producto = document.getElementById('cbxprod').value;
-        if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '' && cantidad>0) {
+        if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '' && cantidad > 0) {
             cantidad = parseFloat(cantidad);
             price = parseFloat(price);
             stock = parseFloat(stock);
@@ -197,16 +201,17 @@
             showConfirmButton: false
         });
     }
-    function mensajeOK(titulo, mensaje,rpta) {
+    function mensajeOK(titulo, mensaje, rpta) {
         swal({
             type: 'success',
             title: titulo,
-            text: mensaje +' Venta :'+rpta+ ' REGISTRADA',
-            timer: 2000,
+            text: mensaje + ' Venta :' + rpta + ' REGISTRADA',
             showConfirmButton: true
         });
     }
-
+    function redireccionarPagina() {
+        window.location = "SMenu?action=pageRegistroVenta";
+    }
     function mostrarStock(id) {
         var vruta = '/ServProducto';
         var vevento = 'GetProductoDetallesAjax';
@@ -584,7 +589,6 @@
         </small>
     </h1>
 </div><!-- /.page-header -->
-
 <div class="row">
     <div class="container">
         <div class="col-sm-12">
@@ -756,7 +760,7 @@
                 </div>
             </div> 
             <div class="form-group col-md-offset-6">
-                <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> IGV (<%=igv*100%>%)</label>
+                <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> IGV (<%=igv * 100%>%)</label>
                 <div class="col-sm-9">
                     <input type="text" id="igv" name="igv" placeholder="IGV" class="col-xs-10 col-sm-4"disabled />
                 </div>
@@ -780,7 +784,7 @@
         </button>
 
         &nbsp; &nbsp; &nbsp;
-        <a href="SMenu?action=pageRegistroVenta">  <button class="btn" type="reset">
+        <a  href="SMenu?action=pageRegistroVenta">  <button class="btn" type="button" id="limpiar">
                 <i class="ace-icon fa fa-undo bigger-110"></i>
                 Limpiar
             </button></a>
@@ -950,7 +954,7 @@
     <div class="modal-dialog modal-sm container-fluid">
         <br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div class="loader  container-fluid">
-                    </div>
+        </div>
     </div>
 </div>
 <style>

@@ -12,11 +12,11 @@ package model.dto;
 public class ListaVenta {
 
     private String idtipocliente;
-    private float cantidad;
-    private float precio;
+    private double cantidad;
+    private double precio;
     private String id_cliente;
     private String id_producto;
-    private float subtotal;
+    private double subtotal;
     private String descripcion;
     private String marca;
     private String presentacion;
@@ -29,19 +29,19 @@ public class ListaVenta {
         this.idtipocliente = idtipocliente;
     }
 
-    public float getCantidad() {
+    public double getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(float cantidad) {
+    public void setCantidad(double cantidad) {
         this.cantidad = cantidad;
     }
 
-    public float getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(float precio) {
+    public void setPrecio(double precio) {
         this.precio = precio;
     }
 
@@ -61,11 +61,11 @@ public class ListaVenta {
         this.id_producto = id_producto;
     }
 
-    public float getSubtotal() {
+    public double getSubtotal() {
         return subtotal;
     }
 
-    public void setSubtotal(float subtotal) {
+    public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
     }
 

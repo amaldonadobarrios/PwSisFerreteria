@@ -267,14 +267,14 @@ public class ServVenta extends HttpServlet {
         objlista.setPresentacion(prod.getPresentacion());
         objlista.setIdtipocliente(idtipocliente);
         objlista.setId_cliente(idCliente);
-        objlista.setCantidad(Float.parseFloat(cantidad));
-        objlista.setPrecio(Float.parseFloat(precio));
-        objlista.setCantidad(Float.parseFloat(cantidad));
+        objlista.setCantidad(Double.parseDouble(cantidad));
+        objlista.setPrecio(Double.parseDouble(precio));
+        objlista.setCantidad(Double.parseDouble(cantidad));
         objlista.setId_producto(id_producto);
-        objlista.setSubtotal((Float.parseFloat(cantidad) * Float.parseFloat(precio)));
+        objlista.setSubtotal((Double.parseDouble(cantidad) * Double.parseDouble(precio)));
         boolean validacion = false;
         String msg = null;
-        float subtotal = 0;
+        double subtotal = 0;
         if (listatemp != null) {
             if (listatemp.size() > 0) {
                 for (ListaVenta listaVenta : listatemp) {
@@ -311,7 +311,7 @@ public class ServVenta extends HttpServlet {
 
     private void EliminarProductoAJAX(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        float subtotal = 0;
+        double subtotal = 0;
         String item = request.getParameter("item");
         List<ListaVenta> listatemp = new ArrayList<ListaVenta>();
         List<ListaVenta> lista = new ArrayList<ListaVenta>();
@@ -394,8 +394,10 @@ public class ServVenta extends HttpServlet {
             venta.setId_usuario(usuario_mod);
         }
         String respuesta = LogicVenta.getInstance().grabarVenta(venta);
+       // verreporte(response,respuesta);
         msg = "OK%" + "VALIDADO% " + respuesta;
         HtmlUtil.getInstance().escrituraHTML(response, msg);
 
     }
+    
 }

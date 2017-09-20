@@ -8,8 +8,7 @@ package model.dto;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Base64;
-import java.util.Base64.Encoder;
+
 
 /**
  *
@@ -31,10 +30,10 @@ public class Producto {
     String StringBase64;
     String type;
     String prod_insu;
-    float pv1;
-    float pv2;
-    float pv3;
-    float existencia;
+    double pv1;
+    double pv2;
+    double pv3;
+    double existencia;
     
     public Producto() {
     }
@@ -153,35 +152,35 @@ public class Producto {
         this.type = type;
     }
 
-    public float getPv1() {
+    public double getPv1() {
         return pv1;
     }
 
-    public void setPv1(float pv1) {
+    public void setPv1(double pv1) {
         this.pv1 = pv1;
     }
 
-    public float getPv2() {
+    public double getPv2() {
         return pv2;
     }
 
-    public void setPv2(float pv2) {
+    public void setPv2(double pv2) {
         this.pv2 = pv2;
     }
 
-    public float getPv3() {
+    public double getPv3() {
         return pv3;
     }
 
-    public void setPv3(float pv3) {
+    public void setPv3(double pv3) {
         this.pv3 = pv3;
     }
 
-    public float getExistencia() {
+    public double getExistencia() {
         return existencia;
     }
 
-    public void setExistencia(float existencia) {
+    public void setExistencia(double existencia) {
         this.existencia = existencia;
     }
 
@@ -199,10 +198,10 @@ public class Producto {
         temp.setFoto(rs.getBytes("foto"));
         temp.setType(rs.getString("type"));
         temp.setProd_insu(rs.getString("producto_insumo"));
-        temp.setPv1(rs.getFloat("pv1"));
-        temp.setPv2(rs.getFloat("pv2"));
-        temp.setPv3(rs.getFloat("pv3"));
-        temp.setExistencia(rs.getFloat("existencia"));
+        temp.setPv1(rs.getDouble("pv1"));
+        temp.setPv2(rs.getDouble("pv2"));
+        temp.setPv3(rs.getDouble("pv3"));
+        temp.setExistencia(rs.getDouble("existencia"));
 //        Encoder code=Base64.getEncoder();
 //        String encod=code.encodeToString(rs.getBytes("foto"));
 //        temp.setStringBase64(encod);

@@ -266,9 +266,9 @@ public class ProductoDaoImpl implements ProductoDao {
 
                 PreparedStatement ps = cn.prepareStatement(sqlResult);
 
-                ps.setFloat(1, pro.getPv1());
-                ps.setFloat(2, pro.getPv2());
-                ps.setFloat(3, pro.getPv3());
+                ps.setDouble(1, pro.getPv1());
+                ps.setDouble(2, pro.getPv2());
+                ps.setDouble(3, pro.getPv3());
                 ps.setInt(4, pro.getUsuario_mod());
                 ps.setInt(5, pro.getId_producto());
 
