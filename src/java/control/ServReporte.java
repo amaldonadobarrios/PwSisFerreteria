@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -45,7 +47,8 @@ public class ServReporte extends HttpServlet {
             throws ServletException, IOException, SQLException, JRException, ClassNotFoundException {
         String evento = request.getParameter("evento");
         String id = request.getParameter("num");
-
+        System.out.println("control.ServReporte.processRequest()"+evento);
+        System.out.println("control.ServReporte.processRequest()"+id);
         verreporte(request,response, id);
     }
 
@@ -55,6 +58,13 @@ public class ServReporte extends HttpServlet {
     try {
         conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbferreteria", "root", "mauricio");
         String jrxmlfile = getServletContext().getRealPath("/jrxml/ClienteReporte.jrxml");
+        Map<String,Object> parameters = new HashMap<String,Object>();
+        parameters.put("numero_comprobante",new String("FAC-4-2017"));
+        parameters.put("nombre_cliente",new String("ALEXANDER MALDONADO BARRIOS"));
+        parameters.put("ruc_dni",new String("44263869"));
+        parameters.put("domicilio",new String("MZ M2 LOTE 33 URB SAN DIEGO"));
+        parameters.put("tipo_documento",new String("DNI"));
+        parameters.put("tipo_comprobante",new String("BOLETA DE VENTA"));
         InputStream input = new FileInputStream(new File(jrxmlfile));
         JasperReport jasperReport = JasperCompileManager.compileReport(input);
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conexion);

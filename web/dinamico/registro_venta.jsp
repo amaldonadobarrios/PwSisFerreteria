@@ -42,12 +42,23 @@
             } else {
                 $('#modalLoaging').modal('hide');
                 mensajeOK('VALIDADO', MSJ, rpta);
-
-                
-                setTimeout("redireccionarPagina()", 5000);window.open('ServReporte?evento=venta&num='+rpta, '_blank');
+                var popUp = window.open('ServReporte?evento=venta&num=' + rpta, 'ventana1', "width=700,height=500,scrollbars=SI");
+                if (popUp == null || typeof (popUp) == 'undefined') {
+                    $('#modalLoaging').modal('show');
+                    setTimeout("redireccionarPagina()", 20000);
+                } else {
+                    $('#modalLoaging').modal('hide');
+                     setTimeout("redireccionarPagina()", 5000);
+                }
             }
         }
     }
+    function myFunction() {
+        var myWindow = window.open("", "", "width=200,height=100");
+        myWindow.document.write("<p>A new window!</p>");
+        myWindow.focus();
+    }
+
     function fn_registrarVentaAjax(jdatos) {
         var vruta = '/ServVenta';
         var vevento = 'RegistrarVentaAJAX';
@@ -205,13 +216,15 @@
         swal({
             type: 'success',
             title: titulo,
-            text: mensaje + ' Venta :' + rpta + ' REGISTRADA',
-            showConfirmButton: true
+            text: mensaje + ' Venta :' + rpta + ' REGISTRADA ',
+            showConfirmButton: true,
         });
     }
+
     function redireccionarPagina() {
         window.location = "SMenu?action=pageRegistroVenta";
     }
+
     function mostrarStock(id) {
         var vruta = '/ServProducto';
         var vevento = 'GetProductoDetallesAjax';
@@ -582,7 +595,7 @@
 </script>
 <div class="page-header">
     <h1>
-        VENTAS
+        VENTAS 
         <small>
             <i class="ace-icon fa fa-angle-double-right"></i>
             Registro de Venta
