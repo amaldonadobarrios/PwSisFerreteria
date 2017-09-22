@@ -30,6 +30,13 @@ public class LogicVenta {
         return LogicVentaHolder.INSTANCE;
     }
 
+    public boolean verificarNumComprobante(String numeradorcomprobante) {
+        boolean estado = false;
+        //numeradorcomprobante
+        return estado;
+
+    }
+
     private static class LogicVentaHolder {
 
         private static final LogicVenta INSTANCE = new LogicVenta();

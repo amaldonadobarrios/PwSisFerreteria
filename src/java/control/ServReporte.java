@@ -9,10 +9,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.sql.Connection;
+
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -27,6 +28,8 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import util.DirDate;
+import util.DirFecha;
 
 /**
  *
@@ -58,16 +61,26 @@ public class ServReporte extends HttpServlet {
     try {
         conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbferreteria", "root", "mauricio");
         String jrxmlfile = getServletContext().getRealPath("/jrxml/ClienteReporte.jrxml");
-        Map<String,Object> parameters = new HashMap<String,Object>();
-        parameters.put("numero_comprobante",new String("FAC-4-2017"));
-        parameters.put("nombre_cliente",new String("ALEXANDER MALDONADO BARRIOS"));
-        parameters.put("ruc_dni",new String("44263869"));
-        parameters.put("domicilio",new String("MZ M2 LOTE 33 URB SAN DIEGO"));
-        parameters.put("tipo_documento",new String("DNI"));
-        parameters.put("tipo_comprobante",new String("BOLETA DE VENTA"));
+        Map parameters = new HashMap();
+        String sSubCadenacomprobante = respuesta.substring(0,2);
+        String TipoComprob=null;
+        String tipodoc=null;
+        if (sSubCadenacomprobante.equals("BOL")) {
+            TipoComprob="BOLETA DE VENTA";
+            tipodoc="DNI :";
+        }else if (sSubCadenacomprobante.equals("FAC")) {
+            TipoComprob="FACTURA";
+            tipodoc="RUC :";
+        }else{
+           TipoComprob="GUÍA DE VENTA"; 
+           tipodoc="DNI/RUC:";
+        }
+        parameters.put("id",respuesta.trim());
+        parameters.put("tipo_documento",tipodoc);
+        parameters.put("tipo_comprobante",TipoComprob);
         InputStream input = new FileInputStream(new File(jrxmlfile));
         JasperReport jasperReport = JasperCompileManager.compileReport(input);
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conexion);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conexion);
         JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
         response.getOutputStream().flush();
         response.getOutputStream().close();

@@ -26,6 +26,7 @@ import model.dto.ComprobanteVenta;
 import model.dto.ListaVenta;
 import model.dto.Producto;
 import model.dto.Usuario;
+import util.DirDate;
 import util.HtmlUtil;
 
 /**
@@ -357,7 +358,12 @@ public class ServVenta extends HttpServlet {
         String msg;
         ComprobanteVenta venta = ComprobanteVenta.getInstance();
         if (listatemp.size() > 0) {
-
+            String numeradorcomprobante = doc + "-" + numero + "-" + DirDate.getInstance().getFechaYYYY();
+            boolean boletaok=LogicVenta.getInstance().verificarNumComprobante(numeradorcomprobante.trim());
+                 
+            
+            
+            
             for (ListaVenta listaVenta : listatemp) {
                 if (listaVenta.getId_cliente().equals(id_cliente)) {
                     Producto prod = new Producto();
@@ -394,10 +400,10 @@ public class ServVenta extends HttpServlet {
             venta.setId_usuario(usuario_mod);
         }
         String respuesta = LogicVenta.getInstance().grabarVenta(venta);
-       // verreporte(response,respuesta);
+        // verreporte(response,respuesta);
         msg = "OK%" + "VALIDADO% " + respuesta;
         HtmlUtil.getInstance().escrituraHTML(response, msg);
 
     }
-    
+
 }
