@@ -6,19 +6,19 @@
 <input type="hidden" id="igvConstante" value="<%=igv%>">
 <script language="JavaScript">
     function mueveReloj() {
-        momentoActual = new Date()
-        day = momentoActual.getDate()
-        mes = momentoActual.getMonth() + 1;
-        año = momentoActual.getFullYear()
-        hora = momentoActual.getHours()
-        minuto = momentoActual.getMinutes()
-        segundo = momentoActual.getSeconds()
+    momentoActual = new Date()
+            day = momentoActual.getDate()
+            mes = momentoActual.getMonth() + 1;
+    año = momentoActual.getFullYear()
+            hora = momentoActual.getHours()
+            minuto = momentoActual.getMinutes()
+            segundo = momentoActual.getSeconds()
 
-        horaImprimible = hora + " : " + minuto + " : " + segundo
-        fechaImprimible = day + "/" + mes + "/" + año
-        document.getElementById("reloj").value = horaImprimible
-        document.getElementById("fecha").value = fechaImprimible
-        setTimeout("mueveReloj()", 1000)
+            horaImprimible = hora + " : " + minuto + " : " + segundo
+            fechaImprimible = day + "/" + mes + "/" + año
+            document.getElementById("reloj").value = horaImprimible
+            document.getElementById("fecha").value = fechaImprimible
+            setTimeout("mueveReloj()", 1000)
     }
     function limpiar_formVenta() {
 
@@ -27,98 +27,101 @@
     //***************************************************************************
     //VENTA
     function fn_pintaRegVenta(response) {
-        if (response == 'NOSESION') {
-            mensaje('ERROR', 'SESION EXPIRADA');
-            location.href = "login.jsp";
-        } else {
-            var v_resultado = response + "";
-            var respuesta = v_resultado.split('%');
-            var estado = respuesta[0];
-            var MSJ = respuesta[1];
-            var rpta = respuesta[2];
-            if (estado == 'ERROR') {
-                $('#modalLoaging').modal('hide');
-                mensaje('ERROR', MSJ);
-            } else {
-                $('#modalLoaging').modal('hide');
-                mensajeOK('VALIDADO', MSJ, rpta);
-                var popUp = window.open('ServReporte?evento=venta&num=' + rpta, 'ventana1', "width=700,height=500,scrollbars=SI");
-                if (popUp == null || typeof (popUp) == 'undefined') {
-                    $('#modalLoaging').modal('show');
-                    setTimeout("redireccionarPagina()", 20000);
-                } else {
-                    $('#modalLoaging').modal('hide');
-                     setTimeout("redireccionarPagina()", 5000);
-                }
-            }
-        }
+    if (response == 'NOSESION') {
+    mensaje('ERROR', 'SESION EXPIRADA');
+    location.href = "login.jsp";
+    } else {
+    var v_resultado = response + "";
+    var respuesta = v_resultado.split('%');
+    var estado = respuesta[0];
+    var MSJ = respuesta[1];
+    var rpta = respuesta[2];
+    if (estado == 'ERROR') {
+    $('#modalLoaging').modal('hide');
+    mensaje('ERROR', MSJ);
+    } else {
+    $('#modalLoaging').modal('hide');
+    mensajeOK('VALIDADO', MSJ, rpta);
+    var popUp = window.open('ServReporte?evento=venta&num=' + rpta, 'ventana1', "width=700,height=500,scrollbars=SI");
+    if (popUp == null || typeof (popUp) == 'undefined') {
+    $('#modalLoaging').modal('show');
+    setTimeout("redireccionarPagina()", 20000);
+    } else {
+    $('#modalLoaging').modal('hide');
+    setTimeout("redireccionarPagina()", 5000);
+    }
+    }
+    }
     }
     function myFunction() {
-        var myWindow = window.open("", "", "width=200,height=100");
-        myWindow.document.write("<p>A new window!</p>");
-        myWindow.focus();
+    var myWindow = window.open("", "", "width=200,height=100");
+    myWindow.document.write("<p>A new window!</p>");
+    myWindow.focus();
     }
 
     function fn_registrarVentaAjax(jdatos) {
-        var vruta = '/ServVenta';
-        var vevento = 'RegistrarVentaAJAX';
-        var jqdata = jdatos;
-        fnEjecutarPeticion(vruta, jqdata, vevento);
+    var vruta = '/ServVenta';
+    var vevento = 'RegistrarVentaAJAX';
+    var jqdata = jdatos;
+    fnEjecutarPeticion(vruta, jqdata, vevento);
     }
 
     function fn_registrar_Venta() {
-        var doc = $("#cbxdoc").val();
-        var num = $("#numero").val();
-        var idcli = $("#txtidcliente").val();
-        var total = $("#total").val();
-        confirmar = confirm("¿Desea Registrar la Venta?");
-
-        if (confirmar) {
-            if (validarventa()) {
-                $('#modalLoaging').modal('show');
-                var jdatos = {
-                    evento: 'RegistrarVentaAJAX',
-                    documento: doc,
-                    numero: num,
-                    id_cliente: idcli,
-                    total: total
-                };
-                fn_registrarVentaAjax(jdatos);
-            }
-        }
+    var doc = $("#cbxdoc").val();
+    var num = $("#numero").val();
+    var idcli = $("#txtidcliente").val();
+    var total = $("#total").val();
+    var igv = $("#igv").val();
+    var neto = $("#neto").val();
+    confirmar = confirm("¿Desea Registrar la Venta?");
+    if (confirmar) {
+    if (validarventa()) {
+    $('#modalLoaging').modal('show');
+    var jdatos = {
+    evento: 'RegistrarVentaAJAX',
+            documento: doc,
+            numero: num,
+            id_cliente: idcli,
+            total: total,
+            igv: igv,
+            neto:neto
+    };
+    fn_registrarVentaAjax(jdatos);
+    }
+    }
     }
     function validarventa() {
-        var doc = $("#cbxdoc").val();
-        var num = $("#numero").val();
-        var idcli = $("#txtidcliente").val();
-        var total = $("#total").val();
-        var val = true;
-        if (doc == '') {
+    var doc = $("#cbxdoc").val();
+    var num = $("#numero").val();
+    var idcli = $("#txtidcliente").val();
+    var total = $("#total").val();
+    var val = true;
+    if (doc == '') {
 
-            mensaje('ERROR', 'SELECCIONE UN COMPROBANTE');
-            val = false;
-        }
-        if (num == '') {
+    mensaje('ERROR', 'SELECCIONE UN COMPROBANTE');
+    val = false;
+    }
+    if (num == '') {
 
-            mensaje('ERROR', 'INGRESE UN NÚMERO DE COMPROBANTE');
-            val = false;
-        }
-        if (idcli == '') {
+    mensaje('ERROR', 'INGRESE UN NÚMERO DE COMPROBANTE');
+    val = false;
+    }
+    if (idcli == '') {
 
-            mensaje('ERROR', 'SELECCIONE UN CLIENTE');
-            val = false;
-        }
-        if (total == '') {
+    mensaje('ERROR', 'SELECCIONE UN CLIENTE');
+    val = false;
+    }
+    if (total == '') {
 
-            mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
-            val = false;
-        }
-        if (total == '0.00') {
+    mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
+    val = false;
+    }
+    if (total == '0.00') {
 
-            mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
-            val = false;
-        }
-        return val;
+    mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
+    val = false;
+    }
+    return val;
     }
 
 
@@ -126,163 +129,163 @@
     //PRODUCTO
 
     function fneliminarItem(item) {
-        var it = Number(item - 1);
-        var vruta = '/ServVenta';
-        var vevento = 'EliminarProductoAJAX';
-        var jqdata = {
-            evento: 'EliminarProductoAJAX',
+    var it = Number(item - 1);
+    var vruta = '/ServVenta';
+    var vevento = 'EliminarProductoAJAX';
+    var jqdata = {
+    evento: 'EliminarProductoAJAX',
             item: it
-        };
-        fnEjecutarPeticion(vruta, jqdata, vevento);
+    };
+    fnEjecutarPeticion(vruta, jqdata, vevento);
     }
     function  fn_pintacarrito(response) {
-        var constIGV = document.getElementById("igvConstante").value;
-        if (response === 'NOSESION') {
-            mensaje('ERROR', 'SESION EXPIRADA');
-            location.href = "login.jsp";
-        } else {
-            var igv = 0;
-            var neto = 0;
-            var total = 0;
-            var v_resultado = response + "";
-            var respuesta = v_resultado.split('%');
-            var estado = respuesta[0];
-            var subtotal = respuesta[1];
-            var datos = respuesta[2];
-            if (estado == 'ERROR') {
-                mensaje('ERROR', datos);
-            } else {
-                igv = subtotal * constIGV;
-                neto = subtotal - igv;
-                total = neto + igv;
-                document.getElementById("neto").value = Number(neto).toFixed(2);
-                document.getElementById("igv").value = Number(igv).toFixed(2);
-                document.getElementById("total").value = Number(total).toFixed(2);
-                $('#detalleventa').html(datos);
-                $('#dynamic-table').DataTable({
-                    responsive: true
-                });
-                $('#dynamic-table').stacktable();
-            }
-        }
+    var constIGV = document.getElementById("igvConstante").value;
+    if (response === 'NOSESION') {
+    mensaje('ERROR', 'SESION EXPIRADA');
+    location.href = "login.jsp";
+    } else {
+    var igv = 0;
+    var neto = 0;
+    var total = 0;
+    var v_resultado = response + "";
+    var respuesta = v_resultado.split('%');
+    var estado = respuesta[0];
+    var subtotal = respuesta[1];
+    var datos = respuesta[2];
+    if (estado == 'ERROR') {
+    mensaje('ERROR', datos);
+    } else {
+    igv = subtotal * constIGV;
+    neto = subtotal - igv;
+    total = neto + igv;
+    document.getElementById("neto").value = Number(neto).toFixed(2);
+    document.getElementById("igv").value = Number(igv).toFixed(2);
+    document.getElementById("total").value = Number(total).toFixed(2);
+    $('#detalleventa').html(datos);
+    $('#dynamic-table').DataTable({
+    responsive: true
+    });
+    $('#dynamic-table').stacktable();
+    }
+    }
     }
     function iraServletAñadirProducto(jdatos) {
-        var vruta = '/ServVenta';
-        var vevento = 'AñadirProductoAJAX';
-        var jqdata = jdatos;
-        fnEjecutarPeticion(vruta, jqdata, vevento);
+    var vruta = '/ServVenta';
+    var vevento = 'AñadirProductoAJAX';
+    var jqdata = jdatos;
+    fnEjecutarPeticion(vruta, jqdata, vevento);
     }
     function fn_añadir_producto() {
-        $('#smsgVenta').html('');
-        var idtipo = document.getElementById("txttipocli").value;
-        var cantidad = document.getElementById("cantidad").value;
-        var price = document.getElementById("precio").value;
-        var stock = document.getElementById("stock").value;
-        var id_cliente = document.getElementById('txtidcliente').value;
-        var id_producto = document.getElementById('cbxprod').value;
-        if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '' && cantidad > 0) {
-            cantidad = parseFloat(cantidad);
-            price = parseFloat(price);
-            stock = parseFloat(stock);
-            if (cantidad <= stock) {
-                var jdatos = {
-                    evento: 'AñadirProductoAJAX',
-                    idtipocliente: idtipo,
-                    cantidad: cantidad,
-                    precio: price,
-                    id_cliente: id_cliente,
-                    id_producto: id_producto
-                }
-                iraServletAñadirProducto(jdatos);
-            } else {
-                mensaje('ERROR', 'NO HAY SUFICIENTES PRODUCTOS');
-                document.getElementById("cantidad").value = '';
-                $('#cantidad').focus();
-            }
-        } else {
-            mensaje('ERROR', ' DEBE SELECCIONAR UN PRODUCTO Y  LA CANTIDAD');
-        }
+    $('#smsgVenta').html('');
+    var idtipo = document.getElementById("txttipocli").value;
+    var cantidad = document.getElementById("cantidad").value;
+    var price = document.getElementById("precio").value;
+    var stock = document.getElementById("stock").value;
+    var id_cliente = document.getElementById('txtidcliente').value;
+    var id_producto = document.getElementById('cbxprod').value;
+    if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '' && cantidad > 0) {
+    cantidad = parseFloat(cantidad);
+    price = parseFloat(price);
+    stock = parseFloat(stock);
+    if (cantidad <= stock) {
+    var jdatos = {
+    evento: 'AñadirProductoAJAX',
+            idtipocliente: idtipo,
+            cantidad: cantidad,
+            precio: price,
+            id_cliente: id_cliente,
+            id_producto: id_producto
+    }
+    iraServletAñadirProducto(jdatos);
+    } else {
+    mensaje('ERROR', 'NO HAY SUFICIENTES PRODUCTOS');
+    document.getElementById("cantidad").value = '';
+    $('#cantidad').focus();
+    }
+    } else {
+    mensaje('ERROR', ' DEBE SELECCIONAR UN PRODUCTO Y  LA CANTIDAD');
+    }
     }
     function mensaje(titulo, mensaje) {
-        swal({
-            type: 'warning',
+    swal({
+    type: 'warning',
             title: titulo,
             text: mensaje,
             timer: 2000,
             showConfirmButton: false
-        });
+    });
     }
     function mensajeOK(titulo, mensaje, rpta) {
-        swal({
-            type: 'success',
+    swal({
+    type: 'success',
             title: titulo,
             text: mensaje + ' Venta :' + rpta + ' REGISTRADA ',
             showConfirmButton: true,
-        });
+    });
     }
 
     function redireccionarPagina() {
-        window.location = "SMenu?action=pageRegistroVenta";
+    window.location = "SMenu?action=pageRegistroVenta";
     }
 
     function mostrarStock(id) {
-        var vruta = '/ServProducto';
-        var vevento = 'GetProductoDetallesAjax';
-        var jqdata = {
-            evento: vevento,
+    var vruta = '/ServProducto';
+    var vevento = 'GetProductoDetallesAjax';
+    var jqdata = {
+    evento: vevento,
             idproducto: id
-        };
-        if (id != '') {
-            fnEjecutarPeticion(vruta, jqdata, vevento);
-        } else {
-            document.getElementById("precio").value = '';
-            document.getElementById("stock").value = '';
-            var contexto = document.getElementById("contexto").value;
-            document.getElementById("image").src = contexto + "/assets/images/sinfoto.png";
-            document.getElementById("cantidad").value = '';
-        }
+    };
+    if (id != '') {
+    fnEjecutarPeticion(vruta, jqdata, vevento);
+    } else {
+    document.getElementById("precio").value = '';
+    document.getElementById("stock").value = '';
+    var contexto = document.getElementById("contexto").value;
+    document.getElementById("image").src = contexto + "/assets/images/sinfoto.png";
+    document.getElementById("cantidad").value = '';
+    }
 
 
     }
     function fn_pintaprod(response) {
-        if (response == 'NOSESION') {
-            mensaje('ERROR', 'SESION EXPIRADA');
-            location.href = "login.jsp";
-        } else {
-            $('#smsgVenta').html('');
-            var v_resultado = response + "";
-            var respuesta = v_resultado.split('%');
-            var imagen = respuesta[0];
-            var pv1 = respuesta[1];
-            var pv2 = respuesta[2];
-            var pv3 = respuesta[3];
-            var stock = respuesta[4];
-            var idtipo = document.getElementById("txttipocli").value;
-            var precio;
-            if (idtipo != '') {
-                if (idtipo == '1') {
-                    precio = pv1;
-                } else if (idtipo == '2') {
-                    precio = pv2;
-                } else if (idtipo == '3') {
-                    precio = pv3;
-                }
-                document.getElementById("precio").value = Number(precio).toFixed(2);
-                document.getElementById("stock").value = stock;
-                document.getElementById("cantidad").value = '';
-                if (imagen != 'null') {
-                    document.getElementById("image").src = "data:image/jpg;base64," + imagen;
-                } else {
-                    var contexto = document.getElementById("contexto").value;
-                    document.getElementById("image").src = contexto + "/assets/images/sinfoto.png";
-                }
-            } else {
-                $('#smsgVenta').html('ERROR! ANTES DEBE SELECCIONAR EL CLIENTE');
-                mensaje('ERROR', ' ANTES DEBE SELECCIONAR EL CLIENTE');
-            }
+    if (response == 'NOSESION') {
+    mensaje('ERROR', 'SESION EXPIRADA');
+    location.href = "login.jsp";
+    } else {
+    $('#smsgVenta').html('');
+    var v_resultado = response + "";
+    var respuesta = v_resultado.split('%');
+    var imagen = respuesta[0];
+    var pv1 = respuesta[1];
+    var pv2 = respuesta[2];
+    var pv3 = respuesta[3];
+    var stock = respuesta[4];
+    var idtipo = document.getElementById("txttipocli").value;
+    var precio;
+    if (idtipo != '') {
+    if (idtipo == '1') {
+    precio = pv1;
+    } else if (idtipo == '2') {
+    precio = pv2;
+    } else if (idtipo == '3') {
+    precio = pv3;
+    }
+    document.getElementById("precio").value = Number(precio).toFixed(2);
+    document.getElementById("stock").value = stock;
+    document.getElementById("cantidad").value = '';
+    if (imagen != 'null') {
+    document.getElementById("image").src = "data:image/jpg;base64," + imagen;
+    } else {
+    var contexto = document.getElementById("contexto").value;
+    document.getElementById("image").src = contexto + "/assets/images/sinfoto.png";
+    }
+    } else {
+    $('#smsgVenta').html('ERROR! ANTES DEBE SELECCIONAR EL CLIENTE');
+    mensaje('ERROR', ' ANTES DEBE SELECCIONAR EL CLIENTE');
+    }
 
 
-        }
+    }
     }
 
 
@@ -290,187 +293,187 @@
 //   ******************************************************************************/ 
     //CLIENTE
     function fn_grabar_cliente() {
-        if (validar()) {
-            var nat = document.getElementById('naturaleza').value;
-            var tipo = document.getElementById('tipo').value;
-            var telefono = document.getElementById('telefono').value;
-            var direccion = document.getElementById('direccion').value;
-            var correo = document.getElementById('correo').value;
-            var dni;
-            var nombres;
-            var paterno;
-            var materno
+    if (validar()) {
+    var nat = document.getElementById('naturaleza').value;
+    var tipo = document.getElementById('tipo').value;
+    var telefono = document.getElementById('telefono').value;
+    var direccion = document.getElementById('direccion').value;
+    var correo = document.getElementById('correo').value;
+    var dni;
+    var nombres;
+    var paterno;
+    var materno
             var ruc;
-            var RazonSocial;
-            if (nat == 'P') {
-                dni = document.getElementById('dni').value;
-                nombres = document.getElementById('nombres').value;
-                paterno = document.getElementById('paterno').value;
-                materno = document.getElementById('materno').value;
-            } else if (nat == 'E') {
-                ruc = document.getElementById('ruc').value;
-                RazonSocial = document.getElementById('RazonSocial').value;
-            }
-            var jqdatos = {
-                evento: 'RegistrarClienteAJAX',
-                naturaleza: nat,
-                correo: correo,
-                direccion: direccion,
-                telefono: telefono,
-                materno: materno,
-                paterno: paterno,
-                nombres: nombres,
-                RazonSocial: RazonSocial,
-                dni: dni,
-                ruc: ruc,
-                tipo: tipo
-            };
-            fn_ejecutar_grabar_cli(jqdatos);
-        }
+    var RazonSocial;
+    if (nat == 'P') {
+    dni = document.getElementById('dni').value;
+    nombres = document.getElementById('nombres').value;
+    paterno = document.getElementById('paterno').value;
+    materno = document.getElementById('materno').value;
+    } else if (nat == 'E') {
+    ruc = document.getElementById('ruc').value;
+    RazonSocial = document.getElementById('RazonSocial').value;
+    }
+    var jqdatos = {
+    evento: 'RegistrarClienteAJAX',
+            naturaleza: nat,
+            correo: correo,
+            direccion: direccion,
+            telefono: telefono,
+            materno: materno,
+            paterno: paterno,
+            nombres: nombres,
+            RazonSocial: RazonSocial,
+            dni: dni,
+            ruc: ruc,
+            tipo: tipo
+    };
+    fn_ejecutar_grabar_cli(jqdatos);
+    }
     }
     function fn_ejecutar_grabar_cli(jqdatos) {
-        var vruta = '/ServVenta';
-        var vevento = 'RegistrarClienteAJAX';
-        var jqdata = jqdatos;
-        fnEjecutarPeticion(vruta, jqdata, vevento);
+    var vruta = '/ServVenta';
+    var vevento = 'RegistrarClienteAJAX';
+    var jqdata = jqdatos;
+    fnEjecutarPeticion(vruta, jqdata, vevento);
     }
     function fnSeleccionarCliente(rz, apep, apem, nom, doc, dir, nat, tip, id) {
-        var tipdesc;
-        if (nat == 'P') {
-            document.getElementById('txtcliente').value = apep + ' ' + apem + ' ' + nom;
-        } else if (nat == 'E') {
-            document.getElementById('txtcliente').value = rz;
-        }
-        if (tip == '1') {
-            tipdesc = 'DISTRIBUIDOR';
-        } else if (tip == '2') {
-            tipdesc = 'MAYORISTA';
-        } else if (tip == '3') {
-            tipdesc = 'MINORISTA';
-        }
-        document.getElementById('txtidcliente').value = id;
-        document.getElementById('txtdnioRuc').value = doc;
-        document.getElementById('txtdomi').value = dir;
-        document.getElementById('txttipocli').value = tip;
-        document.getElementById('txttipoclidesc').value = tipdesc;
-        document.getElementById("precio").value = '';
-        document.getElementById("stock").value = '';
-        document.getElementById("cantidad").value = '';
-        document.getElementById("cbxprod").selectedIndex = "0";
-        $('#1modal').modal('hide');
+    var tipdesc;
+    if (nat == 'P') {
+    document.getElementById('txtcliente').value = apep + ' ' + apem + ' ' + nom;
+    } else if (nat == 'E') {
+    document.getElementById('txtcliente').value = rz;
+    }
+    if (tip == '1') {
+    tipdesc = 'DISTRIBUIDOR';
+    } else if (tip == '2') {
+    tipdesc = 'MAYORISTA';
+    } else if (tip == '3') {
+    tipdesc = 'MINORISTA';
+    }
+    document.getElementById('txtidcliente').value = id;
+    document.getElementById('txtdnioRuc').value = doc;
+    document.getElementById('txtdomi').value = dir;
+    document.getElementById('txttipocli').value = tip;
+    document.getElementById('txttipoclidesc').value = tipdesc;
+    document.getElementById("precio").value = '';
+    document.getElementById("stock").value = '';
+    document.getElementById("cantidad").value = '';
+    document.getElementById("cbxprod").selectedIndex = "0";
+    $('#1modal').modal('hide');
     }
     function linpiar_modal() {
-        document.getElementById('txtdni_ruc').value = '';
-        document.getElementById('txtape_raz').value = '';
-        $('#tablabusquedaCli').html('');
-        document.getElementById('naturaleza').value = '';
-        document.getElementById('tipo').value = '';
-        document.getElementById('ruc').value = '';
-        document.getElementById('dni').value = '';
-        document.getElementById('RazonSocial').value = '';
-        document.getElementById('nombres').value = '';
-        document.getElementById('paterno').value = '';
-        document.getElementById('materno').value = '';
-        document.getElementById('naturaleza').value = '';
-        document.getElementById('telefono').value = '';
-        document.getElementById('direccion').value = '';
-        document.getElementById('correo').value = '';
-        $('#msj').html('');
+    document.getElementById('txtdni_ruc').value = '';
+    document.getElementById('txtape_raz').value = '';
+    $('#tablabusquedaCli').html('');
+    document.getElementById('naturaleza').value = '';
+    document.getElementById('tipo').value = '';
+    document.getElementById('ruc').value = '';
+    document.getElementById('dni').value = '';
+    document.getElementById('RazonSocial').value = '';
+    document.getElementById('nombres').value = '';
+    document.getElementById('paterno').value = '';
+    document.getElementById('materno').value = '';
+    document.getElementById('naturaleza').value = '';
+    document.getElementById('telefono').value = '';
+    document.getElementById('direccion').value = '';
+    document.getElementById('correo').value = '';
+    $('#msj').html('');
     }
     function fn_buscar_cli_doc(val) {
-        $('#lbldniRuc').css("color", "black");
-        $('#tablabusquedaCli').html('');
-        if (val == '') {
-            $('#lbldniRuc').css("color", "red");
-        } else {
-            var vruta = '/ServVenta';
-            var vevento = 'BuscarClientexDOC';
-            var jqdata = {
-                evento: 'BuscarClientexDOC',
-                parametro: val
-            };
-            fnEjecutarPeticion(vruta, jqdata, vevento);
-        }
+    $('#lbldniRuc').css("color", "black");
+    $('#tablabusquedaCli').html('');
+    if (val == '') {
+    $('#lbldniRuc').css("color", "red");
+    } else {
+    var vruta = '/ServVenta';
+    var vevento = 'BuscarClientexDOC';
+    var jqdata = {
+    evento: 'BuscarClientexDOC',
+            parametro: val
+    };
+    fnEjecutarPeticion(vruta, jqdata, vevento);
+    }
     }
     function fn_buscar_cli_aperaz(val) {
-        $('#lblaperazbusc').css("color", "black");
-        $('#tablabusquedaCli').html('');
-        if (val == '') {
-            $('#lblaperazbusc').css("color", "red");
-        } else {
-            var vruta = '/ServVenta';
-            var vevento = 'BuscarClientexAPERAZ';
-            var jqdata = {
-                evento: 'BuscarClientexAPERAZ',
-                parametro: val
-            };
-            fnEjecutarPeticion(vruta, jqdata, vevento);
-        }
+    $('#lblaperazbusc').css("color", "black");
+    $('#tablabusquedaCli').html('');
+    if (val == '') {
+    $('#lblaperazbusc').css("color", "red");
+    } else {
+    var vruta = '/ServVenta';
+    var vevento = 'BuscarClientexAPERAZ';
+    var jqdata = {
+    evento: 'BuscarClientexAPERAZ',
+            parametro: val
+    };
+    fnEjecutarPeticion(vruta, jqdata, vevento);
+    }
     }
     function fn_pintalistacli(response) {
-        if (response == 'NOSESION') {
-            mensaje('ERROR', 'SESION EXPIRADA');
-            location.href = "login.jsp";
-        } else {
-            $('#tablabusquedaCli').html(response);
-            $('#dataTables-example').DataTable({
-                responsive: true
-            });
-            $('#dataTables-example').stacktable();
-        }
+    if (response == 'NOSESION') {
+    mensaje('ERROR', 'SESION EXPIRADA');
+    location.href = "login.jsp";
+    } else {
+    $('#tablabusquedaCli').html(response);
+    $('#dataTables-example').DataTable({
+    responsive: true
+    });
+    $('#dataTables-example').stacktable();
+    }
     }
     function fn_pintaRegCliente(response) {
-        if (response == 'NOSESION') {
-            mensaje('ERROR', 'SESION EXPIRADA');
-            location.href = "login.jsp";
-        } else {
-            var v_resultado = response + "";
-            var respuesta = v_resultado.split('%');
-            var mensaje = respuesta[0];
-            var json = respuesta[1];
-            var arr = JSON.parse(json);
-            var i = Number(1);
-            $('#msj').html(mensaje);
-            fnSeleccionarCliente(arr.razonSocial, arr.apellidoPaterno, arr.apellidoMaterno, arr.nombres, arr.dniRuc, arr.direccion, arr.naturalezaCliente, arr.idTipoCliente, arr.idCliente);
-        }
+    if (response == 'NOSESION') {
+    mensaje('ERROR', 'SESION EXPIRADA');
+    location.href = "login.jsp";
+    } else {
+    var v_resultado = response + "";
+    var respuesta = v_resultado.split('%');
+    var mensaje = respuesta[0];
+    var json = respuesta[1];
+    var arr = JSON.parse(json);
+    var i = Number(1);
+    $('#msj').html(mensaje);
+    fnSeleccionarCliente(arr.razonSocial, arr.apellidoPaterno, arr.apellidoMaterno, arr.nombres, arr.dniRuc, arr.direccion, arr.naturalezaCliente, arr.idTipoCliente, arr.idCliente);
+    }
     }
 //*****************************************************************************
 //CONTROLADOR AJAX
 
     function fnEjecutarPeticion(ruta, jdata, evento) {
-        var contexto = document.getElementById('contexto').value;
-        var vservlet = contexto + ruta;
-        $.ajax({
-            url: vservlet,
+    var contexto = document.getElementById('contexto').value;
+    var vservlet = contexto + ruta;
+    $.ajax({
+    url: vservlet,
             method: 'POST',
             data: jdata,
             success: function (responseText) {
-                fnControlEvento(evento, responseText + '');
+            fnControlEvento(evento, responseText + '');
             }
-        });
+    });
     }
     function fnControlEvento(vevento, vvrespuesta) {
-        if (vevento == 'BuscarClientexDOC') {
-            fn_pintalistacli(vvrespuesta);
-        }
-        if (vevento == 'BuscarClientexAPERAZ') {
-            fn_pintalistacli(vvrespuesta);
-        }
-        if (vevento == 'RegistrarClienteAJAX') {
-            fn_pintaRegCliente(vvrespuesta);
-        }
-        if (vevento == 'GetProductoDetallesAjax') {
-            fn_pintaprod(vvrespuesta);
-        }
-        if (vevento == 'AñadirProductoAJAX') {
-            fn_pintacarrito(vvrespuesta);
-        }
-        if (vevento == 'EliminarProductoAJAX') {
-            fn_pintacarrito(vvrespuesta);
-        }
-        if (vevento == 'RegistrarVentaAJAX') {
-            fn_pintaRegVenta(vvrespuesta);
-        }
+    if (vevento == 'BuscarClientexDOC') {
+    fn_pintalistacli(vvrespuesta);
+    }
+    if (vevento == 'BuscarClientexAPERAZ') {
+    fn_pintalistacli(vvrespuesta);
+    }
+    if (vevento == 'RegistrarClienteAJAX') {
+    fn_pintaRegCliente(vvrespuesta);
+    }
+    if (vevento == 'GetProductoDetallesAjax') {
+    fn_pintaprod(vvrespuesta);
+    }
+    if (vevento == 'AñadirProductoAJAX') {
+    fn_pintacarrito(vvrespuesta);
+    }
+    if (vevento == 'EliminarProductoAJAX') {
+    fn_pintacarrito(vvrespuesta);
+    }
+    if (vevento == 'RegistrarVentaAJAX') {
+    fn_pintaRegVenta(vvrespuesta);
+    }
 
 
 
@@ -479,118 +482,118 @@
 </script>
 <script>
     function fn_tipo_cliente(tipo) {
-        if (tipo != '') {
-            if (tipo == 'P') {
-                //alert("Persona natural")
-                var w = document.getElementById('DivRaz');
-                w.style.display = 'none';
-                var x = document.getElementById('DivPer');
-                x.style.display = 'block';
-                var y = document.getElementById('DivRuc');
-                y.style.display = 'none';
-                var zn = document.getElementById('DivDatPerN');
-                zn.style.display = 'block';
-                var zap = document.getElementById('DivDatPerAP');
-                zap.style.display = 'block';
-                var zam = document.getElementById('DivDatPerAM');
-                zam.style.display = 'block';
-            }
-            if (tipo == 'E') {
-                //alert("Empresa")
-                var w = document.getElementById('DivRaz');
-                w.style.display = 'block';
-                var x = document.getElementById('DivRuc');
-                x.style.display = 'block';
-                var y = document.getElementById('DivPer');
-                y.style.display = 'none';
-                var zn = document.getElementById('DivDatPerN');
-                zn.style.display = 'none';
-                var zap = document.getElementById('DivDatPerAP');
-                zap.style.display = 'none';
-                var zam = document.getElementById('DivDatPerAM');
-                zam.style.display = 'none';
-            }
-        } else {
-            var w = document.getElementById('DivRaz');
-            w.style.display = 'none';
-            var x = document.getElementById('DivRuc');
-            x.style.display = 'none';
-            var y = document.getElementById('DivPer');
-            y.style.display = 'none';
-            var zn = document.getElementById('DivDatPerN');
-            zn.style.display = 'none';
-            var zap = document.getElementById('DivDatPerAP');
-            zap.style.display = 'none';
-            var zam = document.getElementById('DivDatPerAM');
-            zam.style.display = 'none';
-        }
+    if (tipo != '') {
+    if (tipo == 'P') {
+    //alert("Persona natural")
+    var w = document.getElementById('DivRaz');
+    w.style.display = 'none';
+    var x = document.getElementById('DivPer');
+    x.style.display = 'block';
+    var y = document.getElementById('DivRuc');
+    y.style.display = 'none';
+    var zn = document.getElementById('DivDatPerN');
+    zn.style.display = 'block';
+    var zap = document.getElementById('DivDatPerAP');
+    zap.style.display = 'block';
+    var zam = document.getElementById('DivDatPerAM');
+    zam.style.display = 'block';
+    }
+    if (tipo == 'E') {
+    //alert("Empresa")
+    var w = document.getElementById('DivRaz');
+    w.style.display = 'block';
+    var x = document.getElementById('DivRuc');
+    x.style.display = 'block';
+    var y = document.getElementById('DivPer');
+    y.style.display = 'none';
+    var zn = document.getElementById('DivDatPerN');
+    zn.style.display = 'none';
+    var zap = document.getElementById('DivDatPerAP');
+    zap.style.display = 'none';
+    var zam = document.getElementById('DivDatPerAM');
+    zam.style.display = 'none';
+    }
+    } else {
+    var w = document.getElementById('DivRaz');
+    w.style.display = 'none';
+    var x = document.getElementById('DivRuc');
+    x.style.display = 'none';
+    var y = document.getElementById('DivPer');
+    y.style.display = 'none';
+    var zn = document.getElementById('DivDatPerN');
+    zn.style.display = 'none';
+    var zap = document.getElementById('DivDatPerAP');
+    zap.style.display = 'none';
+    var zam = document.getElementById('DivDatPerAM');
+    zam.style.display = 'none';
+    }
     }
 
 
 </script>
 <script>
     function validar() {
-        var validar = true;
-        var nat = document.getElementById('naturaleza').value;
-        var tipo = document.getElementById('tipo').value;
-        $('#lblnaturaleza').css("color", "black");
-        $('#lbltipo').css("color", "black");
-        if (nat == '') {
-            $('#lblnaturaleza').css("color", "red");
-            validar = false;
-        }
-        if (tipo == '') {
-            $('#lbltipo').css("color", "red");
-            validar = false;
-        }
-        if (nat != '') {
-            if (nat == 'P') {
-                $('#lbldni').css("color", "black");
-                $('#lblnombres').css("color", "black");
-                $('#lblpaterno').css("color", "black");
-                $('#lblmaterno').css("color", "black");
-                var dni = document.getElementById('dni').value;
-                var nombres = document.getElementById('nombres').value;
-                var paterno = document.getElementById('paterno').value;
-                var materno = document.getElementById('materno').value;
-                if (dni == '') {
-                    $('#lbldni').css("color", "red");
-                    validar = false;
-                }
-                if (nombres == '') {
-                    $('#lblnombres').css("color", "red");
-                    validar = false;
-                }
-                if (paterno == '') {
-                    $('#lblpaterno').css("color", "red");
-                    validar = false;
-                }
-                if (materno == '') {
-                    $('#lblmaterno').css("color", "red");
-                    validar = false;
-                }
-            } else if (nat == 'E') {
-                $('#lblruc').css("color", "black");
-                $('#lblrazonsocial').css("color", "black");
-                var ruc = document.getElementById('ruc').value;
-                var RazonSocial = document.getElementById('RazonSocial').value;
-                if (ruc == '') {
-                    $('#lblruc').css("color", "red");
-                    validar = false;
-                }
-                if (RazonSocial == '') {
-                    $('#lblrazonsocial').css("color", "red");
-                    validar = false;
-                }
-            }
-        }
-        return validar;
+    var validar = true;
+    var nat = document.getElementById('naturaleza').value;
+    var tipo = document.getElementById('tipo').value;
+    $('#lblnaturaleza').css("color", "black");
+    $('#lbltipo').css("color", "black");
+    if (nat == '') {
+    $('#lblnaturaleza').css("color", "red");
+    validar = false;
+    }
+    if (tipo == '') {
+    $('#lbltipo').css("color", "red");
+    validar = false;
+    }
+    if (nat != '') {
+    if (nat == 'P') {
+    $('#lbldni').css("color", "black");
+    $('#lblnombres').css("color", "black");
+    $('#lblpaterno').css("color", "black");
+    $('#lblmaterno').css("color", "black");
+    var dni = document.getElementById('dni').value;
+    var nombres = document.getElementById('nombres').value;
+    var paterno = document.getElementById('paterno').value;
+    var materno = document.getElementById('materno').value;
+    if (dni == '') {
+    $('#lbldni').css("color", "red");
+    validar = false;
+    }
+    if (nombres == '') {
+    $('#lblnombres').css("color", "red");
+    validar = false;
+    }
+    if (paterno == '') {
+    $('#lblpaterno').css("color", "red");
+    validar = false;
+    }
+    if (materno == '') {
+    $('#lblmaterno').css("color", "red");
+    validar = false;
+    }
+    } else if (nat == 'E') {
+    $('#lblruc').css("color", "black");
+    $('#lblrazonsocial').css("color", "black");
+    var ruc = document.getElementById('ruc').value;
+    var RazonSocial = document.getElementById('RazonSocial').value;
+    if (ruc == '') {
+    $('#lblruc').css("color", "red");
+    validar = false;
+    }
+    if (RazonSocial == '') {
+    $('#lblrazonsocial').css("color", "red");
+    validar = false;
+    }
+    }
+    }
+    return validar;
     }
     function perfiltext(valor) {
 
-        var t = document.getElementById("tipo");
-        var selectedText = t.options[valor].text;
-        return selectedText;
+    var t = document.getElementById("tipo");
+    var selectedText = t.options[valor].text;
+    return selectedText;
     }
 </script>
 <div class="page-header">
@@ -635,7 +638,7 @@
                         </div>
                     </div>
                     <div  class="col-sm-12" align="center"> <input type="button"  class="buttons bigger-130 colorpicker-with-alpha"value="Seleccionar cliente" onclick="linpiar_modal();
-                            $('#1modal').modal('show');"></div>
+                        $('#1modal').modal('show');"></div>
                 </fieldset>
             </div>
             <div class="col-sm-6">             
@@ -648,7 +651,7 @@
                                 <option value="">Seleccione</option>
                                 <option value="BOL">Boleta de Venta</option>
                                 <option value="FAC">Factura</option>
-                                <option value="GV">Guía de venta</option>
+                                <option value="GDV">Guía de venta</option>
                             </select>
                         </div>
                     </div>

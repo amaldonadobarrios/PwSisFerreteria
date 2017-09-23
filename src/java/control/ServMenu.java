@@ -6,7 +6,6 @@
 package control;
 
 import java.io.IOException;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,9 +20,6 @@ import logica.LogicProducto;
 import logica.LogicProveedor;
 import logica.LogicUsuario;
 import logica.LogicVenta;
-import model.dao.UsuarioDao;
-import model.dao.impl.UsuarioDaoImpl;
-import model.dto.Producto;
 import model.dto.Usuario;
 
 /**
@@ -257,7 +253,8 @@ public class ServMenu extends HttpServletConf {
         forwar("template.jsp", request, response);
     }
 
-    private void pageConsultarVenta(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pageConsultarVenta(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
+         request.setAttribute("listaVenta", LogicVenta.getInstance().listarventa200());
         request.setAttribute("body", "consultar_venta");
         forwar("template.jsp", request, response);
     }

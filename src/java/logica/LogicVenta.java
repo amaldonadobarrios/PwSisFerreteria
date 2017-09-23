@@ -30,11 +30,11 @@ public class LogicVenta {
         return LogicVentaHolder.INSTANCE;
     }
 
-    public boolean verificarNumComprobante(String numeradorcomprobante) {
+    public boolean verificarNumComprobante(String numeradorcomprobante) throws Exception {
         boolean estado = false;
-        //numeradorcomprobante
+        ComprobanteVentaDao dao=new ComprobanteVentaDaoImpl();
+        estado=dao.verificarNumComprobante(numeradorcomprobante);
         return estado;
-
     }
 
     private static class LogicVentaHolder {
@@ -80,5 +80,11 @@ public class LogicVenta {
         ComprobanteVentaDao dao = new ComprobanteVentaDaoImpl();
         rpta = dao.GrabarVenta(venta);
         return rpta;
+    }
+    public List<ComprobanteVenta> listarventa200() throws Exception {
+        List<ComprobanteVenta> list = null;
+        ComprobanteVentaDao dao = new ComprobanteVentaDaoImpl();
+        list = dao.ListarVenta200();
+        return list;
     }
 }

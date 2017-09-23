@@ -13,7 +13,6 @@ import java.sql.Connection;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -49,46 +48,49 @@ public class ServReporte extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, JRException, ClassNotFoundException {
         String evento = request.getParameter("evento");
-        String id = request.getParameter("num");
-        System.out.println("control.ServReporte.processRequest()"+evento);
-        System.out.println("control.ServReporte.processRequest()"+id);
-        verreporte(request,response, id);
+        System.out.println("control.ServReporte.processRequest()" + evento);
+        if (evento.equals("venta")) {
+            String id = request.getParameter("num").trim();
+            System.out.println("control.ServReporte.processRequest()" + id);
+            verreporte(request, response, id);
+        }
+
     }
 
-    private void verreporte( HttpServletRequest request,HttpServletResponse response, String respuesta) throws SQLException, IOException, JRException, ClassNotFoundException {
+    private void verreporte(HttpServletRequest request, HttpServletResponse response, String respuesta) throws SQLException, IOException, JRException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
-    Connection conexion=null;
-    try {
-        conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbferreteria", "root", "mauricio");
-        String jrxmlfile = getServletContext().getRealPath("/jrxml/ClienteReporte.jrxml");
-        Map parameters = new HashMap();
-        String sSubCadenacomprobante = respuesta.substring(0,2);
-        String TipoComprob=null;
-        String tipodoc=null;
-        if (sSubCadenacomprobante.equals("BOL")) {
-            TipoComprob="BOLETA DE VENTA";
-            tipodoc="DNI :";
-        }else if (sSubCadenacomprobante.equals("FAC")) {
-            TipoComprob="FACTURA";
-            tipodoc="RUC :";
-        }else{
-           TipoComprob="GUÍA DE VENTA"; 
-           tipodoc="DNI/RUC:";
+        Connection conexion = null;
+        try {
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbferreteria", "root", "mauricio");
+            String jrxmlfile = getServletContext().getRealPath("/jrxml/ComprobanteVentaReporte.jrxml");
+            Map parameters = new HashMap();
+            String sSubCadenacomprobante = respuesta.substring(0, 3);
+            String TipoComprob = null;
+            String tipodoc = null;
+            if (sSubCadenacomprobante.equals("BOL")) {
+                TipoComprob = "BOLETA DE VENTA";
+                tipodoc = "DNI :";
+            } else if (sSubCadenacomprobante.equals("FAC")) {
+                TipoComprob = "FACTURA";
+                tipodoc = "RUC :";
+            } else if (sSubCadenacomprobante.equals("GDV")) {
+                TipoComprob = "GUÍA DE VENTA";
+                tipodoc = "DNI/RUC:";
+            }
+            parameters.put("id", respuesta.trim());
+            parameters.put("tipo_documento", tipodoc);
+            parameters.put("tipo_comprobante", TipoComprob);
+            InputStream input = new FileInputStream(new File(jrxmlfile));
+            JasperReport jasperReport = JasperCompileManager.compileReport(input);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conexion);
+            JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        } catch (SQLException ex) {
+            System.out.println("className.methodName()" + ex);
+        } finally {
+            conexion.close();
         }
-        parameters.put("id",respuesta.trim());
-        parameters.put("tipo_documento",tipodoc);
-        parameters.put("tipo_comprobante",TipoComprob);
-        InputStream input = new FileInputStream(new File(jrxmlfile));
-        JasperReport jasperReport = JasperCompileManager.compileReport(input);
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conexion);
-        JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
-        response.getOutputStream().flush();
-        response.getOutputStream().close();
-    } catch (SQLException ex) {
-        System.out.println("className.methodName()" + ex);
-    } finally {
-        conexion.close();
-    }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

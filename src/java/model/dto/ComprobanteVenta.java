@@ -13,7 +13,7 @@ import java.sql.Date;
  */
 public class ComprobanteVenta {
     
-    private ComprobanteVenta() {
+    public ComprobanteVenta() {
     }
     
     public static ComprobanteVenta getInstance() {
@@ -125,12 +125,37 @@ public class ComprobanteVenta {
     public void setPrecio(String precio) {
         this.precio = precio;
     }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public double getIgv() {
+        return igv;
+    }
+
+    public void setIgv(double igv) {
+        this.igv = igv;
+    }
+
+    public double getNeto() {
+        return neto;
+    }
+
+    public void setNeto(double neto) {
+        this.neto = neto;
+    }
     
     
     private static class ComprobanteVentaHolder {
 
         private static final ComprobanteVenta INSTANCE = new ComprobanteVenta();
     }
+    
     private int  id_comprobante;
     private String numero_comprobante;
     private String tipo;
@@ -144,10 +169,12 @@ public class ComprobanteVenta {
     private String cantidad;
     private String precio;
     private int cantProductos;
+    private double total;
+    private double igv;
+    private double neto;
 
     @Override
     public String toString() {
-        return "ComprobanteVenta{" + "id_comprobante=" + id_comprobante + ", numero_comprobante=" + numero_comprobante + ", tipo=" + tipo + ", fecha=" + fecha + ", id_cliente=" + id_cliente + ", estado=" + estado + ", id_usuario=" + id_usuario + ", fecha_reg=" + fecha_reg + ", numero_detalle=" + numero_detalle + ", id_producto=" + id_producto + ", cantidad=" + cantidad + ", precio=" + precio + ", cantProductos=" + cantProductos + '}';
-    }
-    
+        return "ComprobanteVenta{" + "id_comprobante=" + id_comprobante + ", numero_comprobante=" + numero_comprobante + ", tipo=" + tipo + ", fecha=" + fecha + ", id_cliente=" + id_cliente + ", estado=" + estado + ", id_usuario=" + id_usuario + ", fecha_reg=" + fecha_reg + ", numero_detalle=" + numero_detalle + ", id_producto=" + id_producto + ", cantidad=" + cantidad + ", precio=" + precio + ", cantProductos=" + cantProductos + ", total=" + total + ", igv=" + igv + ", neto=" + neto + '}';
+    }  
 }

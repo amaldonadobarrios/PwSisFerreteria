@@ -7,7 +7,11 @@ package model.dao.impl;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import model.dao.ComprobanteVentaDao;
 import model.dto.ComprobanteVenta;
 import org.apache.log4j.Logger;
@@ -46,8 +50,8 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
             try {
 
                 CallableStatement ps = cn.prepareCall(sqlResult);
-                String num=venta.getTipo() + "-" + venta.getNumero_comprobante() + "-" + DirDate.getInstance().getFechaYYYY();
-                ps.setString(1,num);
+                String num = venta.getTipo() + "-" + venta.getNumero_comprobante() + "-" + DirDate.getInstance().getFechaYYYY();
+                ps.setString(1, num);
                 ps.setString(2, venta.getId_producto());
                 ps.setString(3, venta.getCantidad());
                 ps.setString(4, venta.getPrecio());
@@ -55,9 +59,12 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
                 ps.setString(6, venta.getTipo());
                 ps.setInt(7, venta.getId_cliente());
                 ps.setInt(8, venta.getCantProductos());
+                ps.setDouble(9, venta.getTotal());
+                ps.setDouble(10, venta.getIgv());
+                ps.setDouble(11, venta.getNeto());
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
-               int resultado = ps.getInt(9);
+                int resultado = ps.getInt(12);
                 if (resultado > 0) {
 //                    cn.commit();
                     logger.info("OK");
@@ -80,6 +87,105 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
         }
 
         return mensaje;
+    }
+
+    @Override
+    public boolean verificarNumComprobante(String numeradorcomprobante) throws Exception {
+        boolean estado = false;
+        String sqlResult = "";
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectComprobantexNumero.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+        if (cn != null) {
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setString(1, numeradorcomprobante);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next() == true) {
+                    estado = false;
+                } else {
+                    estado = true;
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+        return estado;
+    }
+
+    @Override
+    public List<ComprobanteVenta> ListarVenta200() throws Exception {
+        String sqlResult = "";
+        List<ComprobanteVenta> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectVenta200.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    ComprobanteVenta temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new ComprobanteVenta();
+                        temp.setNumero_comprobante(rs.getString("numero_comprobante"));
+                        temp.setCantProductos(rs.getInt("items"));
+                        temp.setEstado(rs.getString("estado"));
+                        temp.setFecha_reg(rs.getDate("fecha_reg"));
+                        temp.setId_usuario(rs.getInt("id_usuario"));
+                        temp.setIgv(rs.getDouble("igv"));
+                        temp.setNeto(rs.getDouble("neto"));
+                        temp.setTotal(rs.getDouble("total"));
+                        listTemp.add(temp);
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
     }
 
 }

@@ -340,6 +340,8 @@ public class ServVenta extends HttpServlet {
         String numero = request.getParameter("numero");
         String id_cliente = request.getParameter("id_cliente");
         String total = request.getParameter("total");
+        String igv = request.getParameter("igv");
+        String neto = request.getParameter("neto");
         List<ListaVenta> listatemp = new ArrayList<ListaVenta>();
         List<ListaVenta> lista = new ArrayList<ListaVenta>();
         try {
@@ -359,11 +361,12 @@ public class ServVenta extends HttpServlet {
         ComprobanteVenta venta = ComprobanteVenta.getInstance();
         if (listatemp.size() > 0) {
             String numeradorcomprobante = doc + "-" + numero + "-" + DirDate.getInstance().getFechaYYYY();
-            boolean boletaok=LogicVenta.getInstance().verificarNumComprobante(numeradorcomprobante.trim());
-                 
-            
-            
-            
+            boolean boletaok = LogicVenta.getInstance().verificarNumComprobante(numeradorcomprobante.trim());
+            if (boletaok == false) {
+                msg = "ERROR%" + "NÚMERO DE COMPROBANTE YA EXISTE";
+                HtmlUtil.getInstance().escrituraHTML(response, msg);
+                return;
+            }
             for (ListaVenta listaVenta : listatemp) {
                 if (listaVenta.getId_cliente().equals(id_cliente)) {
                     Producto prod = new Producto();
@@ -398,6 +401,9 @@ public class ServVenta extends HttpServlet {
             venta.setPrecio(precio);
             venta.setTipo(doc);
             venta.setId_usuario(usuario_mod);
+            venta.setIgv(Double.parseDouble(igv));
+            venta.setTotal(Double.parseDouble(total));
+            venta.setNeto(Double.parseDouble(neto));
         }
         String respuesta = LogicVenta.getInstance().grabarVenta(venta);
         // verreporte(response,respuesta);
