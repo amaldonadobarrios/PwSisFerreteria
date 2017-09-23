@@ -178,8 +178,7 @@ INSERT INTO `usuario` (`id_usuario`, `usuario`, `password`, `dni`, `apellido_pat
 (3, 'ferreteria', '120c11210a181006000e', '45206131', 'MALDONADO', 'BARRIOS', 'ALEXANDER', '333333333', 'A', '2017-08-15', '2017-08-18', 3, 1, 3);
 
 
-DELIMITER $$
-CREATE  PROCEDURE `GrabarVenta`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GrabarVenta`(
 in numero varchar(45),
 in productox varchar(1000), 
 in cantidadx varchar(1000),
@@ -188,6 +187,9 @@ in usuario int,
 in tipocomprobante varchar(45),
 in cliente int,
 in registros int,
+in total double,
+in igv double,
+in neto double,
 out rpta int)
 BEGIN
 DECLARE v1 INT DEFAULT 1;
@@ -212,7 +214,7 @@ END;
 /*Inicia transaccion*/ 
 START TRANSACTION; 
 /*Primer INSERT datos ACTA*/ 
-INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg) VALUES(numero,tipocomprobante,now(),cliente,'VENDIDO',usuario,now());
+INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg,total,igv,neto,items) VALUES(numero,tipocomprobante,now(),cliente,'VENDIDO',usuario,now(),FORMAT(total, 2),FORMAT(igv, 2),FORMAT(neto, 2),registros);
 /*SECOND INSERT datos ACTA*/ 
 WHILE v1 <= registros DO
 SET prod = (SELECT strSplit (productox, '@', v1));
@@ -227,15 +229,6 @@ COMMIT;
 /*Mandamos 0 si todo salio bien*/ 
 set rpta =1;
 END
-DELIMITER ;
-
-
-DELIMITER $$
-CREATE FUNCTION `strSplit`(cadena VARCHAR(255), delimitador VARCHAR(12), posicion INT) RETURNS varchar(255) CHARSET utf8
-BEGIN
-     RETURN ltrim(replace(substring(substring_index(cadena, delimitador, posicion), length(substring_index(cadena, delimitador, posicion - 1)) + 1), delimitador, ''));
-END$$
-DELIMITER ;
 
 
 
