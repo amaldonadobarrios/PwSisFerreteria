@@ -13,8 +13,13 @@ import model.dto.ComprobanteVenta;
  * @author Alexander
  */
 public interface ComprobanteVentaDao {
-  public String GrabarVenta(ComprobanteVenta venta) throws  Exception;
-  public boolean verificarNumComprobante(String numeradorcomprobante) throws Exception;
-  public List<ComprobanteVenta> ListarVenta200 () throws  Exception;
-  
+
+    public String GrabarVenta(ComprobanteVenta venta) throws Exception;
+
+    public boolean verificarNumComprobante(String numeradorcomprobante) throws Exception;
+
+    public List<ComprobanteVenta> ListarVenta200() throws Exception;
+
+    public String EliminarVenta(String numero, String id) throws Exception;
+
 }

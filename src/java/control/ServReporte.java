@@ -27,8 +27,6 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import util.DirDate;
-import util.DirFecha;
 
 /**
  *
@@ -51,13 +49,15 @@ public class ServReporte extends HttpServlet {
         System.out.println("control.ServReporte.processRequest()" + evento);
         if (evento.equals("venta")) {
             String id = request.getParameter("num").trim();
+            String estado = null;
+            estado = request.getParameter("estado");
             System.out.println("control.ServReporte.processRequest()" + id);
-            verreporte(request, response, id);
+            verreporte(request, response, id, estado);
         }
 
     }
 
-    private void verreporte(HttpServletRequest request, HttpServletResponse response, String respuesta) throws SQLException, IOException, JRException, ClassNotFoundException {
+    private void verreporte(HttpServletRequest request, HttpServletResponse response, String respuesta, String estado) throws SQLException, IOException, JRException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conexion = null;
         try {
@@ -76,6 +76,11 @@ public class ServReporte extends HttpServlet {
             } else if (sSubCadenacomprobante.equals("GDV")) {
                 TipoComprob = "GUÍA DE VENTA";
                 tipodoc = "DNI/RUC:";
+            }
+            if (estado.equals("VENDIDO")) {
+                parameters.put("in_estado", "VENDIDO");
+            } else if (estado.equals("ELIMINADO")) {
+                parameters.put("in_estado", "ELIMINADO");
             }
             parameters.put("id", respuesta.trim());
             parameters.put("tipo_documento", tipodoc);

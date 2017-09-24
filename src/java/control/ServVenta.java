@@ -67,6 +67,9 @@ public class ServVenta extends HttpServlet {
                     } else if (evento.equals("RegistrarVentaAJAX")) {
                         System.out.println("control.ServVenta.processRequest()" + "REGISTRANDO VENTA");
                         RegistrarVentaAJAX(request, response);
+                    }else if (evento.equals("EliminarVentaAjax")) {
+                        System.out.println("ELIMINAR VENTA");
+                        EliminarVentaAjax(request, response);
                     }
 
                 }
@@ -410,6 +413,14 @@ public class ServVenta extends HttpServlet {
         msg = "OK%" + "VALIDADO% " + respuesta;
         HtmlUtil.getInstance().escrituraHTML(response, msg);
 
+    }
+
+    private void EliminarVentaAjax(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String numero = request.getParameter("num");
+        String id = request.getParameter("id");
+        String respuesta=null;
+        respuesta=LogicVenta.getInstance().eliminarVenta(numero,id);
+         HtmlUtil.getInstance().escrituraHTML(response, respuesta); 
     }
 
 }

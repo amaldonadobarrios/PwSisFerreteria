@@ -1,1 +1,1 @@
-SELECT * FROM comprobante_venta where numero_comprobante=? ;
+SELECT * FROM comprobante_venta where numero_comprobante=? and estado='VENDIDO' ;

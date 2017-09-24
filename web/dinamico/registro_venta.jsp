@@ -20,9 +20,7 @@
             document.getElementById("fecha").value = fechaImprimible
             setTimeout("mueveReloj()", 1000)
     }
-    function limpiar_formVenta() {
-
-    }
+   
 
     //***************************************************************************
     //VENTA
@@ -42,7 +40,7 @@
     } else {
     $('#modalLoaging').modal('hide');
     mensajeOK('VALIDADO', MSJ, rpta);
-    var popUp = window.open('ServReporte?evento=venta&num=' + rpta, 'ventana1', "width=700,height=500,scrollbars=SI");
+    var popUp = window.open('ServReporte?evento=venta&estado=VENDIDO&num=' + rpta, 'ventana1', "width=700,height=500,scrollbars=SI");
     if (popUp == null || typeof (popUp) == 'undefined') {
     $('#modalLoaging').modal('show');
     setTimeout("redireccionarPagina()", 20000);

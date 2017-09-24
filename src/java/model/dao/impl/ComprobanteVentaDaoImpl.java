@@ -161,6 +161,8 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
                     while (rs.next()) {
 
                         temp = new ComprobanteVenta();
+                        temp.setId_comprobante(rs.getInt("id_comprobante"));
+                        temp.setEstado(rs.getString("estado"));
                         temp.setNumero_comprobante(rs.getString("numero_comprobante"));
                         temp.setCantProductos(rs.getInt("items"));
                         temp.setEstado(rs.getString("estado"));
@@ -186,6 +188,56 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
         }
 
         return listTemp;
+    }
+
+    @Override
+    public String EliminarVenta(String numero, String id) throws Exception {
+        String mensaje = null;
+        String sqlResult = "";
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/eliminarVenta.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+        }
+
+        if (cn != null) {
+
+            try {
+
+                CallableStatement ps = cn.prepareCall(sqlResult);
+               ps.setString(1, numero);
+               ps.setInt(2, Integer.parseInt(id));
+          
+                ps.execute();
+                // devuelve el valor del parametro de salida del procedimiento
+                int resultado = ps.getInt(3);
+                if (resultado > 0) {
+//                    cn.commit();
+                    logger.info("OK");
+                    mensaje = "OK";
+                } else {
+                    //cn.rollback();
+                    mensaje = "NO OK";
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return mensaje;
     }
 
 }

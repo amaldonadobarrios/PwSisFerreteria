@@ -37,6 +37,13 @@ public class LogicVenta {
         return estado;
     }
 
+    public String eliminarVenta(String numero, String id)throws Exception {
+       String respuesta=null;
+        ComprobanteVentaDao dao=new ComprobanteVentaDaoImpl();
+        respuesta=dao.EliminarVenta(numero,id);
+        return respuesta;
+    }
+
     private static class LogicVentaHolder {
 
         private static final LogicVenta INSTANCE = new LogicVenta();
