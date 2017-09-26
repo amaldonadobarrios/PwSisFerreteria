@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import logica.LogicCliente;
+import logica.LogicInventario;
 import logica.LogicPerfil;
 import logica.LogicProducto;
 import logica.LogicProveedor;
@@ -254,7 +255,13 @@ public class ServMenu extends HttpServletConf {
     }
 
     private void pageConsultarVenta(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
-         request.setAttribute("listaVenta", LogicVenta.getInstance().listarventa200());
+        String fecha = null;
+        fecha = request.getParameter("fecha");
+        if (fecha == null) {
+            request.setAttribute("listaVenta", LogicVenta.getInstance().listarventa200());
+        } else {
+            request.setAttribute("listaVenta", LogicVenta.getInstance().listarventaxFecha(fecha));
+        }
         request.setAttribute("body", "consultar_venta");
         forwar("template.jsp", request, response);
     }
@@ -269,7 +276,8 @@ public class ServMenu extends HttpServletConf {
         forwar("template.jsp", request, response);
     }
 
-    private void pageConsultarInventario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pageConsultarInventario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
+        request.setAttribute("listainventario", LogicInventario.getInstance().ListarInventario());
         request.setAttribute("body", "consultar_inventario");
         forwar("template.jsp", request, response);
     }
@@ -285,6 +293,18 @@ public class ServMenu extends HttpServletConf {
     }
 
     private void pageReporteVentas(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String fechaini = null;
+        String fechafin = null;
+        fechaini = request.getParameter("fecha1");
+        fechafin = request.getParameter(("fecha2"));
+
+        if (fechaini != null && fechafin != null) {
+            String sSubCadenadia1 = fechaini.substring(0, 2);
+            String sSubCadenames1 = fechaini.substring(3, 5);
+            String sSubCadenaaño1 = fechaini.substring(6, 10);
+
+        }
+
         request.setAttribute("body", "reporte_venta");
         forwar("template.jsp", request, response);
     }

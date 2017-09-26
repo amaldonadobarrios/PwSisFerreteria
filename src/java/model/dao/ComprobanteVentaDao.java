@@ -5,6 +5,7 @@
  */
 package model.dao;
 
+
 import java.util.List;
 import model.dto.ComprobanteVenta;
 
@@ -21,5 +22,9 @@ public interface ComprobanteVentaDao {
     public List<ComprobanteVenta> ListarVenta200() throws Exception;
 
     public String EliminarVenta(String numero, String id) throws Exception;
+
+    public List<ComprobanteVenta> ListarVentaxFecha(String fecha) throws  Exception;
+
+    public List<ComprobanteVenta> ListarVentaxRango(String ini, String fin) throws  Exception;
 
 }

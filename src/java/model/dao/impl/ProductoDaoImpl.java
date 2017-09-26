@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import model.dao.ProductoDao;
 import model.dto.Producto;
@@ -348,6 +349,108 @@ public class ProductoDaoImpl implements ProductoDao {
         }
 
         return listTemp;
+    }
+    @Override
+    public List<Producto> getProductosSinfoto() throws Exception {
+        String sqlResult = "";
+        List<Producto> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectProducto.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    Producto temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new Producto();
+                        temp.setId_producto(rs.getInt("id_producto"));
+                        temp.setDescripcion(rs.getString("descripcion"));
+                        temp.setPresentacion(rs.getString("presentacion"));
+                        temp.setMedida(rs.getString("medida"));
+                        temp.setMarca(rs.getString("marca"));
+                        temp.setProd_insu(rs.getString("producto_insumo"));
+                        temp.setExistencia(rs.getDouble("existencia"));
+                    listTemp.add(temp);
+
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
+    }
+
+    @Override
+    public String getfotoId(String id) throws Exception {
+         String sqlResult = "";
+        String pro = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectFotoProductoID.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setInt(1, Integer.parseInt(id));
+                ResultSet rs = ps.executeQuery();
+                byte[] foto=null;
+                if (rs.next()) {
+                  foto=rs.getBytes("foto");
+                }
+                Base64.Encoder code = Base64.getEncoder();
+                pro = code.encodeToString(foto);
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return pro;
     }
 
 }

@@ -125,21 +125,7 @@
                     </a>
                     <b class="arrow"></b>
                 </li>
-                <li class="">
-                    <a href="SMenu?action=pageConsultarInventarioProductos">
-                        <i class="menu-icon fa fa-caret-right"></i>
-                        Consultar Inventario de Productos
-                    </a>
-                    <b class="arrow"></b>
-                </li>
-                <li class="">
-                    <a href="SMenu?action=pageConsultarInventarioInsumos">
-                        <i class="menu-icon fa fa-caret-right"></i>
-                        Consultar Inventario de Insumos
-                    </a>
-                    <b class="arrow"></b>
-                </li>
-            </ul>
+           </ul>
         </li>
          <li class="">
             <a href="#" class="dropdown-toggle">

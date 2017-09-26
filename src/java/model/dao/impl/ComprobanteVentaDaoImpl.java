@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 import java.util.List;
 import model.dao.ComprobanteVentaDao;
 import model.dto.ComprobanteVenta;
@@ -240,4 +241,122 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
         return mensaje;
     }
 
+    @Override
+    public List<ComprobanteVenta> ListarVentaxFecha(String fecha) throws Exception {
+    String sqlResult = "";
+        List<ComprobanteVenta> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectVentaxFecha.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setString(1, fecha);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    ComprobanteVenta temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+                        temp = new ComprobanteVenta();
+                        temp.setId_comprobante(rs.getInt("id_comprobante"));
+                        temp.setEstado(rs.getString("estado"));
+                        temp.setNumero_comprobante(rs.getString("numero_comprobante"));
+                        temp.setCantProductos(rs.getInt("items"));
+                        temp.setEstado(rs.getString("estado"));
+                        temp.setFecha_reg(rs.getDate("fecha_reg"));
+                        temp.setId_usuario(rs.getInt("id_usuario"));
+                        temp.setIgv(rs.getDouble("igv"));
+                        temp.setNeto(rs.getDouble("neto"));
+                        temp.setTotal(rs.getDouble("total"));
+                        listTemp.add(temp);
+                    }
+                }
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+        return listTemp;     
+    }
+
+    @Override
+    public List<ComprobanteVenta> ListarVentaxRango(String ini, String fin) throws Exception {
+       String sqlResult = "";
+        List<ComprobanteVenta> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectVentaRango.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setString(1, ini);
+                ps.setString(2, fin);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    ComprobanteVenta temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+                        temp = new ComprobanteVenta();
+                        temp.setId_comprobante(rs.getInt("id_comprobante"));
+                        temp.setEstado(rs.getString("estado"));
+                        temp.setNumero_comprobante(rs.getString("numero_comprobante"));
+                        temp.setCantProductos(rs.getInt("items"));
+                        temp.setEstado(rs.getString("estado"));
+                        temp.setFecha_reg(rs.getDate("fecha_reg"));
+                        temp.setId_usuario(rs.getInt("id_usuario"));
+                        temp.setIgv(rs.getDouble("igv"));
+                        temp.setNeto(rs.getDouble("neto"));
+                        temp.setTotal(rs.getDouble("total"));
+                        listTemp.add(temp);
+                    }
+                }
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+        return listTemp;  
+    }
 }

@@ -94,4 +94,16 @@ public class LogicVenta {
         list = dao.ListarVenta200();
         return list;
     }
+     public List<ComprobanteVenta> listarventaxFecha(String fecha) throws Exception {
+        List<ComprobanteVenta> list = null;
+        ComprobanteVentaDao dao = new ComprobanteVentaDaoImpl();
+        list = dao.ListarVentaxFecha(fecha);
+        return list;
+    }
+       public List<ComprobanteVenta> listarventaxRango(String ini,String fin) throws Exception {
+        List<ComprobanteVenta> list = null;
+        ComprobanteVentaDao dao = new ComprobanteVentaDaoImpl();
+        list = dao.ListarVentaxRango(ini,fin);
+        return list;
+    }
 }

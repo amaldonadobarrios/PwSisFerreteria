@@ -1,0 +1,1 @@
+SELECT * FROM comprobante_venta where fecha_reg BETWEEN ? AND ? and estado='VENDIDO';

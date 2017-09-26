@@ -58,7 +58,7 @@
         
          <link rel="stylesheet" href="assets/js/myjs/stacktable.css" />
          <link rel="stylesheet" href="assets/js/myjs/sweetalert.css" />
-        
+         <link href="assets/js/myjs/magnific-popup.css" rel="stylesheet" type="text/css"/>
     </head>
 
     <body class="no-skin">
@@ -157,6 +157,7 @@
           <script src="assets/js/validator.min.js"></script>
           <script src="assets/js/myjs/stacktable.js"></script>
           <script src="assets/js/myjs/sweetalert.min.js"></script>
+          <script src="assets/js/myjs/jquery.magnific-popup.min.js" type="text/javascript"></script>
         <!-- inline scripts related to this page            MALDONADO-->
         <script type="text/javascript">
                 jQuery(function ($) {

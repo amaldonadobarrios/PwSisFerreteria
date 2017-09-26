@@ -1,4 +1,14 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<script>
+      function fn_buscar(fechaini,fechafin) {
+          alert(fechaini);
+          alert(fechafin);
+      if (fechaini !== '' && fechafin!==''  ) {
+            location.replace("SMenu?action=pageReporteVentas&fecha1="+fechaini+"&fecha2="+fechafin);
+        }
+    }
+    </script>
+
 <div class="page-header">
     <h1>
         REPORTES
@@ -17,7 +27,7 @@
                 <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Fecha de Inicio </label>
                 <div class="col-sm-9">
                     <div class="input-group col-sm-3">
-                        <input class="form-control date-picker" id="id-date-picker-1" name="fechaini" type="text" data-date-format="dd-mm-yyyy"/>
+                        <input class="form-control date-picker" id="fechaini" name="fechaini" type="text" data-date-format="dd-mm-yyyy"/>
                         <span class="input-group-addon">
                             <i class="fa fa-calendar bigger-110"></i>
                         </span>
@@ -29,7 +39,7 @@
                 <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Fecha de Fin </label>
                 <div class="col-sm-9">
                     <div class="input-group col-sm-3">
-                        <input class="form-control date-picker" id="id-date-picker-1" name="fechafin" type="text" data-date-format="dd-mm-yyyy"/>
+                        <input class="form-control date-picker" id="fechafin" name="fechafin" type="text" data-date-format="dd-mm-yyyy"/>
                         <span class="input-group-addon">
                             <i class="fa fa-calendar bigger-110"></i>
                         </span>
@@ -37,7 +47,7 @@
                 </div>
             </div>
             <div class="form-group col-sm-12" >
-                <input type="button" class="btn-info btn" value="Consultar">
+                <input type="button" class="btn-info btn"  onclick="javascript:fn_buscar(document.getElementById('fechaini').value,document.getElementById('fechafin').value);"value="Consultar">
             </div>
         </fieldset>
         <fieldset>

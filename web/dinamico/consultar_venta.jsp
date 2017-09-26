@@ -2,6 +2,15 @@
 <c:set var="context" value="${pageContext.request.contextPath}" />
 <input type="hidden" id="contexto" value="${context}">
 <script>
+    //BUSCAR VENTA
+    function fn_buscar(fecha) {
+       if (fecha !== '') {
+            location.replace("SMenu?action=pageConsultarVenta&fecha="+fecha);
+        }
+    }
+
+
+    //ELIMINAR VENTA
     function fn_eliminarventa(id, estado, numero) {
         var jdatos;
         if (estado === 'VENDIDO') {
@@ -24,8 +33,9 @@
         fnEjecutarPeticion(vruta, jqdata, vevento);
     }
     function  fn_pintaEliminarVentaAjax(response) {
-        alert(response);
-        location.replace("SMenu?action=pageConsultarVenta");
+        if (response === 'OK') {
+            location.replace("SMenu?action=pageConsultarVenta");
+        }
     }
 //MENSAJE SW
     function mensaje(titulo, mensaje) {
@@ -83,7 +93,7 @@
                 </div>
             </div>  
             <div class="form-group col-sm-12" >
-                <input type="button" class="btn-info btn" value="Buscar">
+                <input type="button" class="btn-info btn" onclick="fn_buscar(document.getElementById('fechaventa').value);" value="Buscar">
             </div>
         </fieldset>
         <fieldset>
