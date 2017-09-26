@@ -46,10 +46,14 @@ CREATE TABLE `comprobante_venta` (
   `fecha` datetime DEFAULT NULL,
   `id_cliente` int(11) DEFAULT NULL,
   `estado` varchar(45) DEFAULT NULL,
-  `id_usuario` int(11) DEFAULT NULL,
-  `fecha_reg` datetime DEFAULT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `fecha_reg` datetime NOT NULL,
+  `total` double NOT NULL,
+  `igv` double NOT NULL,
+  `neto` double NOT NULL,
+  `items` int(11) NOT NULL,
   PRIMARY KEY (`id_comprobante`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `detalle_comprobante_venta` (
   `id_detalle_comprobante_venta` int(11) NOT NULL AUTO_INCREMENT,
@@ -60,8 +64,11 @@ CREATE TABLE `detalle_comprobante_venta` (
   `precio` double NOT NULL,
   `id_usuario` int(11) DEFAULT NULL,
   `fecha_reg` datetime DEFAULT NULL,
+  `estado` varchar(45) NOT NULL DEFAULT 'VENDIDO',
+  `id_comprobante` int(11) NOT NULL,
   PRIMARY KEY (`id_detalle_comprobante_venta`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+
 
 
 
@@ -196,6 +203,7 @@ DECLARE v1 INT DEFAULT 1;
 DECLARE prod int DEFAULT 0;
 DECLARE prec float DEFAULT 0;
 DECLARE cant float DEFAULT 0;
+DECLARE v_id_comprobante int;
 
 /*Handler para error SQL*/ 
 DECLARE EXIT HANDLER FOR SQLEXCEPTION 
@@ -214,14 +222,15 @@ END;
 /*Inicia transaccion*/ 
 START TRANSACTION; 
 /*Primer INSERT datos ACTA*/ 
-INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg,total,igv,neto,items) VALUES(numero,tipocomprobante,now(),cliente,'VENDIDO',usuario,now(),FORMAT(total, 2),FORMAT(igv, 2),FORMAT(neto, 2),registros);
+INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg,total,igv,neto,items) VALUES(numero,tipocomprobante,now(),cliente,'VENDIDO',usuario,now(),FORMAT(total,2),FORMAT(igv, 2),FORMAT(neto, 2),registros);
+SET v_id_comprobante =(select id_comprobante from comprobante_venta where numero_comprobante=numero and estado='VENDIDO' and items=registros and FORMAT(total, 2) limit 1 );
 /*SECOND INSERT datos ACTA*/ 
 WHILE v1 <= registros DO
 SET prod = (SELECT strSplit (productox, '@', v1));
 SET prec = (SELECT strSplit (preciox, '@', v1));
 SET cant = (SELECT strSplit (cantidadx, '@', v1));
 UPDATE producto SET existencia = (existencia -cant), fecha_mod = now(), usuario_mod = usuario WHERE id_producto = prod;
-INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg)VALUES(v1,numero,prod,FORMAT(cant, 2),FORMAT(prec, 2),usuario,now());    
+INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg,estado,id_comprobante)VALUES(v1,numero,prod,FORMAT(cant, 2),FORMAT(prec, 2),usuario,now(),'VENDIDO',v_id_comprobante);    
     SET v1 = v1+1;
   END WHILE;
 /*Fin de transaccion*/ 
