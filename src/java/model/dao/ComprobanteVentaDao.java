@@ -27,4 +27,6 @@ public interface ComprobanteVentaDao {
 
     public List<ComprobanteVenta> ListarVentaxRango(String ini, String fin) throws  Exception;
 
+    public List<ComprobanteVenta> ListarVentasxmesxaño(String ini, String fin) throws  Exception;
+
 }

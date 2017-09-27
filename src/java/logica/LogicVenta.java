@@ -106,4 +106,10 @@ public class LogicVenta {
         list = dao.ListarVentaxRango(ini,fin);
         return list;
     }
+       public List<ComprobanteVenta>  PNGReporteVenta(String ini,String fin) throws Exception {
+        List<ComprobanteVenta> list = null;
+        ComprobanteVentaDao dao = new ComprobanteVentaDaoImpl();
+         list = dao.ListarVentasxmesxaño(ini,fin);
+        return list;
+    }
 }

@@ -6,7 +6,10 @@
 package control;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +24,9 @@ import logica.LogicProducto;
 import logica.LogicProveedor;
 import logica.LogicUsuario;
 import logica.LogicVenta;
+import model.dto.ComprobanteVenta;
 import model.dto.Usuario;
+import util.GraficoJFChart;
 
 /**
  *
@@ -292,19 +297,35 @@ public class ServMenu extends HttpServletConf {
         forwar("template.jsp", request, response);
     }
 
-    private void pageReporteVentas(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pageReporteVentas(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
         String fechaini = null;
         String fechafin = null;
         fechaini = request.getParameter("fecha1");
-        fechafin = request.getParameter(("fecha2"));
-
+        fechafin = request.getParameter("fecha2");
+        List<ComprobanteVenta> listaventa = null;
+        List<ComprobanteVenta> listagrafico = null;
         if (fechaini != null && fechafin != null) {
-            String sSubCadenadia1 = fechaini.substring(0, 2);
-            String sSubCadenames1 = fechaini.substring(3, 5);
-            String sSubCadenaaño1 = fechaini.substring(6, 10);
+            SimpleDateFormat parseador = new SimpleDateFormat("dd-MM-yy");
+            SimpleDateFormat formateador = new SimpleDateFormat("YYYY-MM-dd");
+            Date date1 = parseador.parse(fechaini);
+            Date date2 = parseador.parse(fechafin);
+            String fecha1 = formateador.format(date1);
 
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date2);
+            cal.add(Calendar.DATE, 1);
+            String fecha2 = formateador.format(cal.getTime());
+            System.out.println("control.ServMenu.pageReporteVentas()FECHAS: " + fecha1 + " FECHA 2 :" + fecha2);
+            listaventa = LogicVenta.getInstance().listarventaxRango(fecha1, fecha2);
+            listagrafico = LogicVenta.getInstance().PNGReporteVenta(fecha1, fecha2);
+            String b64 = GraficoJFChart.getInstance().B64graficoLineaxmesxyear(listagrafico);
+            if (listaventa != null) {
+                if (listaventa.size() > 0) {
+                    request.setAttribute("listaventarango", listaventa);
+                    request.setAttribute("grafico", b64);
+                }
+            }
         }
-
         request.setAttribute("body", "reporte_venta");
         forwar("template.jsp", request, response);
     }

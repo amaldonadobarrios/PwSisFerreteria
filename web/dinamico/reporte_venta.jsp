@@ -64,42 +64,35 @@
                     <!-- div.table-responsive -->
                     <!-- div.dataTables_borderWrap -->
                     <div>
-                        <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                          <table id="dynamic-table" class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th class="center">
+                                    <th class="center">N°
                                     </th>
-                                    <th>Nombre</th>
-                                    <th>Tipo</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Fin</th>
-                                    <th>Vacantes</th>
-                                    <th></th>
+                                    <th>Comprobante</th>
+                                    <th>Items</th>
+                                    <th>Neto</th>
+                                    <th>IGV</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                <c:forEach var="curso" items="${listCurso}" varStatus="loop">
+                                <c:forEach var="venta" items="${listaventarango}" varStatus="loop">
                                     <tr>
                                         <td class="center">  ${loop.count} </td>
-                                        <td> ${curso.nombre} </td>
-                                        <td> ${curso.tipo} </td>
-                                        <td> ${curso.fechaini} </td>
-                                        <td> ${curso.fechafin} </td>
-                                        <td> 
-                                            <span class="label label-sm label-info">${curso.vacante}</span>
-                                        </td>
-                                        <td>
+                                        <td> ${venta.numero_comprobante}  ${venta.fecha_reg}</td>
+                                        <td> ${venta.cantProductos} </td>
+                                        <td> ${venta.neto} </td>
+                                        <td> ${venta.igv} </td>
+                                        <td> ${venta.total} </td>
+                                        <td>${venta.estado}
                                             <div class="hidden-sm hidden-xs action-buttons">
-                                                <a class="blue" href="Curso?action=verCurso">
+                                                <a class="blue" href="ServReporte?evento=venta&estado=${venta.estado}&num=+${venta.numero_comprobante}" target="_blank">
                                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                 </a>
-
-                                                <a class="green" href="Curso?action=formActualizarCurso&idcurso=${curso.idcurso}" >
-                                                    <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                                </a>
-
-                                                <a class="red" href="Curso?action=eliminarCurso&idcurso=${curso.idcurso}">
+                                                <a class="red" href="javascript:fn_eliminarventa('${venta.id_comprobante}','${venta.estado}','${venta.numero_comprobante}');">
                                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                 </a>
                                             </div>
@@ -119,135 +112,29 @@
                         <!-- PAGE CONTENT BEGINS -->
             
 
-                        <div class="row">
-                           
+                        <div class="row" style="text-align: center;">
+                              <div class="col-md-12 sidenav" align="center" id="divfoto" >
+                        <c:if test = "${grafico !=null}">
+
+                            <img  src="data:image/png;base64,${grafico}"width="500px" height="500px" 
+                                  name="image" id="image" />
+                        </c:if>
+                        
+                    </div>
 
 
                             <div class="vspace-12-sm"></div>
 
-                            <div class="col-sm-5">
-                                <div class="widget-box">
-                                    <div class="widget-header widget-header-flat widget-header-small">
-                                        <h5 class="widget-title">
-                                            <i class="ace-icon fa fa-signal"></i>
-                                            Traffic Sources
-                                        </h5>
-
-                                        <div class="widget-toolbar no-border">
-                                            <div class="inline dropdown-hover">
-                                                <button class="btn btn-minier btn-primary">
-                                                    This Week
-                                                    <i class="ace-icon fa fa-angle-down icon-on-right bigger-110"></i>
-                                                </button>
-
-                                                <ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
-                                                    <li class="active">
-                                                        <a href="#" class="blue">
-                                                            <i class="ace-icon fa fa-caret-right bigger-110">&nbsp;</i>
-                                                            This Week
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="#">
-                                                            <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                            Last Week
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="#">
-                                                            <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                            This Month
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="#">
-                                                            <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                            Last Month
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="widget-body">
-                                        <div class="widget-main">
-                                            <div id="piechart-placeholder"></div>
-
-                                            <div class="hr hr8 hr-double"></div>
-
-                                            <div class="clearfix">
-                                                <div class="grid3">
-                                                    <span class="grey">
-                                                        <i class="ace-icon fa fa-facebook-square fa-2x blue"></i>
-                                                        &nbsp; likes
-                                                    </span>
-                                                    <h4 class="bigger pull-right">1,255</h4>
-                                                </div>
-
-                                                <div class="grid3">
-                                                    <span class="grey">
-                                                        <i class="ace-icon fa fa-twitter-square fa-2x purple"></i>
-                                                        &nbsp; tweets
-                                                    </span>
-                                                    <h4 class="bigger pull-right">941</h4>
-                                                </div>
-
-                                                <div class="grid3">
-                                                    <span class="grey">
-                                                        <i class="ace-icon fa fa-pinterest-square fa-2x red"></i>
-                                                        &nbsp; pins
-                                                    </span>
-                                                    <h4 class="bigger pull-right">1,050</h4>
-                                                </div>
-                                            </div>
-                                        </div><!-- /.widget-main -->
-                                    </div><!-- /.widget-body -->
-                                </div><!-- /.widget-box -->
-                            </div><!-- /.col -->
+                           
                         </div><!-- /.row -->
 
                      
 
-                        <div class="row">
-                            
-
-                            <div class="col-sm-7">
-                                <div class="widget-box transparent">
-                                    <div class="widget-header widget-header-flat">
-                                        <h4 class="widget-title lighter">
-                                            <i class="ace-icon fa fa-signal"></i>
-                                            Sale Stats
-                                        </h4>
-
-                                        <div class="widget-toolbar">
-                                            <a href="#" data-action="collapse">
-                                                <i class="ace-icon fa fa-chevron-up"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="widget-body">
-                                        <div class="widget-main padding-4">
-                                            <div id="sales-charts"></div>
-                                        </div><!-- /.widget-main -->
-                                    </div><!-- /.widget-body -->
-                                </div><!-- /.widget-box -->
-                            </div><!-- /.col -->
-                        </div><!-- /.row -->
+                        
 
                         <div class="hr hr32 hr-dotted"></div>
 
-                        <div class="row">
-                            <div class="col-sm-6">
-                                
-                            </div><!-- /.col -->
-
-                            
-                        </div><!-- /.row -->
+             
 
                         <!-- PAGE CONTENT ENDS -->
                     </div><!-- /.col -->

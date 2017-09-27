@@ -26,7 +26,7 @@ import util.jdbc.ConectaDB;
  */
 public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
 
-    final static Logger logger = Logger.getLogger(ClienteDaoImpl.class);
+    final  Logger logger = Logger.getLogger(ClienteDaoImpl.class);
     Util uti = new Util();
     Connection cn = null;
     ConectaDB db = new ConectaDB();
@@ -343,6 +343,58 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
                         temp.setIgv(rs.getDouble("igv"));
                         temp.setNeto(rs.getDouble("neto"));
                         temp.setTotal(rs.getDouble("total"));
+                        listTemp.add(temp);
+                    }
+                }
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+        return listTemp;  
+    }
+
+    @Override
+    public List <ComprobanteVenta> ListarVentasxmesxaño(String ini, String fin) throws Exception {
+        String sqlResult = "";
+        List<ComprobanteVenta> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectventaReporteGrafico.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setString(1, ini);
+                ps.setString(2, fin);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    ComprobanteVenta temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+                        temp = new ComprobanteVenta();
+                        temp.setEstado(rs.getString("intervalo"));
+                        temp.setTotal(rs.getDouble("totalpormes"));
                         listTemp.add(temp);
                     }
                 }
