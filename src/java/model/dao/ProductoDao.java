@@ -26,4 +26,6 @@ public interface ProductoDao {
     public List<Producto> listarproductoscomboventa() throws  Exception;
     public List<Producto> getProductosSinfoto() throws Exception;
     public String getfotoId(String id) throws  Exception;
+
+    public List<Producto> listarproductoscombocompra() throws Exception;
 }

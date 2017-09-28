@@ -236,6 +236,165 @@ public class ProveedorDaoImpl implements ProveedorDao{
 
         return prov;
     }
+
+    @Override
+    public List<Proveedor> getProveedorXdoc(String arg) throws Exception{
+        String sqlResult = "";
+        List<Proveedor> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectProveedorXdoc.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setString(1, arg);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    Proveedor temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new Proveedor();
+                        listTemp.add(temp.loadRs(rs));
+
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
+    }
+
+    @Override
+    public List<Proveedor> getProveedorXaperaz(String arg) throws Exception {
+          String sqlResult = "";
+        List<Proveedor> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectProveedorXaperaz.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                for (int i = 1; i < 5; i++) {
+                    ps.setString(i, arg);
+                }
+
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    Proveedor temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new Proveedor();
+                        listTemp.add(temp.loadRs(rs));
+
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
+    }
+
+    @Override
+    public Proveedor getProveedorRegistrado(Proveedor proveedor)  throws  Exception{
+       String sqlResult = "";
+        Proveedor pro = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectProveedorRegistrado.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setString(1, proveedor.getNaturalezaProveedor());
+                ps.setString(2, proveedor.getDniRuc());
+                ps.setString(3, proveedor.getRazonSocial());
+                ps.setString(4, proveedor.getNombres());
+                ps.setString(5, proveedor.getApellidoPaterno());
+                ps.setString(6, proveedor.getApellidoMaterno());
+                ps.setString(7, proveedor.getTelefono());
+                ps.setString(8, proveedor.getDireccion());
+                ps.setString(9, proveedor.getEmail());
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    pro = new Proveedor();
+                    pro = pro.loadRs(rs);
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return pro;
+    }
     
     
 }

@@ -350,6 +350,7 @@ public class ProductoDaoImpl implements ProductoDao {
 
         return listTemp;
     }
+
     @Override
     public List<Producto> getProductosSinfoto() throws Exception {
         String sqlResult = "";
@@ -389,7 +390,7 @@ public class ProductoDaoImpl implements ProductoDao {
                         temp.setMarca(rs.getString("marca"));
                         temp.setProd_insu(rs.getString("producto_insumo"));
                         temp.setExistencia(rs.getDouble("existencia"));
-                    listTemp.add(temp);
+                        listTemp.add(temp);
 
                     }
                 }
@@ -411,7 +412,7 @@ public class ProductoDaoImpl implements ProductoDao {
 
     @Override
     public String getfotoId(String id) throws Exception {
-         String sqlResult = "";
+        String sqlResult = "";
         String pro = null;
 
         try {
@@ -431,13 +432,14 @@ public class ProductoDaoImpl implements ProductoDao {
                 PreparedStatement ps = cn.prepareStatement(sqlResult);
                 ps.setInt(1, Integer.parseInt(id));
                 ResultSet rs = ps.executeQuery();
-                byte[] foto=null;
+                byte[] foto = null;
                 if (rs.next()) {
-                  foto=rs.getBytes("foto");
+                    foto = rs.getBytes("foto");
                 }
-                Base64.Encoder code = Base64.getEncoder();
-                pro = code.encodeToString(foto);
-
+                if (foto != null) {
+                    Base64.Encoder code = Base64.getEncoder();
+                    pro = code.encodeToString(foto);
+                }
             } catch (SQLException e) {
                 logger.error(e);
                 throw new Exception("Problemas del sistema...");
@@ -451,6 +453,58 @@ public class ProductoDaoImpl implements ProductoDao {
         }
 
         return pro;
+    }
+
+    @Override
+    public List<Producto> listarproductoscombocompra() throws Exception {
+       String sqlResult = "";
+        List<Producto> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectProdComboCompra.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    Producto temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new Producto();
+                        listTemp.add(temp.loadRs(rs));
+
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
     }
 
 }

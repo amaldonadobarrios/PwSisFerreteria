@@ -39,7 +39,5 @@ public class LogicInventario {
         ProductoDao dao = new ProductoDaoImpl();
         foto = dao.getfotoId(id);
         return foto;
-    }
-    
-    
+    } 
 }

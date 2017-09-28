@@ -35,6 +35,10 @@
         <servlet-name>ServInventario</servlet-name>
         <servlet-class>control.ServInventario</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ServCompra</servlet-name>
+        <servlet-class>control.ServCompra</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ServletMenu</servlet-name>
         <url-pattern>/SMenu</url-pattern>
@@ -74,6 +78,10 @@
     <servlet-mapping>
         <servlet-name>ServInventario</servlet-name>
         <url-pattern>/ServInventario</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServCompra</servlet-name>
+        <url-pattern>/ServCompra</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -20,4 +20,10 @@ public interface ProveedorDao {
     public List<Proveedor> getProveedor() throws Exception;
 
     public Proveedor getProveedorXid(int id) throws Exception;
+
+    public List<Proveedor> getProveedorXdoc(String arg)throws  Exception;
+
+    public List<Proveedor> getProveedorXaperaz(String arg)throws  Exception;
+
+    public Proveedor getProveedorRegistrado(Proveedor cli) throws  Exception;
 }
