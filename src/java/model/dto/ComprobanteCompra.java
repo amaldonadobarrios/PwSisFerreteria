@@ -12,6 +12,10 @@ import java.sql.Date;
  * @author 31424836
  */
 public class ComprobanteCompra {
+
+    public static ComprobanteCompra getInstance() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
         private int  id_comprobante;
     private String numero_comprobante;
     private String tipo;

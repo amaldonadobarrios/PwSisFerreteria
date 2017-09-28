@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import logica.LogicCliente;
+import logica.LogicCompra;
 import logica.LogicInventario;
 import logica.LogicPerfil;
 import logica.LogicProducto;
@@ -47,6 +48,7 @@ public class ServMenu extends HttpServletConf {
                 HttpSession session = request.getSession();
                 session.removeAttribute("comboprod");
                 session.removeAttribute("listaventa");
+                session.removeAttribute("listacompra");
                 switch (action) {
 
                     case "pagehome":
@@ -271,7 +273,8 @@ public class ServMenu extends HttpServletConf {
         forwar("template.jsp", request, response);
     }
 
-    private void pageRegistroCompra(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pageRegistroCompra(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
+         request.setAttribute("combopro", LogicCompra.getInstance().listarproductoscombocompra());
         request.setAttribute("body", "registro_compra");
         forwar("template.jsp", request, response);
     }

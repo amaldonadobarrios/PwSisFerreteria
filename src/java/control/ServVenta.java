@@ -147,10 +147,6 @@ public class ServVenta extends HttpServlet {
         return respuesta;
     }
 
-    private void forwar(String templatejsp, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher(templatejsp).forward(request, response);
-    }
-
     private List<Cliente> BuscarClientexDOC(String arg) throws Exception {
         List<Cliente> cli = null;
         cli = LogicVenta.getInstance().buscarclientexDOC(arg);
