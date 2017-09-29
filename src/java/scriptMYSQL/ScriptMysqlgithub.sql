@@ -253,3 +253,9 @@ WHILE v1 <= 2 DO
     SET v1 = v1+1;
   END WHILE;
 END
+
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `strSplit`(cadena VARCHAR(255), delimitador VARCHAR(12), posicion INT) RETURNS varchar(255) CHARSET utf8
+BEGIN
+     RETURN ltrim(replace(substring(substring_index(cadena, delimitador, posicion), length(substring_index(cadena, delimitador, posicion - 1)) + 1), delimitador, ''));
+END

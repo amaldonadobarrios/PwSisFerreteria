@@ -282,7 +282,7 @@
             var dni;
             var nombres;
             var paterno;
-            var materno
+            var materno;
             var ruc;
             var RazonSocial;
             if (nat == 'P') {
@@ -305,8 +305,7 @@
                 nombres: nombres,
                 RazonSocial: RazonSocial,
                 dni: dni,
-                ruc: ruc,
-                tipo: tipo
+                ruc: ruc
             };
             fn_ejecutar_grabar_cli(jqdatos);
         }
@@ -318,7 +317,6 @@
         fnEjecutarPeticion(vruta, jqdata, vevento);
     }
     function fnSeleccionarProveedor(rz, apep, apem, nom, doc, dir, nat, id) {
-        var tipdesc;
         if (nat == 'P') {
             document.getElementById('txtproveedor').value = apep + ' ' + apem + ' ' + nom;
         } else if (nat == 'E') {
@@ -327,9 +325,7 @@
         document.getElementById('txtidproveedor').value = id;
         document.getElementById('txtdnioRuc').value = doc;
         document.getElementById('txtdomi').value = dir;
-        document.getElementById('txttipoclidesc').value = tipdesc;
         document.getElementById("precio").value = '';
-        document.getElementById("stock").value = '';
         document.getElementById("cantidad").value = '';
         document.getElementById("cbxprod").selectedIndex = "0";
         $('#1modal').modal('hide');
@@ -403,7 +399,6 @@
             var mensaje = respuesta[0];
             var json = respuesta[1];
             var arr = JSON.parse(json);
-            var i = Number(1);
             $('#msj').html(mensaje);
             fnSeleccionarProveedor(arr.razonSocial, arr.apellidoPaterno, arr.apellidoMaterno, arr.nombres, arr.dniRuc, arr.direccion, arr.naturalezaProveedor, arr.idProveedor);
         }

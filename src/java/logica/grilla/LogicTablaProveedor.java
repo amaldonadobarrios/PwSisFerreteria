@@ -62,7 +62,7 @@ public class LogicTablaProveedor {
 				str.append(INI_TD);	str.append( i );			str.append(FIN_TD);
 				str.append(INI_TD);	str.append( fila.getDniRuc());				str.append(FIN_TD);
 				str.append(INI_TD);	str.append( fila.getRazonSocial().concat(" ").concat(fila.getApellidoPaterno()).concat(" ").concat(fila.getApellidoMaterno().concat(" ").concat(fila.getNombres())));			str.append(FIN_TD);
-				str.append(INI_TD);	str.append( "<input type=\"button\" value=\"Seleccionar\" onclick=\"fnSeleccionarCliente('"+fila.getRazonSocial()+"','"+fila.getApellidoPaterno()+"','"+fila.getApellidoMaterno()+"','"+fila.getNombres()+"','"+fila.getDniRuc()+"','"+fila.getDireccion()+"','"+fila.getNaturalezaProveedor()+"','"+fila.getIdProveedor()+"')\" />");		str.append(FIN_TD);
+				str.append(INI_TD);	str.append( "<input type=\"button\" value=\"Seleccionar\" onclick=\"fnSeleccionarProveedor('"+fila.getRazonSocial()+"','"+fila.getApellidoPaterno()+"','"+fila.getApellidoMaterno()+"','"+fila.getNombres()+"','"+fila.getDniRuc()+"','"+fila.getDireccion()+"','"+fila.getNaturalezaProveedor()+"','"+fila.getIdProveedor()+"')\" />");		str.append(FIN_TD);
 				str.append(FINI_TR);
 			i++;	
 			}
