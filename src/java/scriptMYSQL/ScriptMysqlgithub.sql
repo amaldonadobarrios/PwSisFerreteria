@@ -185,6 +185,7 @@ INSERT INTO `usuario` (`id_usuario`, `usuario`, `password`, `dni`, `apellido_pat
 (3, 'ferreteria', '120c11210a181006000e', '45206131', 'MALDONADO', 'BARRIOS', 'ALEXANDER', '333333333', 'A', '2017-08-15', '2017-08-18', 3, 1, 3);
 
 
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GrabarVenta`(
 in numero varchar(45),
 in productox varchar(1000), 
@@ -237,25 +238,65 @@ INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_produ
 COMMIT; 
 /*Mandamos 0 si todo salio bien*/ 
 set rpta =1;
-END
+END$$
+DELIMITER ;
 
-
-
-CREATE  PROCEDURE `test`(
-in texto varchar(50)
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarVenta`(
+in numero varchar(45),
+in id int,
+out rpta int
 )
-begin
-DECLARE prod float DEFAULT 0;
-DECLARE v1 int DEFAULT 1;
-WHILE v1 <= 2 DO
-    SET prod = (SELECT strSplit (texto, '@', v1));
-    INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg)VALUES(v1,'hola',1,prod,1,1,now());    
-    SET v1 = v1+1;
-  END WHILE;
-END
+BEGIN
+DECLARE fin INTEGER DEFAULT 0;
+DECLARE v_id_detalle_venta int;
+DECLARE id_prod int;
+DECLARE cant double;
+DECLARE v_existencia double;
+DECLARE cur1 CURSOR FOR SELECT id_detalle_comprobante_venta,id_producto,cantidad FROM detalle_comprobante_venta where numero_comprobante=numero and estado='VENDIDO';
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+OPEN cur1;
+ read_loop: LOOP
+    FETCH cur1 INTO v_id_detalle_venta,id_prod, cant;
+   IF fin = 1 THEN
+       LEAVE read_loop;
+    END IF;
+	SET v_existencia= (select existencia from producto where id_producto=id_prod);
+	UPDATE producto SET existencia =v_existencia+cant  WHERE id_producto=id_prod;
+    UPDATE detalle_comprobante_venta SET estado ='ELIMINADO'  WHERE id_detalle_comprobante_venta=v_id_detalle_venta;
+  END LOOP;
+ CLOSE cur1;
+ UPDATE comprobante_venta set estado='ELIMINADO' where id_comprobante=id and numero_comprobante=numero;
+/*Fin de transaccion*/ 
+COMMIT; 
+/*Mandamos 1 si todo salio bien*/ 
+set rpta =1;
+
+END$$
+DELIMITER ;
 
 
+
+
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` FUNCTION `strSplit`(cadena VARCHAR(255), delimitador VARCHAR(12), posicion INT) RETURNS varchar(255) CHARSET utf8
 BEGIN
      RETURN ltrim(replace(substring(substring_index(cadena, delimitador, posicion), length(substring_index(cadena, delimitador, posicion - 1)) + 1), delimitador, ''));
-END
+END$$
+DELIMITER ;
