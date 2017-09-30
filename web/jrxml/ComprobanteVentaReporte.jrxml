@@ -58,10 +58,6 @@ LEFT JOIN producto d on (b.id_producto = d.id_producto) where a.numero_comproban
 			<rectangle>
 				<reportElement x="0" y="0" width="456" height="121"/>
 			</rectangle>
-			<image>
-				<reportElement x="5" y="6" width="54" height="48"/>
-				<imageExpression class="java.lang.String"><![CDATA["C:\\Users\\31424836\\Documents\\D\\proyectos\\sisferreteria\\PwSisFerreteria\\PwSisFerreteria\\web\\jrxml\\img\\logo.png"]]></imageExpression>
-			</image>
 			<staticText>
 				<reportElement x="59" y="24" width="171" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">

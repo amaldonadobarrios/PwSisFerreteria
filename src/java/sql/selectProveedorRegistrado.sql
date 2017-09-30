@@ -1,5 +1,5 @@
 SELECT * FROM `proveedor` WHERE 
-naturaleza_cliente= ? and
+naturaleza_proveedor= ? and
 dni_ruc=? and
 razon_social=? and
 nombres=? and

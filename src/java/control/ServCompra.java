@@ -19,10 +19,12 @@ import javax.servlet.http.HttpSession;
 import logica.LogicCompra;
 import logica.LogicProducto;
 import logica.LogicProveedor;
+import logica.grilla.LogicTablaCompra;
 import logica.grilla.LogicTablaProveedor;
 import logica.grilla.LogicTablaVenta;
 import model.dto.ComprobanteCompra;
-import model.dto.ListaVenta;
+import model.dto.ListaCompra;
+import model.dto.ListaCompra;
 import model.dto.Producto;
 import model.dto.Proveedor;
 import model.dto.Usuario;
@@ -165,30 +167,28 @@ public class ServCompra extends HttpServlet {
 
     private void AñadirProductoAJAX(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        List<ListaVenta> listatemp = new ArrayList<ListaVenta>();
-        List<ListaVenta> lista = new ArrayList<ListaVenta>();
+        List<ListaCompra> listatemp = new ArrayList<ListaCompra>();
+        List<ListaCompra> lista = new ArrayList<ListaCompra>();
         try {
-            lista = (List<ListaVenta>) session.getAttribute("listacompra");
+            lista = (List<ListaCompra>) session.getAttribute("listacompra");
         } catch (Exception e) {
         }
         if (lista != null) {
             listatemp = lista;
 
         }
-        String idCliente = request.getParameter("id_cliente");
-        String idtipocliente = request.getParameter("idtipocliente");
+        String idCliente = request.getParameter("id_proveedor");
         String cantidad = request.getParameter("cantidad");
         String precio = request.getParameter("precio");
         String id_producto = request.getParameter("id_producto");
         int id_prod = Integer.parseInt(id_producto);
         String respuesta = null;
-        ListaVenta objlista = new ListaVenta();
+        ListaCompra objlista = new ListaCompra();
         Producto prod = LogicProducto.getInstance().buscarProductoID(id_prod);
         objlista.setDescripcion(prod.getDescripcion());
         objlista.setMarca(prod.getMarca());
         objlista.setPresentacion(prod.getPresentacion());
-        objlista.setIdtipocliente(idtipocliente);
-        objlista.setId_cliente(idCliente);
+        objlista.setId_proveedor(idCliente);
         objlista.setCantidad(Double.parseDouble(cantidad));
         objlista.setPrecio(Double.parseDouble(precio));
         objlista.setCantidad(Double.parseDouble(cantidad));
@@ -199,8 +199,8 @@ public class ServCompra extends HttpServlet {
         double subtotal = 0;
         if (listatemp != null) {
             if (listatemp.size() > 0) {
-                for (ListaVenta listaVenta : listatemp) {
-                    if (listaVenta.getId_cliente().equals(objlista.getId_cliente())) {
+                for (ListaCompra ListaCompra : listatemp) {
+                    if (ListaCompra.getId_proveedor().equals(objlista.getId_proveedor())) {
                         validacion = true;
                     } else {
                         validacion = false;
@@ -208,7 +208,7 @@ public class ServCompra extends HttpServlet {
                         HtmlUtil.getInstance().escrituraHTML(response, msg);
                         return;
                     }
-                    if (listaVenta.getId_producto().trim().equals(objlista.getId_producto().trim())) {
+                    if (ListaCompra.getId_producto().trim().equals(objlista.getId_producto().trim())) {
                         validacion = false;
                         msg = "ERROR%" + subtotal + "%EL PRODUCTO YA SE ENCUENTRA REGISTRADO";
                         HtmlUtil.getInstance().escrituraHTML(response, msg);
@@ -223,11 +223,11 @@ public class ServCompra extends HttpServlet {
 
         System.out.println("control.ServVenta.AñadirProductoAJAX()" + objlista.toString());
         listatemp.add(objlista);
-        for (ListaVenta listaVenta : listatemp) {
+        for (ListaCompra listaVenta : listatemp) {
             subtotal = subtotal + listaVenta.getSubtotal();
         }
         session.setAttribute("listacompra", listatemp);
-        respuesta = LogicTablaVenta.getInstance().construirGrillaVenta(listatemp);
+        respuesta = LogicTablaCompra.getInstance().construirGrillaCompra(listatemp);
         HtmlUtil.getInstance().escrituraHTML(response, "OK%" + subtotal + "%" + respuesta);
     }
 
@@ -235,10 +235,10 @@ public class ServCompra extends HttpServlet {
        HttpSession session = request.getSession();
         double subtotal = 0;
         String item = request.getParameter("item");
-        List<ListaVenta> listatemp = new ArrayList<ListaVenta>();
-        List<ListaVenta> lista = new ArrayList<ListaVenta>();
+        List<ListaCompra> listatemp = new ArrayList<ListaCompra>();
+        List<ListaCompra> lista = new ArrayList<ListaCompra>();
         try {
-            lista = (List<ListaVenta>) session.getAttribute("listacompra");
+            lista = (List<ListaCompra>) session.getAttribute("listacompra");
         } catch (Exception e) {
         }
         if (lista != null) {
@@ -247,8 +247,8 @@ public class ServCompra extends HttpServlet {
         }
         listatemp.remove(Integer.parseInt(item));
         session.setAttribute("listacompra", listatemp);
-        String respuesta = LogicTablaVenta.getInstance().construirGrillaVenta(listatemp);
-        for (ListaVenta listaVenta : listatemp) {
+        String respuesta = LogicTablaCompra.getInstance().construirGrillaCompra(listatemp);
+        for (ListaCompra listaVenta : listatemp) {
             subtotal = subtotal + listaVenta.getSubtotal();
         }
         HtmlUtil.getInstance().escrituraHTML(response, "OK%" + subtotal + "%" + respuesta);
@@ -317,10 +317,10 @@ public class ServCompra extends HttpServlet {
         String total = request.getParameter("total");
         String igv = request.getParameter("igv");
         String neto = request.getParameter("neto");
-        List<ListaVenta> listatemp = new ArrayList<ListaVenta>();
-        List<ListaVenta> lista = new ArrayList<ListaVenta>();
+        List<ListaCompra> listatemp = new ArrayList<ListaCompra>();
+        List<ListaCompra> lista = new ArrayList<ListaCompra>();
         try {
-            lista = (List<ListaVenta>) session.getAttribute("listacompra");
+            lista = (List<ListaCompra>) session.getAttribute("listacompra");
         } catch (Exception e) {
         }
         if (lista != null) {
@@ -342,14 +342,14 @@ public class ServCompra extends HttpServlet {
                 HtmlUtil.getInstance().escrituraHTML(response, msg);
                 return;
             }
-            for (ListaVenta listaVenta : listatemp) {
-                if (listaVenta.getId_cliente().equals(id_cliente)) {
+            for (ListaCompra ListaCompra : listatemp) {
+                if (ListaCompra.getId_proveedor().equals(id_cliente)) {
                     Producto prod = new Producto();
-                    prod = LogicProducto.getInstance().buscarProductoID(Integer.parseInt(listaVenta.getId_producto()));
-                    if (prod.getExistencia() >= listaVenta.getCantidad()) {
+                    prod = LogicProducto.getInstance().buscarProductoID(Integer.parseInt(ListaCompra.getId_producto()));
+                    if (prod.getExistencia() >= ListaCompra.getCantidad()) {
 
                     } else {
-                        msg = "ERROR%" + "NO SE CUENTA CON SUFICIENTES PRODUCTOS: " + listaVenta.getDescripcion().concat(" ").concat(listaVenta.getMarca());
+                        msg = "ERROR%" + "NO SE CUENTA CON SUFICIENTES PRODUCTOS: " + ListaCompra.getDescripcion().concat(" ").concat(ListaCompra.getMarca());
                         HtmlUtil.getInstance().escrituraHTML(response, msg);
                         return;
                     }
@@ -359,9 +359,9 @@ public class ServCompra extends HttpServlet {
                     return;
                 }
 
-                precio = precio + String.valueOf(listaVenta.getPrecio() + "@");
-                id_producto = id_producto + String.valueOf(listaVenta.getId_producto() + "@");
-                cantidad = cantidad + String.valueOf(listaVenta.getCantidad() + "@");
+                precio = precio + String.valueOf(ListaCompra.getPrecio() + "@");
+                id_producto = id_producto + String.valueOf(ListaCompra.getId_producto() + "@");
+                cantidad = cantidad + String.valueOf(ListaCompra.getCantidad() + "@");
                 contador++;
             }
             Usuario usuario = usuario = new Usuario();
