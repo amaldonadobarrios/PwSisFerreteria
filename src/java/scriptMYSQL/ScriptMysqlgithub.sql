@@ -300,3 +300,145 @@ BEGIN
      RETURN ltrim(replace(substring(substring_index(cadena, delimitador, posicion), length(substring_index(cadena, delimitador, posicion - 1)) + 1), delimitador, ''));
 END$$
 DELIMITER ;
+
+
+CREATE TABLE `comprobante_compra` (
+  `id_comprobante` int(11) NOT NULL AUTO_INCREMENT,
+  `numero_comprobante` varchar(45) NOT NULL,
+  `tipo` varchar(45) DEFAULT NULL,
+  `fecha` date DEFAULT NULL,
+  `id_proveedor` int(11) DEFAULT NULL,
+  `estado` varchar(45) DEFAULT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `fecha_reg` datetime NOT NULL,
+  `total` double NOT NULL,
+  `igv` double NOT NULL,
+  `neto` double NOT NULL,
+  `items` int(11) NOT NULL,
+  PRIMARY KEY (`id_comprobante`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `detalle_comprobante_compra` (
+  `id_detalle_comprobante_compra` int(11) NOT NULL AUTO_INCREMENT,
+  `numero_detalle` int(11) NOT NULL,
+  `numero_comprobante` varchar(45) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `cantidad` double NOT NULL,
+  `subtotal` double NOT NULL,
+  `id_usuario` int(11) DEFAULT NULL,
+  `fecha_reg` datetime DEFAULT NULL,
+  `estado` varchar(45) NOT NULL DEFAULT 'VENDIDO',
+  `id_comprobante` int(11) NOT NULL,
+  PRIMARY KEY (`id_detalle_comprobante_compra`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarCompra`(
+in numero varchar(45),
+in id int,
+out rpta int
+)
+BEGIN
+DECLARE fin INTEGER DEFAULT 0;
+DECLARE v_id_detalle_compra int;
+DECLARE id_prod int;
+DECLARE cant double;
+DECLARE v_existencia double;
+DECLARE cur1 CURSOR FOR SELECT id_detalle_comprobante_compra,id_producto,cantidad FROM detalle_comprobante_compra where numero_comprobante=numero and estado='COMPRADO';
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+OPEN cur1;
+ read_loop: LOOP
+    FETCH cur1 INTO v_id_detalle_compra,id_prod, cant;
+   IF fin = 1 THEN
+       LEAVE read_loop;
+    END IF;
+	SET v_existencia= (select existencia from producto where id_producto=id_prod);
+	UPDATE producto SET existencia =v_existencia-cant  WHERE id_producto=id_prod;
+    UPDATE detalle_comprobante_compra SET estado ='ELIMINADO'  WHERE id_detalle_comprobante_compra=v_id_detalle_compra;
+  END LOOP;
+ CLOSE cur1;
+ UPDATE comprobante_compra set estado='ELIMINADO' where id_comprobante=id and numero_comprobante=numero;
+/*Fin de transaccion*/ 
+COMMIT; 
+/*Mandamos 1 si todo salio bien*/ 
+set rpta =1;
+
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GrabarCompra`(
+in numero varchar(45),
+in productox varchar(1000), 
+in cantidadx varchar(1000),
+in subtotalX varchar(1000),
+in usuario int,
+in tipocomprobante varchar(45),
+in proveedor int,
+in registros int,
+in total double,
+in igv double,
+in neto double,
+in fecha date,
+out rpta int)
+BEGIN
+DECLARE v1 INT DEFAULT 1;
+DECLARE prod int DEFAULT 0;
+DECLARE sub float DEFAULT 0;
+DECLARE cant float DEFAULT 0;
+DECLARE v_id_comprobante int;
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+/*Primer INSERT datos ACTA*/ 
+INSERT INTO comprobante_compra (numero_comprobante,tipo,fecha,id_proveedor,estado,id_usuario,fecha_reg,total,igv,neto,items) VALUES(numero,tipocomprobante,fecha,proveedor,'COMPRADO',usuario,now(),FORMAT(total,2),FORMAT(igv, 2),FORMAT(neto, 2),registros);
+SET v_id_comprobante =(select id_comprobante from comprobante_compra where numero_comprobante=numero and estado='COMPRADO' and items=registros and FORMAT(total, 2) limit 1 );
+/*SECOND INSERT datos ACTA*/ 
+WHILE v1 <= registros DO
+SET prod = (SELECT strSplit (productox, '@', v1));
+SET sub = (SELECT strSplit (subtotalX, '@', v1));
+SET cant = (SELECT strSplit (cantidadx, '@', v1));
+UPDATE producto SET existencia = (existencia +cant), fecha_mod = now(), usuario_mod = usuario WHERE id_producto = prod;
+INSERT INTO detalle_comprobante_compra(numero_detalle,numero_comprobante,id_producto,cantidad,subtotal,id_usuario,fecha_reg,estado,id_comprobante)VALUES(v1,numero,prod,FORMAT(cant, 2),FORMAT(sub, 2),usuario,now(),'COMPRADO',v_id_comprobante);    
+    SET v1 = v1+1;
+  END WHILE;
+/*Fin de transaccion*/ 
+COMMIT; 
+/*Mandamos 0 si todo salio bien*/ 
+set rpta =1;
+END$$
+DELIMITER ;
+
+
+
