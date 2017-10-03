@@ -51,8 +51,7 @@ public class LogicTablaCompra {
 		cabecera.append(INI_TH);	cabecera.append("CODIGO");			cabecera.append(FINI_TH);
 		cabecera.append(INI_TH);	cabecera.append("DESCRIPCION ");			cabecera.append(FINI_TH);
 		cabecera.append(INI_TH);	cabecera.append("MARCA");			cabecera.append(FINI_TH);
-                cabecera.append(INI_TH);	cabecera.append("PRECIO");			cabecera.append(FINI_TH);
-                cabecera.append(INI_TH);	cabecera.append("CANTIDAD");			cabecera.append(FINI_TH);
+                      cabecera.append(INI_TH);	cabecera.append("CANTIDAD");			cabecera.append(FINI_TH);
                 cabecera.append(INI_TH);	cabecera.append("SUBTOTAL");			cabecera.append(FINI_TH);
                 cabecera.append(INI_TH);	cabecera.append("ELIMINAR");			cabecera.append(FINI_TH);
 		cabecera.append(FINI_TR);
@@ -70,7 +69,6 @@ public class LogicTablaCompra {
 				str.append(INI_TD);	str.append( formateadorCodigo.format(Integer.parseInt(fila.getId_producto())));				str.append(FIN_TD);
                                 str.append(INI_TD);	str.append( fila.getDescripcion().concat("(").concat(fila.getPresentacion()).concat(")"));				str.append(FIN_TD);
                                 str.append(INI_TD);	str.append( fila.getMarca());				str.append(FIN_TD);
-                                str.append(INI_TD);	str.append( formateadorDecimal.format(fila.getPrecio()));				str.append(FIN_TD);
                                 str.append(INI_TD);	str.append( formateadorDecimal.format(fila.getCantidad()));				str.append(FIN_TD);
                                 str.append(INI_TD);	str.append( formateadorDecimal.format(fila.getSubtotal()));				str.append(FIN_TD);
 				str.append(INI_TD);	str.append( "<input type=\"button\" value=\"Eliminar\" onclick=\"fneliminarItem('"+i+"');\"");				str.append(FIN_TD);

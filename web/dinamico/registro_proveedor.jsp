@@ -223,10 +223,11 @@
                     </button>
 
                     &nbsp; &nbsp; &nbsp;
-                    <button class="btn" type="reset">
-                        <i class="ace-icon fa fa-undo bigger-110"></i>
-                        Limpiar
-                    </button>
+                    <a href="SMenu?action=pageRegistroProveedor"><button class="btn" type="button" >
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            Limpiar
+                        </button>
+                    </a>
                 </div>
             </div>
         </form>

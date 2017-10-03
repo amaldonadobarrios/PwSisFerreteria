@@ -5,6 +5,115 @@
 <input type="hidden" id="contexto" value="${context}">
 <input type="hidden" id="igvConstante" value="<%=igv%>">
 <script language="JavaScript">
+   //***************************************************************************
+    //COMPRA
+    
+    function fn_pintaRegCompra(response) {
+    if (response == 'NOSESION') {
+    mensaje('ERROR', 'SESION EXPIRADA');
+    location.href = "login.jsp";
+    } else {
+    var v_resultado = response + "";
+    var respuesta = v_resultado.split('%');
+    var estado = respuesta[0];
+    var MSJ = respuesta[1];
+    var rpta = respuesta[2];
+    if (estado == 'ERROR') {
+    $('#modalLoaging').modal('hide');
+    mensaje('ERROR', MSJ);
+    } else {
+    $('#modalLoaging').modal('hide');
+    mensajeOK('VALIDADO', MSJ, rpta);
+    var popUp = window.open('ServReporte?evento=compra&estado=COMPRADO&num=' + rpta, 'ventana1', "width=700,height=500,scrollbars=SI");
+    if (popUp == null || typeof (popUp) == 'undefined') {
+    $('#modalLoaging').modal('show');
+    setTimeout("redireccionarPagina()", 20000);
+    } else {
+    $('#modalLoaging').modal('hide');
+    setTimeout("redireccionarPagina()", 5000);
+    }
+    }
+    }
+    }
+    function myFunction() {
+    var myWindow = window.open("", "", "width=200,height=100");
+    myWindow.document.write("<p>A new window!</p>");
+    myWindow.focus();
+    }
+
+    function fn_registrarCompraAjax(jdatos) {
+    var vruta = '/ServCompra';
+    var vevento = 'RegistrarCompraAJAX';
+    var jqdata = jdatos;
+    fnEjecutarPeticion(vruta, jqdata, vevento);
+    }
+
+    function fn_registrar_Compra() {
+    var doc = $("#cbxdoc").val();
+    var num = $("#numero").val();
+    var idcli = $("#txtidproveedor").val();
+    var total = $("#total").val();
+    var igv = $("#igv").val();
+    var neto = $("#neto").val();
+    var fecha = $("#fecha").val();
+    confirmar = confirm("¿Desea Registrar la Compra?");
+    if (confirmar) {
+    if (validarcompra()) {
+    $('#modalLoaging').modal('show');
+    var jdatos = {
+    evento: 'RegistrarCompraAJAX',
+            documento: doc,
+            numero: num,
+            id_proveedor: idcli,
+            total: total,
+            igv: igv,
+            neto:neto,
+            fecha:fecha
+    };
+    fn_registrarCompraAjax(jdatos);
+    }
+    }
+    }
+    function validarcompra() {
+    var doc = $("#cbxdoc").val();
+    var num = $("#numero").val();
+    var idcli = $("#txtidproveedor").val();
+    var total = $("#total").val();
+    var fecha = $("#fecha").val();
+    var val = true;
+   if (fecha == '') {
+
+    mensaje('ERROR', 'SELECCIONE LA FECHA DEL COMPROBANTE');
+    val = false;
+    }
+    if (doc == '') {
+
+    mensaje('ERROR', 'SELECCIONE UN COMPROBANTE');
+    val = false;
+    }
+    if (num == '') {
+
+    mensaje('ERROR', 'INGRESE UN NÚMERO DE COMPROBANTE');
+    val = false;
+    }
+    if (idcli == '') {
+
+    mensaje('ERROR', 'SELECCIONE UN PROVEEDOR');
+    val = false;
+    }
+    if (total == '') {
+
+    mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
+    val = false;
+    }
+    if (total == '0.00') {
+
+    mensaje('ERROR', 'NO HA REGISTRADO PRODUCTOS');
+    val = false;
+    }
+    return val;
+    }
+   
     //PRODUCTO
 
     function fneliminarItem(item) {
@@ -57,7 +166,7 @@
     var price = document.getElementById("precio").value;
     var id_proveedor = document.getElementById('txtidproveedor').value;
     var id_producto = document.getElementById('cbxprod').value;
-    if (cantidad != '' && price != '' && id_proveedor != '' && cantidad > 0) {
+    if (cantidad != '' && price != '' && id_proveedor != '' && cantidad > 0 && id_producto!= '')  {
     cantidad = parseFloat(cantidad);
     price = parseFloat(price);
   
@@ -99,7 +208,7 @@
     }
 
     function redireccionarPagina() {
-    window.location = "SMenu?action=pageRegistroVenta";
+    window.location = "SMenu?action=pageRegistroCompra";
     }
 
     function mostrarStock(id) {
@@ -141,8 +250,8 @@
     document.getElementById("image").src = contexto + "/assets/images/sinfoto.png";
     }
     } else {
-    $('#smsgVenta').html('ERROR! ANTES DEBE SELECCIONAR EL CLIENTE');
-    mensaje('ERROR', ' ANTES DEBE SELECCIONAR EL CLIENTE');
+    $('#smsgVenta').html('ERROR! ANTES DEBE SELECCIONAR EL PROVEEDOR');
+    mensaje('ERROR', ' ANTES DEBE SELECCIONAR EL PROVEEDOR');
     }
 
 
@@ -150,7 +259,7 @@
     }
 
 //   ******************************************************************************/ 
-    //CLIENTE
+    //PROVEEDOR
     function fn_grabar_proveedor() {
     if (validar()) {
     var nat = document.getElementById('naturaleza').value;
@@ -496,7 +605,7 @@
                         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Fecha</label>
                         <div class="col-sm-10">
                             <div class="input-group col-sm-3">
-                                <input class="form-control date-picker" id="fechaini" name="fechaini" type="text" data-date-format="dd-mm-yyyy"/>
+                                <input class="form-control date-picker" id="fecha" name="fecha" type="text" data-date-format="yyyy-mm-dd"/>
                                 <span class="input-group-addon">
                                     <i class="fa fa-calendar bigger-110"></i>
                                 </span>
@@ -522,7 +631,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Precio</label>
+                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Subtotal</label>
                     <div class="col-sm-9">
                         <input type="text" id="precio" name="precio" placeholder="precio" class="col-xs-10 col-sm-9" />
                     </div>

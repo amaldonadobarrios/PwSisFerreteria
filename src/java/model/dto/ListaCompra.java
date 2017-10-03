@@ -11,7 +11,6 @@ package model.dto;
  */
 public class ListaCompra {
     private double cantidad;
-    private double precio;
     private String id_proveedor;
     private String id_producto;
     private double subtotal;
@@ -26,15 +25,6 @@ public class ListaCompra {
     public void setCantidad(double cantidad) {
         this.cantidad = cantidad;
     }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
     public String getId_proveedor() {
         return id_proveedor;
     }
@@ -85,7 +75,8 @@ public class ListaCompra {
 
     @Override
     public String toString() {
-        return "ListaCompra{" + "cantidad=" + cantidad + ", precio=" + precio + ", id_proveedor=" + id_proveedor + ", id_producto=" + id_producto + ", subtotal=" + subtotal + ", descripcion=" + descripcion + ", marca=" + marca + ", presentacion=" + presentacion + '}';
+        return "ListaCompra{" + "cantidad=" + cantidad + ", id_proveedor=" + id_proveedor + ", id_producto=" + id_producto + ", subtotal=" + subtotal + ", descripcion=" + descripcion + ", marca=" + marca + ", presentacion=" + presentacion + '}';
     }
+
     
 }

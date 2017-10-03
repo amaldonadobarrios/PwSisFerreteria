@@ -189,9 +189,11 @@ public class ProductoDaoImpl implements ProductoDao {
         try {
             cn = db.getConnection();
             if (pro.getType() != null) {
-                sqlResult = uti.getLocalResource("/sql/updateProducto.sql");
-            } else {
-                sqlResult = uti.getLocalResource("/sql/updateProductoSinfoto.sql");
+                if (pro.getType().equals("image/jpeg") && pro.getFoto() != null) {
+                    sqlResult = uti.getLocalResource("/sql/updateProducto.sql");
+                } else {
+                    sqlResult = uti.getLocalResource("/sql/updateProductoSinfoto.sql");
+                }
             }
         } catch (SQLException ex) {
             logger.error(ex);
@@ -212,7 +214,7 @@ public class ProductoDaoImpl implements ProductoDao {
                 ps.setString(4, pro.getMedida());
                 ps.setString(5, pro.getProd_insu().toUpperCase());
                 ps.setInt(6, pro.getUsuario_mod());
-                if (pro.getType() != null) {
+                if (pro.getType().equals("image/jpeg")) {
                     ps.setBytes(7, pro.getFoto());
                     ps.setString(8, pro.getType());
                     ps.setInt(9, pro.getId_producto());
@@ -457,7 +459,7 @@ public class ProductoDaoImpl implements ProductoDao {
 
     @Override
     public List<Producto> listarproductoscombocompra() throws Exception {
-       String sqlResult = "";
+        String sqlResult = "";
         List<Producto> listTemp = null;
 
         try {

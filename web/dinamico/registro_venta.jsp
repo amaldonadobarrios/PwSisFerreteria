@@ -181,7 +181,7 @@
     var stock = document.getElementById("stock").value;
     var id_cliente = document.getElementById('txtidcliente').value;
     var id_producto = document.getElementById('cbxprod').value;
-    if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '' && cantidad > 0) {
+    if (cantidad != '' && price != '' && stock != '' && idtipo != '' && id_cliente != '' && cantidad > 0 && id_producto!= '') {
     cantidad = parseFloat(cantidad);
     price = parseFloat(price);
     stock = parseFloat(stock);

@@ -7,6 +7,7 @@ package model.dao.impl;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ import model.dao.ComprobanteCompraDao;
 import model.dto.ComprobanteCompra;
 import org.apache.log4j.Logger;
 import util.DirDate;
+import util.DirFecha;
 import util.Util;
 import util.jdbc.ConectaDB;
 
@@ -46,22 +48,24 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
         if (cn != null) {
 
             try {
-
+                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()"+"voy a grabar compra");
                 CallableStatement ps = cn.prepareCall(sqlResult);
                 String num = compra.getTipo() + "-" + compra.getNumero_comprobante() + "-" + DirDate.getInstance().getFechaYYYY();
                 ps.setString(1, num);
                 ps.setString(2, compra.getId_producto());
                 ps.setString(3, compra.getCantidad());
-                ps.setString(4, compra.getPrecio());
+                ps.setString(4, compra.getSubtotal());
                 ps.setInt(5, compra.getId_usuario());
                 ps.setString(6, compra.getTipo());
-                ps.setInt(7, compra.getCantProductos());
-                ps.setDouble(8, compra.getTotal());
-                ps.setDouble(9, compra.getIgv());
-                ps.setDouble(10, compra.getNeto());
+                ps.setInt(7, compra.getId_proveedor());
+                ps.setInt(8, compra.getCantProductos());
+                ps.setDouble(9, compra.getTotal());
+                ps.setDouble(10, compra.getIgv());
+                ps.setDouble(11, compra.getNeto());
+                ps.setString(12, compra.getFecha());
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
-                int resultado = ps.getInt(12);
+                int resultado = ps.getInt(13);
                 if (resultado > 0) {
 //                    cn.commit();
                     logger.info("OK");
@@ -164,6 +168,7 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
                         temp.setCantProductos(rs.getInt("items"));
                         temp.setEstado(rs.getString("estado"));
                         temp.setFecha_reg(rs.getDate("fecha_reg"));
+                        temp.setFecha(rs.getString("fecha"));
                         temp.setId_usuario(rs.getInt("id_usuario"));
                         temp.setIgv(rs.getDouble("igv"));
                         temp.setNeto(rs.getDouble("neto"));
@@ -275,6 +280,7 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
                         temp.setCantProductos(rs.getInt("items"));
                         temp.setEstado(rs.getString("estado"));
                         temp.setFecha_reg(rs.getDate("fecha_reg"));
+                        temp.setFecha(rs.getString("fecha"));
                         temp.setId_usuario(rs.getInt("id_usuario"));
                         temp.setIgv(rs.getDouble("igv"));
                         temp.setNeto(rs.getDouble("neto"));

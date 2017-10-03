@@ -6,6 +6,7 @@
 package control;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +26,7 @@ import logica.LogicProducto;
 import logica.LogicProveedor;
 import logica.LogicUsuario;
 import logica.LogicVenta;
+import model.dto.ComprobanteCompra;
 import model.dto.ComprobanteVenta;
 import model.dto.Usuario;
 import util.GraficoJFChart;
@@ -262,7 +264,7 @@ public class ServMenu extends HttpServletConf {
     }
 
     private void pageConsultarVenta(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
-        String fecha = null;
+       String fecha = null;
         fecha = request.getParameter("fecha");
         if (fecha == null) {
             request.setAttribute("listaVenta", LogicVenta.getInstance().listarventa200());
@@ -279,7 +281,14 @@ public class ServMenu extends HttpServletConf {
         forwar("template.jsp", request, response);
     }
 
-    private void pageConsultarCompra(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pageConsultarCompra(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
+         String fecha = null;
+        fecha = request.getParameter("fecha");
+        if (fecha == null) {
+            request.setAttribute("listaCompra", LogicCompra.getInstance().listarcompra200());
+        } else {
+            request.setAttribute("listaCompra", LogicCompra.getInstance().listarcompraxFecha(fecha));
+        }
         request.setAttribute("body", "consultar_compra");
         forwar("template.jsp", request, response);
     }
@@ -333,7 +342,35 @@ public class ServMenu extends HttpServletConf {
         forwar("template.jsp", request, response);
     }
 
-    private void pageReporteCompras(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pageReporteCompras(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, Exception {
+         String fechaini = null;
+        String fechafin = null;
+        fechaini = request.getParameter("fecha1");
+        fechafin = request.getParameter("fecha2");
+        List<ComprobanteCompra> listacompra = null;
+        List<ComprobanteCompra> listagrafico = null;
+        if (fechaini != null && fechafin != null) {
+            SimpleDateFormat parseador = new SimpleDateFormat("dd-MM-yy");
+            SimpleDateFormat formateador = new SimpleDateFormat("YYYY-MM-dd");
+            Date date1 = parseador.parse(fechaini);
+            Date date2 = parseador.parse(fechafin);
+            String fecha1 = formateador.format(date1);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date2);
+            cal.add(Calendar.DATE, 1);
+            String fecha2 = formateador.format(cal.getTime());
+            System.out.println("control.ServMenu.pageReporteCompras()FECHAS: " + fecha1 + " FECHA 2 :" + fecha2);
+            listacompra = LogicCompra.getInstance().listarcompraxRango(fecha1, fecha2);
+            listagrafico = LogicCompra.getInstance().PNGReporteCompra(fecha1, fecha2);
+            String b64 = GraficoJFChart.getInstance().B64graficoLineaxmesxyearCompra(listagrafico);
+            if (listacompra != null) {
+                if (listacompra.size() > 0) {
+                    request.setAttribute("listacomprarango", listacompra);
+                    request.setAttribute("grafico", b64);
+                }
+            }
+        }
         request.setAttribute("body", "reporte_compra");
         forwar("template.jsp", request, response);
     }

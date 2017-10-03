@@ -5,7 +5,7 @@
  */
 package model.dto;
 
-import java.sql.Date;
+import java.util.Date;
 
 /**
  *
@@ -13,13 +13,10 @@ import java.sql.Date;
  */
 public class ComprobanteCompra {
 
-    public static ComprobanteCompra getInstance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-        private int  id_comprobante;
+    private int id_comprobante;
     private String numero_comprobante;
     private String tipo;
-    private Date fecha;
+    private String fecha;
     private int id_proveedor;
     private String estado;
     private int id_usuario;
@@ -27,7 +24,7 @@ public class ComprobanteCompra {
     private String numero_detalle;
     private String id_producto;
     private String cantidad;
-    private String precio;
+    private String subtotal;
     private int cantProductos;
     private double total;
     private double igv;
@@ -57,11 +54,11 @@ public class ComprobanteCompra {
         this.tipo = tipo;
     }
 
-    public Date getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 
@@ -121,14 +118,6 @@ public class ComprobanteCompra {
         this.cantidad = cantidad;
     }
 
-    public String getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(String precio) {
-        this.precio = precio;
-    }
-
     public int getCantProductos() {
         return cantProductos;
     }
@@ -161,9 +150,17 @@ public class ComprobanteCompra {
         this.neto = neto;
     }
 
+    public String getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(String subtotal) {
+        this.subtotal = subtotal;
+    }
+
     @Override
     public String toString() {
-        return "ComprobanteCompra{" + "id_comprobante=" + id_comprobante + ", numero_comprobante=" + numero_comprobante + ", tipo=" + tipo + ", fecha=" + fecha + ", id_proveedor=" + id_proveedor + ", estado=" + estado + ", id_usuario=" + id_usuario + ", fecha_reg=" + fecha_reg + ", numero_detalle=" + numero_detalle + ", id_producto=" + id_producto + ", cantidad=" + cantidad + ", precio=" + precio + ", cantProductos=" + cantProductos + ", total=" + total + ", igv=" + igv + ", neto=" + neto + '}';
+        return "ComprobanteCompra{" + "id_comprobante=" + id_comprobante + ", numero_comprobante=" + numero_comprobante + ", tipo=" + tipo + ", fecha=" + fecha + ", id_proveedor=" + id_proveedor + ", estado=" + estado + ", id_usuario=" + id_usuario + ", fecha_reg=" + fecha_reg + ", numero_detalle=" + numero_detalle + ", id_producto=" + id_producto + ", cantidad=" + cantidad + ", subtotal=" + subtotal + ", cantProductos=" + cantProductos + ", total=" + total + ", igv=" + igv + ", neto=" + neto + '}';
     }
-    
+
 }

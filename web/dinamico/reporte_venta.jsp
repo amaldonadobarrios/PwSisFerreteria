@@ -92,9 +92,6 @@
                                                 <a class="blue" href="ServReporte?evento=venta&estado=${venta.estado}&num=+${venta.numero_comprobante}" target="_blank">
                                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                 </a>
-                                                <a class="red" href="javascript:fn_eliminarventa('${venta.id_comprobante}','${venta.estado}','${venta.numero_comprobante}');">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
                                             </div>
                                         </td>
                                     </tr>

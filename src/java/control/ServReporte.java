@@ -7,11 +7,10 @@ package control;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,13 +26,17 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import util.Util;
+import util.jdbc.ConectaDB;
 
 /**
  *
  * @author 31424836
  */
 public class ServReporte extends HttpServlet {
-
+    Util uti = new Util();
+    Connection cn = null;
+    ConectaDB db = new ConectaDB();
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -49,19 +52,25 @@ public class ServReporte extends HttpServlet {
         System.out.println("control.ServReporte.processRequest()" + evento);
         if (evento.equals("venta")) {
             String id = request.getParameter("num").trim();
-            String estado = null;
+            String estado = "";
             estado = request.getParameter("estado");
             System.out.println("control.ServReporte.processRequest()" + id);
             verreporte(request, response, id, estado);
+        }else if (evento.equals("compra")) {
+            String id = request.getParameter("num").trim();
+            String estado = "";
+            estado = request.getParameter("estado");
+            System.out.println("control.ServReporte.processRequest()" + id);
+            verreportecOMPRA(request, response, id, estado);
+            
         }
 
     }
 
     private void verreporte(HttpServletRequest request, HttpServletResponse response, String respuesta, String estado) throws SQLException, IOException, JRException, ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection conexion = null;
+       
         try {
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbferreteria", "root", "mauricio");
+            cn = db.getConnection();
             String jrxmlfile = getServletContext().getRealPath("/jrxml/ComprobanteVentaReporte.jrxml");
             Map parameters = new HashMap();
             String sSubCadenacomprobante = respuesta.substring(0, 3);
@@ -87,14 +96,14 @@ public class ServReporte extends HttpServlet {
             parameters.put("tipo_comprobante", TipoComprob);
             InputStream input = new FileInputStream(new File(jrxmlfile));
             JasperReport jasperReport = JasperCompileManager.compileReport(input);
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conexion);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, cn);
             JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
             response.getOutputStream().flush();
             response.getOutputStream().close();
         } catch (SQLException ex) {
             System.out.println("className.methodName()" + ex);
         } finally {
-            conexion.close();
+            cn.close();
         }
     }
 
@@ -152,5 +161,44 @@ public class ServReporte extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void verreportecOMPRA(HttpServletRequest request, HttpServletResponse response, String id, String estado) throws ClassNotFoundException, FileNotFoundException, JRException, IOException, SQLException {
+        try {
+            cn = db.getConnection();
+            String jrxmlfile = getServletContext().getRealPath("/jrxml/ComprobanteCompraReporte.jrxml");
+            Map parameters = new HashMap();
+            String sSubCadenacomprobante = id.substring(0, 3);
+            String TipoComprob = null;
+            String tipodoc = null;
+            if (sSubCadenacomprobante.equals("BOL")) {
+                TipoComprob = "BOLETA DE VENTA";
+                tipodoc = "DNI :";
+            } else if (sSubCadenacomprobante.equals("FAC")) {
+                TipoComprob = "FACTURA";
+                tipodoc = "RUC :";
+            } else if (sSubCadenacomprobante.equals("GDV")) {
+                TipoComprob = "GUÍA DE VENTA";
+                tipodoc = "DNI/RUC:";
+            }
+            if (estado.equals("COMPRADO")) {
+                parameters.put("in_estado", "COMPRADO");
+            } else if (estado.equals("ELIMINADO")) {
+                parameters.put("in_estado", "ELIMINADO");
+            }
+            parameters.put("id", id.trim());
+            parameters.put("tipo_documento", tipodoc);
+            parameters.put("tipo_comprobante", TipoComprob);
+            InputStream input = new FileInputStream(new File(jrxmlfile));
+            JasperReport jasperReport = JasperCompileManager.compileReport(input);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, cn);
+            JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        } catch (SQLException ex) {
+            System.out.println("className.methodName()" + ex);
+        } finally {
+            cn.close();
+        }
+    }
 
 }

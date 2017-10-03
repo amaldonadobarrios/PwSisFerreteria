@@ -7,7 +7,9 @@ package control;
 
 import com.mi.diredu.util.DirTexto;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,14 +23,13 @@ import logica.LogicProducto;
 import logica.LogicProveedor;
 import logica.grilla.LogicTablaCompra;
 import logica.grilla.LogicTablaProveedor;
-import logica.grilla.LogicTablaVenta;
 import model.dto.ComprobanteCompra;
-import model.dto.ListaCompra;
 import model.dto.ListaCompra;
 import model.dto.Producto;
 import model.dto.Proveedor;
 import model.dto.Usuario;
 import util.DirDate;
+import util.DirFecha;
 import util.HtmlUtil;
 
 /**
@@ -66,9 +67,9 @@ public class ServCompra extends HttpServlet {
                     } else if (evento.equals("EliminarProductoAJAX")) {
                         System.out.println("control.ServVenta.processRequest()" + " SERVLET COMPRA - ELIMINANDO PRODUCTO");
                         EliminarProductoAJAX(request, response);
-                    } else if (evento.equals("RegistrarCompraJAX")) {
+                    } else if (evento.equals("RegistrarCompraAJAX")) {
                         System.out.println("control.ServVenta.processRequest()" + "REGISTRANDO COMPRA");
-                        RegistrarCompraJAX(request, response);
+                        RegistrarCompraAJAX(request, response);
                     } else if (evento.equals("EliminarCompraAjax")) {
                         System.out.println("ELIMINAR COMPRA");
                         EliminarCompraAjax(request, response);
@@ -190,10 +191,8 @@ public class ServCompra extends HttpServlet {
         objlista.setPresentacion(prod.getPresentacion());
         objlista.setId_proveedor(idCliente);
         objlista.setCantidad(Double.parseDouble(cantidad));
-        objlista.setPrecio(Double.parseDouble(precio));
-        objlista.setCantidad(Double.parseDouble(cantidad));
         objlista.setId_producto(id_producto);
-        objlista.setSubtotal((Double.parseDouble(cantidad) * Double.parseDouble(precio)));
+        objlista.setSubtotal(Double.parseDouble(precio));
         boolean validacion = false;
         String msg = null;
         double subtotal = 0;
@@ -204,7 +203,7 @@ public class ServCompra extends HttpServlet {
                         validacion = true;
                     } else {
                         validacion = false;
-                        msg = "ERROR%" + subtotal + "%HA CAMBIADO CLIENTE DURANTE LA TRANSACCION";
+                        msg = "ERROR%" + subtotal + "%HA CAMBIADO PROVEEDOR DURANTE LA TRANSACCION";
                         HtmlUtil.getInstance().escrituraHTML(response, msg);
                         return;
                     }
@@ -232,7 +231,7 @@ public class ServCompra extends HttpServlet {
     }
 
     private void EliminarProductoAJAX(HttpServletRequest request, HttpServletResponse response) {
-       HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
         double subtotal = 0;
         String item = request.getParameter("item");
         List<ListaCompra> listatemp = new ArrayList<ListaCompra>();
@@ -309,14 +308,15 @@ public class ServCompra extends HttpServlet {
         HtmlUtil.getInstance().escrituraHTML(response, mensaje);
     }
 
-    private void RegistrarCompraJAX(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void RegistrarCompraAJAX(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String doc = request.getParameter("documento");
         String numero = request.getParameter("numero");
-        String id_cliente = request.getParameter("id_cliente");
+        String id_proveedor = request.getParameter("id_proveedor");
         String total = request.getParameter("total");
         String igv = request.getParameter("igv");
         String neto = request.getParameter("neto");
+        String fecha = request.getParameter("fecha");
         List<ListaCompra> listatemp = new ArrayList<ListaCompra>();
         List<ListaCompra> lista = new ArrayList<ListaCompra>();
         try {
@@ -327,39 +327,21 @@ public class ServCompra extends HttpServlet {
             listatemp = lista;
         }
         //declaro variables locales;
-        String precio = "";
+        String subtotal = "";
         String id_producto = "";
         String cantidad = "";
         int contador = 0;
         //verificar cliente
         String msg;
-        ComprobanteCompra venta = ComprobanteCompra.getInstance();
+        ComprobanteCompra compra = new ComprobanteCompra();
         if (listatemp.size() > 0) {
-            String numeradorcomprobante = doc + "-" + numero + "-" + DirDate.getInstance().getFechaYYYY();
-            boolean boletaok = LogicCompra.getInstance().verificarNumComprobante(numeradorcomprobante.trim());
-            if (boletaok == false) {
-                msg = "ERROR%" + "NÚMERO DE COMPROBANTE YA EXISTE";
-                HtmlUtil.getInstance().escrituraHTML(response, msg);
-                return;
-            }
             for (ListaCompra ListaCompra : listatemp) {
-                if (ListaCompra.getId_proveedor().equals(id_cliente)) {
-                    Producto prod = new Producto();
-                    prod = LogicProducto.getInstance().buscarProductoID(Integer.parseInt(ListaCompra.getId_producto()));
-                    if (prod.getExistencia() >= ListaCompra.getCantidad()) {
-
-                    } else {
-                        msg = "ERROR%" + "NO SE CUENTA CON SUFICIENTES PRODUCTOS: " + ListaCompra.getDescripcion().concat(" ").concat(ListaCompra.getMarca());
-                        HtmlUtil.getInstance().escrituraHTML(response, msg);
-                        return;
-                    }
-                } else {
-                    msg = "ERROR%" + "HA CAMBIADO CLIENTE DURANTE LA TRANSACCION";
+                if (!ListaCompra.getId_proveedor().equals(id_proveedor)) {
+                    msg = "ERROR%" + "HA CAMBIADO PROVEEDOR DURANTE LA TRANSACCION";
                     HtmlUtil.getInstance().escrituraHTML(response, msg);
-                    return;
+                    return; 
                 }
-
-                precio = precio + String.valueOf(ListaCompra.getPrecio() + "@");
+                subtotal = subtotal + String.valueOf(ListaCompra.getSubtotal() + "@");
                 id_producto = id_producto + String.valueOf(ListaCompra.getId_producto() + "@");
                 cantidad = cantidad + String.valueOf(ListaCompra.getCantidad() + "@");
                 contador++;
@@ -367,20 +349,21 @@ public class ServCompra extends HttpServlet {
             Usuario usuario = usuario = new Usuario();
             usuario = (Usuario) session.getAttribute("usuario");
             int usuario_mod = usuario.getIdUsuario();
-            venta.setCantProductos(contador);
-            venta.setCantidad(cantidad);
-            venta.setEstado("PAGADO");
-            venta.setId_proveedor(Integer.parseInt(id_cliente));
-            venta.setId_producto(id_producto);
-            venta.setNumero_comprobante(numero);
-            venta.setPrecio(precio);
-            venta.setTipo(doc);
-            venta.setId_usuario(usuario_mod);
-            venta.setIgv(Double.parseDouble(igv));
-            venta.setTotal(Double.parseDouble(total));
-            venta.setNeto(Double.parseDouble(neto));
+            compra.setCantProductos(contador);
+            compra.setCantidad(cantidad);
+            compra.setEstado("COMPRADO");
+            compra.setId_proveedor(Integer.parseInt(id_proveedor));
+            compra.setId_producto(id_producto);
+            compra.setNumero_comprobante(numero);
+            compra.setSubtotal(subtotal);
+            compra.setTipo(doc);
+            compra.setId_usuario(usuario_mod);
+            compra.setIgv(Double.parseDouble(igv));
+            compra.setTotal(Double.parseDouble(total));
+            compra.setNeto(Double.parseDouble(neto));
+            compra.setFecha(fecha);
         }
-        String respuesta = LogicCompra.getInstance().grabarCompra(venta);
+        String respuesta = LogicCompra.getInstance().grabarCompra(compra);
         // verreporte(response,respuesta);
         msg = "OK%" + "VALIDADO% " + respuesta;
         HtmlUtil.getInstance().escrituraHTML(response, msg);
@@ -389,9 +372,9 @@ public class ServCompra extends HttpServlet {
     private void EliminarCompraAjax(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String numero = request.getParameter("num");
         String id = request.getParameter("id");
-        String respuesta=null;
-        respuesta=LogicCompra.getInstance().eliminarCompra(numero,id);
-         HtmlUtil.getInstance().escrituraHTML(response, respuesta); 
+        String respuesta = null;
+        respuesta = LogicCompra.getInstance().eliminarCompra(numero, id);
+        HtmlUtil.getInstance().escrituraHTML(response, respuesta);
     }
 
     private List<Proveedor> BuscarProveedorxDOC(String parametro_busq) throws Exception {
@@ -407,7 +390,7 @@ public class ServCompra extends HttpServlet {
     }
 
     private String Consultarproveedorgrabado(Proveedor cli) throws Exception {
-       String cliente = null;
+        String cliente = null;
         cliente = LogicCompra.getInstance().buscarProveedorRegistrado(cli);
         return cliente;
     }

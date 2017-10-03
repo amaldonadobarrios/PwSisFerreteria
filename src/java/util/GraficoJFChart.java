@@ -11,6 +11,7 @@ import java.util.Base64;
 import java.util.List;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JPanel;
+import model.dto.ComprobanteCompra;
 import model.dto.ComprobanteVenta;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -40,12 +41,36 @@ public class GraficoJFChart {
         String b64 = null;
         // Fuente de Datos
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-        for (ComprobanteVenta list : lista) {
-              line_chart_dataset.addValue(list.getTotal(), "VENTAS", list.getEstado());
+        if (lista != null) {
+            if (lista.size() > 0) {
+                for (ComprobanteVenta list : lista) {
+                    line_chart_dataset.addValue(list.getTotal(), "VENTAS", list.getEstado());
+                }
+            }
         }
         // Creando el Grafico
         JFreeChart chart = ChartFactory.createLineChart("TOTAL DE VENTAS(S/.)",
                 "Mes", "VENTAS", line_chart_dataset, PlotOrientation.VERTICAL,
+                true, true, false);
+        byte[] img = ChartUtilities.encodeAsPNG(chart.createBufferedImage(500, 500));
+        Base64.Encoder code = Base64.getEncoder();
+        b64 = code.encodeToString(img);
+        return b64;
+    }
+     public String B64graficoLineaxmesxyearCompra(List<ComprobanteCompra> lista) throws IOException, NoSuchFieldException {
+        String b64 = null;
+        // Fuente de Datos
+        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+        if (lista != null) {
+            if (lista.size() > 0) {
+                for (ComprobanteCompra list : lista) {
+                    line_chart_dataset.addValue(list.getTotal(), "COMPRAS", list.getEstado());
+                }
+            }
+        }
+        // Creando el Grafico
+        JFreeChart chart = ChartFactory.createLineChart("TOTAL DE COMPRAS(S/.)",
+                "Mes", "COMPRAS", line_chart_dataset, PlotOrientation.VERTICAL,
                 true, true, false);
         byte[] img = ChartUtilities.encodeAsPNG(chart.createBufferedImage(500, 500));
         Base64.Encoder code = Base64.getEncoder();
