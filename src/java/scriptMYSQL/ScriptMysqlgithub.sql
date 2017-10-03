@@ -401,9 +401,10 @@ out rpta int)
 BEGIN
 DECLARE v1 INT DEFAULT 1;
 DECLARE prod int DEFAULT 0;
-DECLARE sub float DEFAULT 0;
-DECLARE cant float DEFAULT 0;
+DECLARE sub double DEFAULT 0;
+DECLARE cant double DEFAULT 0;
 DECLARE v_id_comprobante int;
+DECLARE v_existenciax double default 0;
 
 /*Handler para error SQL*/ 
 DECLARE EXIT HANDLER FOR SQLEXCEPTION 
@@ -429,7 +430,11 @@ WHILE v1 <= registros DO
 SET prod = (SELECT strSplit (productox, '@', v1));
 SET sub = (SELECT strSplit (subtotalX, '@', v1));
 SET cant = (SELECT strSplit (cantidadx, '@', v1));
-UPDATE producto SET existencia = (existencia +cant), fecha_mod = now(), usuario_mod = usuario WHERE id_producto = prod;
+SET v_existenciax = (SELECT  existencia FROM producto where  id_producto = prod);
+if (v_existenciax is null) then
+set v_existenciax=0;
+end if;
+UPDATE producto SET existencia = (v_existenciax +cant), fecha_mod = now(), usuario_mod = usuario WHERE id_producto = prod;
 INSERT INTO detalle_comprobante_compra(numero_detalle,numero_comprobante,id_producto,cantidad,subtotal,id_usuario,fecha_reg,estado,id_comprobante)VALUES(v1,numero,prod,FORMAT(cant, 2),FORMAT(sub, 2),usuario,now(),'COMPRADO',v_id_comprobante);    
     SET v1 = v1+1;
   END WHILE;
@@ -439,6 +444,7 @@ COMMIT;
 set rpta =1;
 END$$
 DELIMITER ;
+
 
 
 
