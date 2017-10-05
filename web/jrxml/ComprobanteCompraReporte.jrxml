@@ -15,7 +15,7 @@
 	<queryString>
 		<![CDATA[SELECT a.id_comprobante,b.id_comprobante as coprobanteb ,a.numero_comprobante,a.tipo, a.fecha, a.id_usuario, a.estado, a.id_proveedor,FORMAT(a.total,2),a.igv,a.neto,b.id_producto, b.cantidad,b.subtotal, c.apellido_paterno, c.apellido_materno, c.nombres, c.razon_social, c.dni_ruc, c.direccion,
 d.descripcion,d.marca,d.presentacion,d.medida
-FROM (SELECT * FROM `dbferreteria`.`comprobante_compra` where id_comprobante=$P{id_compra} and estado=$P{in_estado}) a
+FROM (SELECT * FROM comprobante_compra where id_comprobante=$P{id_compra} and estado=$P{in_estado}) a
 INNER JOIN detalle_comprobante_compra b on (a.id_comprobante=b.id_comprobante)
  JOIN proveedor c on (a.id_proveedor = c.id_proveedor)
  JOIN producto d on (b.id_producto = d.id_producto)  where b.id_comprobante=$P{id_compra};]]>
