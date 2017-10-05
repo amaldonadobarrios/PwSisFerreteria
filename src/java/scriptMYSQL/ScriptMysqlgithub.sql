@@ -397,7 +397,8 @@ in total double,
 in igv double,
 in neto double,
 in fecha date,
-out rpta int)
+out rpta int,
+out id_compra varchar(100))
 BEGIN
 DECLARE v1 INT DEFAULT 1;
 DECLARE prod int DEFAULT 0;
@@ -410,6 +411,7 @@ DECLARE v_existenciax double default 0;
 DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 BEGIN 
 set rpta =0;
+set id_compra='ERROR';
 ROLLBACK; 
 END; 
 
@@ -417,6 +419,7 @@ END;
 DECLARE EXIT HANDLER FOR SQLWARNING 
 BEGIN 
 set rpta =0;
+set id_compra='ERROR';
 ROLLBACK; 
 END; 
 
@@ -442,9 +445,6 @@ INSERT INTO detalle_comprobante_compra(numero_detalle,numero_comprobante,id_prod
 COMMIT; 
 /*Mandamos 0 si todo salio bien*/ 
 set rpta =1;
+set id_compra=v_id_comprobante;
 END$$
 DELIMITER ;
-
-
-
-

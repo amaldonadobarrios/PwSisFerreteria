@@ -66,10 +66,12 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(13);
+                String id_compra = ps.getString(14);
+                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()------ID COMPRA"+id_compra);
                 if (resultado > 0) {
 //                    cn.commit();
                     logger.info("OK");
-                    mensaje = num;
+                    mensaje = num +"%"+id_compra;
                 } else {
                     //cn.rollback();
                     mensaje = "NO OK";

@@ -18,13 +18,14 @@
     var estado = respuesta[0];
     var MSJ = respuesta[1];
     var rpta = respuesta[2];
+    var id_compra = respuesta[3];
     if (estado == 'ERROR') {
     $('#modalLoaging').modal('hide');
     mensaje('ERROR', MSJ);
     } else {
     $('#modalLoaging').modal('hide');
     mensajeOK('VALIDADO', MSJ, rpta);
-    var popUp = window.open('ServReporte?evento=compra&estado=COMPRADO&num=' + rpta, 'ventana1', "width=700,height=500,scrollbars=SI");
+    var popUp = window.open('ServReporte?evento=compra&estado=COMPRADO&id_compra='+id_compra+'&num=' + rpta, 'ventana1', "width=700,height=500,scrollbars=SI");
     if (popUp == null || typeof (popUp) == 'undefined') {
     $('#modalLoaging').modal('show');
     setTimeout("redireccionarPagina()", 20000);

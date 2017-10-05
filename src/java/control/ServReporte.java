@@ -59,9 +59,11 @@ public class ServReporte extends HttpServlet {
         }else if (evento.equals("compra")) {
             String id = request.getParameter("num").trim();
             String estado = "";
+            String id_compra="";
+            id_compra=request.getParameter("id_compra");
             estado = request.getParameter("estado");
             System.out.println("control.ServReporte.processRequest()" + id);
-            verreportecOMPRA(request, response, id, estado);
+            verreportecOMPRA(request, response, id, estado,id_compra);
             
         }
 
@@ -162,7 +164,8 @@ public class ServReporte extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void verreportecOMPRA(HttpServletRequest request, HttpServletResponse response, String id, String estado) throws ClassNotFoundException, FileNotFoundException, JRException, IOException, SQLException {
+    private void verreportecOMPRA(HttpServletRequest request, HttpServletResponse response, String id, String estado, String id_compra) throws ClassNotFoundException, FileNotFoundException, JRException, IOException, SQLException {
+        int idcompra=Integer.parseInt(id_compra);
         try {
             cn = db.getConnection();
             String jrxmlfile = getServletContext().getRealPath("/jrxml/ComprobanteCompraReporte.jrxml");
@@ -186,6 +189,7 @@ public class ServReporte extends HttpServlet {
                 parameters.put("in_estado", "ELIMINADO");
             }
             parameters.put("id", id.trim());
+            parameters.put("id_compra", idcompra);
             parameters.put("tipo_documento", tipodoc);
             parameters.put("tipo_comprobante", TipoComprob);
             InputStream input = new FileInputStream(new File(jrxmlfile));

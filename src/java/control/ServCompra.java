@@ -339,7 +339,7 @@ public class ServCompra extends HttpServlet {
                 if (!ListaCompra.getId_proveedor().equals(id_proveedor)) {
                     msg = "ERROR%" + "HA CAMBIADO PROVEEDOR DURANTE LA TRANSACCION";
                     HtmlUtil.getInstance().escrituraHTML(response, msg);
-                    return; 
+                    return;
                 }
                 subtotal = subtotal + String.valueOf(ListaCompra.getSubtotal() + "@");
                 id_producto = id_producto + String.valueOf(ListaCompra.getId_producto() + "@");
@@ -365,7 +365,7 @@ public class ServCompra extends HttpServlet {
         }
         String respuesta = LogicCompra.getInstance().grabarCompra(compra);
         // verreporte(response,respuesta);
-        msg = "OK%" + "VALIDADO% " + respuesta;
+        msg = "OK%" + "VALIDADO% " +respuesta ;
         HtmlUtil.getInstance().escrituraHTML(response, msg);
     }
 
