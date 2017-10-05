@@ -89,7 +89,7 @@
                                         <td> ${compra.total} </td>
                                         <td>${compra.estado}
                                             <div class="hidden-sm hidden-xs action-buttons">
-                                                <a class="blue" href="ServReporte?evento=compra&estado=${compra.estado}&num=+${compra.numero_comprobante}" target="_blank">
+                                                <a class="blue" href="ServReporte?evento=compra&estado=${compra.estado}&num=+${compra.numero_comprobante}+&id_compra=${compra.id_comprobante}" target="_blank">
                                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                 </a>
                                             </div>
