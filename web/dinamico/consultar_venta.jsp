@@ -135,7 +135,7 @@
                                         <td> ${venta.total} </td>
                                         <td>${venta.estado}
                                             <div class="hidden-sm hidden-xs action-buttons">
-                                                <a class="blue" href="ServReporte?evento=venta&estado=${venta.estado}&num=+${venta.numero_comprobante}" target="_blank">
+                                                <a class="blue" href="ServReporte?evento=venta&estado=${venta.estado}&num=${venta.numero_comprobante}" target="_blank">
                                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                 </a>
                                                 <a class="red" href="javascript:fn_eliminarventa('${venta.id_comprobante}','${venta.estado}','${venta.numero_comprobante}');">
