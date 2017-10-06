@@ -184,63 +184,6 @@ INSERT INTO `perfil` (`id_perfil`, `codigo`, `tipo`, `descripcion`, `estado`) VA
 INSERT INTO `usuario` (`id_usuario`, `usuario`, `password`, `dni`, `apellido_paterno`, `apellido_materno`, `nombres`, `telefono`, `estado`, `fecha_reg`, `fecha_mod`, `usuario_mod`, `usuario_reg`, `perfil_idperfil`) VALUES
 (3, 'ferreteria', '120c11210a181006000e', '45206131', 'MALDONADO', 'BARRIOS', 'ALEXANDER', '333333333', 'A', '2017-08-15', '2017-08-18', 3, 1, 3);
 
-
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GrabarVenta`(
-in numero varchar(45),
-in productox varchar(1000), 
-in cantidadx varchar(1000),
-in preciox varchar(1000),
-in usuario int,
-in tipocomprobante varchar(45),
-in cliente int,
-in registros int,
-in total double,
-in igv double,
-in neto double,
-out rpta int)
-BEGIN
-DECLARE v1 INT DEFAULT 1;
-DECLARE prod int DEFAULT 0;
-DECLARE prec float DEFAULT 0;
-DECLARE cant float DEFAULT 0;
-DECLARE v_id_comprobante int;
-
-/*Handler para error SQL*/ 
-DECLARE EXIT HANDLER FOR SQLEXCEPTION 
-BEGIN 
-set rpta =0;
-ROLLBACK; 
-END; 
-
-/*Handler para error SQL*/ 
-DECLARE EXIT HANDLER FOR SQLWARNING 
-BEGIN 
-set rpta =0;
-ROLLBACK; 
-END; 
-
-/*Inicia transaccion*/ 
-START TRANSACTION; 
-/*Primer INSERT datos ACTA*/ 
-INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg,total,igv,neto,items) VALUES(numero,tipocomprobante,now(),cliente,'VENDIDO',usuario,now(),FORMAT(total,2),FORMAT(igv, 2),FORMAT(neto, 2),registros);
-SET v_id_comprobante =(select id_comprobante from comprobante_venta where numero_comprobante=numero and estado='VENDIDO' and items=registros and FORMAT(total, 2) limit 1 );
-/*SECOND INSERT datos ACTA*/ 
-WHILE v1 <= registros DO
-SET prod = (SELECT strSplit (productox, '@', v1));
-SET prec = (SELECT strSplit (preciox, '@', v1));
-SET cant = (SELECT strSplit (cantidadx, '@', v1));
-UPDATE producto SET existencia = (existencia -cant), fecha_mod = now(), usuario_mod = usuario WHERE id_producto = prod;
-INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg,estado,id_comprobante)VALUES(v1,numero,prod,FORMAT(cant, 2),FORMAT(prec, 2),usuario,now(),'VENDIDO',v_id_comprobante);    
-    SET v1 = v1+1;
-  END WHILE;
-/*Fin de transaccion*/ 
-COMMIT; 
-/*Mandamos 0 si todo salio bien*/ 
-set rpta =1;
-END$$
-DELIMITER ;
-
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarVenta`(
 in numero varchar(45),
@@ -382,9 +325,8 @@ set rpta =1;
 END$$
 DELIMITER ;
 
-
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GrabarCompra`(
+CREATE  PROCEDURE `GrabarCompra`(
 in numero varchar(45),
 in productox varchar(1000), 
 in cantidadx varchar(1000),
@@ -427,7 +369,7 @@ END;
 START TRANSACTION; 
 /*Primer INSERT datos ACTA*/ 
 INSERT INTO comprobante_compra (numero_comprobante,tipo,fecha,id_proveedor,estado,id_usuario,fecha_reg,total,igv,neto,items) VALUES(numero,tipocomprobante,fecha,proveedor,'COMPRADO',usuario,now(),FORMAT(total,2),FORMAT(igv, 2),FORMAT(neto, 2),registros);
-SET v_id_comprobante =(select id_comprobante from comprobante_compra where numero_comprobante=numero and estado='COMPRADO' and items=registros and FORMAT(total, 2) limit 1 );
+SET v_id_comprobante =(SELECT LAST_INSERT_ID());
 /*SECOND INSERT datos ACTA*/ 
 WHILE v1 <= registros DO
 SET prod = (SELECT strSplit (productox, '@', v1));
@@ -446,5 +388,61 @@ COMMIT;
 /*Mandamos 0 si todo salio bien*/ 
 set rpta =1;
 set id_compra=v_id_comprobante;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE  PROCEDURE `GrabarVenta`(
+in numero varchar(45),
+in productox varchar(1000), 
+in cantidadx varchar(1000),
+in preciox varchar(1000),
+in usuario int,
+in tipocomprobante varchar(45),
+in cliente int,
+in registros int,
+in total double,
+in igv double,
+in neto double,
+out rpta int)
+BEGIN
+DECLARE v1 INT DEFAULT 1;
+DECLARE prod int DEFAULT 0;
+DECLARE prec float DEFAULT 0;
+DECLARE cant float DEFAULT 0;
+DECLARE v_id_comprobante int;
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+/*Primer INSERT datos ACTA*/ 
+INSERT INTO comprobante_venta (numero_comprobante,tipo,fecha,id_cliente,estado,id_usuario,fecha_reg,total,igv,neto,items) VALUES(numero,tipocomprobante,now(),cliente,'VENDIDO',usuario,now(),FORMAT(total,2),FORMAT(igv, 2),FORMAT(neto, 2),registros);
+SET v_id_comprobante =(SELECT LAST_INSERT_ID());
+/*SECOND INSERT datos ACTA*/ 
+WHILE v1 <= registros DO
+SET prod = (SELECT strSplit (productox, '@', v1));
+SET prec = (SELECT strSplit (preciox, '@', v1));
+SET cant = (SELECT strSplit (cantidadx, '@', v1));
+UPDATE producto SET existencia = (existencia -cant), fecha_mod = now(), usuario_mod = usuario WHERE id_producto = prod;
+INSERT INTO detalle_comprobante_venta(numero_detalle,numero_comprobante,id_producto,cantidad,precio,id_usuario,fecha_reg,estado,id_comprobante)VALUES(v1,numero,prod,FORMAT(cant, 2),FORMAT(prec, 2),usuario,now(),'VENDIDO',v_id_comprobante);    
+    SET v1 = v1+1;
+  END WHILE;
+/*Fin de transaccion*/ 
+COMMIT; 
+/*Mandamos 0 si todo salio bien*/ 
+set rpta =1;
 END$$
 DELIMITER ;

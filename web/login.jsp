@@ -4,6 +4,8 @@
     Author     : FARID
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<c:set var="context" value="${pageContext.request.contextPath}" />
+<input type="hidden" id="contexto" value="${context}">
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -36,7 +38,7 @@
         <![endif]-->
     </head>
 
-    <body class="login-layout">
+    <body class="login-layout" BACKGROUND="fondo.png" >
         <div class="main-container">
             <div class="main-content">
                 <div class="row">
@@ -53,7 +55,7 @@
 
                             <div class="space-6"></div>
 
-                            <div class="position-relative">
+                            <div class="position-relative" style="background-color: rgba(0,0,255,0.5);">
                                 <div id="login-box" class="login-box visible widget-box no-border">
                                     <div class="widget-body">
                                         <div class="widget-main">
