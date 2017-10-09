@@ -105,7 +105,7 @@ public class ProductoDaoImpl implements ProductoDao {
         if (cn != null) {
 
             try {
-                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                CallableStatement ps = cn.prepareCall(sqlResult);
                 ResultSet rs = ps.executeQuery();
 
                 if (rs.next()) {
