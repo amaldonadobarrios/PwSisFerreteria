@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -64,6 +65,7 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
                 ps.setDouble(9, venta.getTotal());
                 ps.setDouble(10, venta.getIgv());
                 ps.setDouble(11, venta.getNeto());
+                ps.registerOutParameter(12,Types.INTEGER);
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(12);

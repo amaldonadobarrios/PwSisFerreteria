@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import model.dao.ComprobanteCompraDao;
@@ -64,6 +65,8 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
                 ps.setDouble(10, compra.getIgv());
                 ps.setDouble(11, compra.getNeto());
                 ps.setString(12, compra.getFecha());
+                ps.registerOutParameter(13,Types.INTEGER);
+                ps.registerOutParameter(14,Types.VARCHAR);
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(13);
