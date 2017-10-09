@@ -446,3 +446,30 @@ COMMIT;
 set rpta =1;
 END$$
 DELIMITER ;
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `select_producto`()
+BEGIN
+SELECT `producto`.`id_producto`,
+    `producto`.`descripcion`,
+    `producto`.`marca`,
+    `producto`.`presentacion`,
+    `producto`.`medida`,
+    `producto`.`producto_insumo`,
+    `producto`.`pv1`,
+    `producto`.`pv2`,
+    `producto`.`pv3`,
+    `producto`.`existencia`,
+    `producto`.`foto`,
+    `producto`.`type`,
+    `producto`.`estado`,
+    `producto`.`fecha_reg`,
+    `producto`.`fecha_mod`,
+    `producto`.`usuario_reg`,
+    `producto`.`usuario_mod`
+FROM `dbferreteria`.`producto`;
+
+
+END$$
+DELIMITER ;
