@@ -1,1 +1,1 @@
-SELECT * FROM `producto` 
+CALL `select_producto`();
