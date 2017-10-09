@@ -52,6 +52,7 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
 
                 CallableStatement ps = cn.prepareCall(sqlResult);
                 String num = venta.getTipo() + "-" + venta.getNumero_comprobante() + "-" + DirDate.getInstance().getFechaYYYY();
+                System.out.println("model.dao.impl.ComprobanteVentaDaoImpl.GrabarVenta()"+venta.toString());
                 ps.setString(1, num);
                 ps.setString(2, venta.getId_producto());
                 ps.setString(3, venta.getCantidad());

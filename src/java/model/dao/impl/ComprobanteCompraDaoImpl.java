@@ -26,7 +26,7 @@ import util.jdbc.ConectaDB;
  * @author 31424836
  */
 public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
-   final  Logger logger = Logger.getLogger(ClienteDaoImpl.class);
+   final  Logger logger = Logger.getLogger(ComprobanteCompraDaoImpl.class);
     Util uti = new Util();
     Connection cn = null;
     ConectaDB db = new ConectaDB();
@@ -51,6 +51,7 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
                 System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()"+"voy a grabar compra");
                 CallableStatement ps = cn.prepareCall(sqlResult);
                 String num = compra.getTipo() + "-" + compra.getNumero_comprobante() + "-" + DirDate.getInstance().getFechaYYYY();
+                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()"+compra.toString());
                 ps.setString(1, num);
                 ps.setString(2, compra.getId_producto());
                 ps.setString(3, compra.getCantidad());
