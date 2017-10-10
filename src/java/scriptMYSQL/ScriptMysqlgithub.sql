@@ -473,3 +473,37 @@ FROM `dbferreteria`.`producto`;
 
 END$$
 DELIMITER ;
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ganancia_anual`(
+in fecha1 date,
+in fecha2 date)
+BEGIN
+select l.FECHA, (l.totalpormes-m.totalpormes) as ganancia_anual 
+from 
+(select  DATE_FORMAT(a.fecha, "%Y") AS FECHA, a.estado, SUM(a.total) as totalpormes from comprobante_venta a where  a.fecha BETWEEN fecha1 AND fecha2 and a.estado='VENDIDO' group by DATE_FORMAT(a.fecha, "%Y")) l ,
+(select  DATE_FORMAT(b.fecha, "%Y") AS FECHA, b.estado, SUM(b.total) as totalpormes from comprobante_compra b where  b.fecha BETWEEN fecha1 AND fecha2 and b.estado='COMPRADO'group by DATE_FORMAT(b.fecha, "%Y")) m
+where l.FECHA=m.FECHA;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ganancia_mensual`(
+in fecha1 date,
+in fecha2 date
+)
+BEGIN
+select l.FECHA, (l.totalpormes-m.totalpormes) as ganancia_mensual from
+(select  DATE_FORMAT(z.fecha, "%m-%Y") AS FECHA, z.estado, SUM(z.total) as totalpormes
+from 
+(select a.fecha, a.total, a.estado from comprobante_venta a where  a.fecha BETWEEN fecha1 AND fecha2 and a.estado='VENDIDO'
+union select b.fecha,b.total,b.estado from comprobante_compra b where  b.fecha BETWEEN fecha1 AND fecha2   and b.estado='COMPRADO') z
+where z.estado='VENDIDO' group by DATE_FORMAT(z.fecha, "%m-%Y"),z.estado order by z.fecha asc) l ,(select  DATE_FORMAT(z.fecha, "%m-%Y") AS FECHA, z.estado, SUM(z.total) as totalpormes
+from 
+(select a.fecha, a.total, a.estado from comprobante_venta a where  a.fecha BETWEEN fecha1 AND fecha2 and a.estado='VENDIDO'
+union select b.fecha,b.total,b.estado from comprobante_compra b where  b.fecha BETWEEN fecha1 AND fecha2 and b.estado='COMPRADO') z
+ where z.estado='COMPRADO' group by DATE_FORMAT(z.fecha, "%m-%Y"),z.estado order by z.fecha asc) m
+ where l.FECHA=m.FECHA;
+ END$$
+DELIMITER ;

@@ -26,14 +26,16 @@ import util.jdbc.ConectaDB;
  *
  * @author 31424836
  */
-public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
-   final  Logger logger = Logger.getLogger(ComprobanteCompraDaoImpl.class);
+public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao {
+
+    final Logger logger = Logger.getLogger(ComprobanteCompraDaoImpl.class);
     Util uti = new Util();
     Connection cn = null;
     ConectaDB db = new ConectaDB();
+
     @Override
     public String GrabarCompra(ComprobanteCompra compra) throws Exception {
-         String mensaje = null;
+        String mensaje = null;
         String sqlResult = "";
 
         try {
@@ -49,10 +51,10 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
         if (cn != null) {
 
             try {
-                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()"+"voy a grabar compra");
+                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()" + "voy a grabar compra");
                 CallableStatement ps = cn.prepareCall(sqlResult);
                 String num = compra.getTipo() + "-" + compra.getNumero_comprobante() + "-" + DirDate.getInstance().getFechaYYYY();
-                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()"+compra.toString());
+                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()" + compra.toString());
                 ps.setString(1, num);
                 ps.setString(2, compra.getId_producto());
                 ps.setString(3, compra.getCantidad());
@@ -65,17 +67,17 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
                 ps.setDouble(10, compra.getIgv());
                 ps.setDouble(11, compra.getNeto());
                 ps.setString(12, compra.getFecha());
-                ps.registerOutParameter(13,Types.INTEGER);
-                ps.registerOutParameter(14,Types.VARCHAR);
+                ps.registerOutParameter(13, Types.INTEGER);
+                ps.registerOutParameter(14, Types.VARCHAR);
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(13);
                 String id_compra = ps.getString(14);
-                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()------ID COMPRA"+id_compra);
+                System.out.println("model.dao.impl.ComprobanteCompraDaoImpl.GrabarCompra()------ID COMPRA" + id_compra);
                 if (resultado > 0) {
 //                    cn.commit();
                     logger.info("OK");
-                    mensaje = num +"%"+id_compra;
+                    mensaje = num + "%" + id_compra;
                 } else {
                     //cn.rollback();
                     mensaje = "NO OK";
@@ -200,7 +202,7 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
 
     @Override
     public String EliminarCompra(String numero, String id) throws Exception {
-         String mensaje = null;
+        String mensaje = null;
         String sqlResult = "";
 
         try {
@@ -218,9 +220,9 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
             try {
 
                 CallableStatement ps = cn.prepareCall(sqlResult);
-               ps.setString(1, numero);
-               ps.setInt(2, Integer.parseInt(id));
-          
+                ps.setString(1, numero);
+                ps.setInt(2, Integer.parseInt(id));
+                ps.registerOutParameter(3, Types.INTEGER);
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(3);
@@ -305,7 +307,7 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
                 }
             }
         }
-        return listTemp;   
+        return listTemp;
     }
 
     @Override
@@ -370,7 +372,7 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
 
     @Override
     public List<ComprobanteCompra> ListarCompraxmesxaño(String ini, String fin) throws Exception {
-         String sqlResult = "";
+        String sqlResult = "";
         List<ComprobanteCompra> listTemp = null;
 
         try {
@@ -417,7 +419,7 @@ public class ComprobanteCompraDaoImpl implements ComprobanteCompraDao{
                 }
             }
         }
-        return listTemp;  
+        return listTemp;
     }
-    
+
 }

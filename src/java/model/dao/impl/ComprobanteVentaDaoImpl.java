@@ -27,7 +27,7 @@ import util.jdbc.ConectaDB;
  */
 public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
 
-    final  Logger logger = Logger.getLogger(ClienteDaoImpl.class);
+    final Logger logger = Logger.getLogger(ClienteDaoImpl.class);
     Util uti = new Util();
     Connection cn = null;
     ConectaDB db = new ConectaDB();
@@ -53,7 +53,7 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
 
                 CallableStatement ps = cn.prepareCall(sqlResult);
                 String num = venta.getTipo() + "-" + venta.getNumero_comprobante() + "-" + DirDate.getInstance().getFechaYYYY();
-                System.out.println("model.dao.impl.ComprobanteVentaDaoImpl.GrabarVenta()"+venta.toString());
+                System.out.println("model.dao.impl.ComprobanteVentaDaoImpl.GrabarVenta()" + venta.toString());
                 ps.setString(1, num);
                 ps.setString(2, venta.getId_producto());
                 ps.setString(3, venta.getCantidad());
@@ -65,7 +65,7 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
                 ps.setDouble(9, venta.getTotal());
                 ps.setDouble(10, venta.getIgv());
                 ps.setDouble(11, venta.getNeto());
-                ps.registerOutParameter(12,Types.INTEGER);
+                ps.registerOutParameter(12, Types.INTEGER);
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(12);
@@ -214,9 +214,9 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
             try {
 
                 CallableStatement ps = cn.prepareCall(sqlResult);
-               ps.setString(1, numero);
-               ps.setInt(2, Integer.parseInt(id));
-          
+                ps.setString(1, numero);
+                ps.setInt(2, Integer.parseInt(id));
+                ps.registerOutParameter(3, Types.INTEGER);
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(3);
@@ -246,7 +246,7 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
 
     @Override
     public List<ComprobanteVenta> ListarVentaxFecha(String fecha) throws Exception {
-    String sqlResult = "";
+        String sqlResult = "";
         List<ComprobanteVenta> listTemp = null;
 
         try {
@@ -300,12 +300,12 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
                 }
             }
         }
-        return listTemp;     
+        return listTemp;
     }
 
     @Override
     public List<ComprobanteVenta> ListarVentaxRango(String ini, String fin) throws Exception {
-       String sqlResult = "";
+        String sqlResult = "";
         List<ComprobanteVenta> listTemp = null;
 
         try {
@@ -360,11 +360,11 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
                 }
             }
         }
-        return listTemp;  
+        return listTemp;
     }
 
     @Override
-    public List <ComprobanteVenta> ListarVentasxmesxaño(String ini, String fin) throws Exception {
+    public List<ComprobanteVenta> ListarVentasxmesxaño(String ini, String fin) throws Exception {
         String sqlResult = "";
         List<ComprobanteVenta> listTemp = null;
 
@@ -412,6 +412,6 @@ public class ComprobanteVentaDaoImpl implements ComprobanteVentaDao {
                 }
             }
         }
-        return listTemp;  
+        return listTemp;
     }
 }
