@@ -13,6 +13,7 @@ import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JPanel;
 import model.dto.ComprobanteCompra;
 import model.dto.ComprobanteVenta;
+import model.dto.Ganancia;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -71,6 +72,47 @@ public class GraficoJFChart {
         // Creando el Grafico
         JFreeChart chart = ChartFactory.createLineChart("TOTAL DE COMPRAS(S/.)",
                 "Mes", "COMPRAS", line_chart_dataset, PlotOrientation.VERTICAL,
+                true, true, false);
+        byte[] img = ChartUtilities.encodeAsPNG(chart.createBufferedImage(500, 500));
+        Base64.Encoder code = Base64.getEncoder();
+        b64 = code.encodeToString(img);
+        return b64;
+    }
+     
+     public String B64graficoLineaxmesxyearGanancia(List<Ganancia> lista) throws IOException, NoSuchFieldException {
+        String b64 = null;
+        // Fuente de Datos
+        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+        if (lista != null) {
+            if (lista.size() > 0) {
+                for (Ganancia list : lista) {
+                    line_chart_dataset.addValue(list.getGanancia(), "GANANCIA", list.getFecha());
+                }
+            }
+        }
+        // Creando el Grafico
+        JFreeChart chart = ChartFactory.createLineChart("TOTAL DE GANANCIA(S/.)",
+                "Mes", "GANANCIA", line_chart_dataset, PlotOrientation.VERTICAL,
+                true, true, false);
+        byte[] img = ChartUtilities.encodeAsPNG(chart.createBufferedImage(500, 500));
+        Base64.Encoder code = Base64.getEncoder();
+        b64 = code.encodeToString(img);
+        return b64;
+    }
+       public String B64graficoLineaxyearGanancia(List<Ganancia> lista) throws IOException, NoSuchFieldException {
+        String b64 = null;
+        // Fuente de Datos
+        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+        if (lista != null) {
+            if (lista.size() > 0) {
+                for (Ganancia list : lista) {
+                    line_chart_dataset.addValue(list.getGanancia(), "GANANCIA", list.getFecha());
+                }
+            }
+        }
+        // Creando el Grafico
+        JFreeChart chart = ChartFactory.createLineChart("TOTAL DE GANANCIA(S/.)",
+                "AÑO", "GANANCIA", line_chart_dataset, PlotOrientation.VERTICAL,
                 true, true, false);
         byte[] img = ChartUtilities.encodeAsPNG(chart.createBufferedImage(500, 500));
         Base64.Encoder code = Base64.getEncoder();

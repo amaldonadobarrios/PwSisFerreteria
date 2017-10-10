@@ -1,4 +1,14 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<script>
+      function fn_buscar(fechaini,fechafin) {
+          alert(fechaini);
+          alert(fechafin);
+      if (fechaini !== '' && fechafin!==''  ) {
+            location.replace("SMenu?action=pageReporteGanancias&fecha1="+fechaini+"&fecha2="+fechafin);
+        }
+    }
+    </script>
+
 <div class="page-header">
     <h1>
         REPORTES
@@ -17,7 +27,7 @@
                 <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Fecha de Inicio </label>
                 <div class="col-sm-9">
                     <div class="input-group col-sm-3">
-                        <input class="form-control date-picker" id="id-date-picker-1" name="fechaini" type="text" data-date-format="dd-mm-yyyy"/>
+                        <input class="form-control date-picker" id="fechaini" name="fechaini" type="text" data-date-format="dd-mm-yyyy"/>
                         <span class="input-group-addon">
                             <i class="fa fa-calendar bigger-110"></i>
                         </span>
@@ -29,7 +39,7 @@
                 <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Fecha de Fin </label>
                 <div class="col-sm-9">
                     <div class="input-group col-sm-3">
-                        <input class="form-control date-picker" id="id-date-picker-1" name="fechafin" type="text" data-date-format="dd-mm-yyyy"/>
+                        <input class="form-control date-picker" id="fechafin" name="fechafin" type="text" data-date-format="dd-mm-yyyy"/>
                         <span class="input-group-addon">
                             <i class="fa fa-calendar bigger-110"></i>
                         </span>
@@ -37,63 +47,75 @@
                 </div>
             </div>
             <div class="form-group col-sm-12" >
-                <input type="button" class="btn-info btn" value="Consultar">
+                <input type="button" class="btn-info btn"  onclick="javascript:fn_buscar(document.getElementById('fechaini').value,document.getElementById('fechafin').value);"value="Consultar">
             </div>
         </fieldset>
         <fieldset>
-            <legend> Ventas </legend>
+            <legend> Ganancia </legend>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="clearfix">
                         <div class="pull-right tableTools-container"></div>
                     </div>
                     <div class="table-header">
-                        Resultado para "Ganancias Registradas"
+                        Resultado para "Ganancias Mensuales obtenidas"
                     </div>
 
                     <!-- div.table-responsive -->
                     <!-- div.dataTables_borderWrap -->
                     <div>
-                        <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                          <table id="dynamic-table" class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th class="center">
+                                    <th class="center">N°
                                     </th>
-                                    <th>Nombre</th>
-                                    <th>Tipo</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Fin</th>
-                                    <th>Vacantes</th>
-                                    <th></th>
-                                </tr>
+                                    <th>INTERVALO</th>
+                                    <th>MONTO GANANCIA</th>
+                                 </tr>
                             </thead>
 
                             <tbody>
-                                <c:forEach var="curso" items="${listCurso}" varStatus="loop">
+                                <c:forEach var="ganancia" items="${listagananciaMes}" varStatus="loop">
                                     <tr>
                                         <td class="center">  ${loop.count} </td>
-                                        <td> ${curso.nombre} </td>
-                                        <td> ${curso.tipo} </td>
-                                        <td> ${curso.fechaini} </td>
-                                        <td> ${curso.fechafin} </td>
-                                        <td> 
-                                            <span class="label label-sm label-info">${curso.vacante}</span>
-                                        </td>
-                                        <td>
-                                            <div class="hidden-sm hidden-xs action-buttons">
-                                                <a class="blue" href="Curso?action=verCurso">
-                                                    <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                                </a>
+                                        <td> ${ganancia.fecha}  </td>
+                                        <td> ${ganancia.ganancia} </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="clearfix">
+                        <div class="pull-right tableTools-container"></div>
+                    </div>
+                    <div class="table-header">
+                        Resultado para "Ganancias Anuales obtenidas"
+                    </div>
 
-                                                <a class="green" href="Curso?action=formActualizarCurso&idcurso=${curso.idcurso}" >
-                                                    <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                                </a>
+                    <!-- div.table-responsive -->
+                    <!-- div.dataTables_borderWrap -->
+                    <div>
+                          <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="center">N°
+                                    </th>
+                                    <th>INTERVALO</th>
+                                    <th>MONTO GANANCIA</th>
+                                 </tr>
+                            </thead>
 
-                                                <a class="red" href="Curso?action=eliminarCurso&idcurso=${curso.idcurso}">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
-                                            </div>
-                                        </td>
+                            <tbody>
+                                <c:forEach var="ganancia" items="${listagananciaAño}" varStatus="loop">
+                                    <tr>
+                                        <td class="center">  ${loop.count} </td>
+                                        <td> ${ganancia.fecha}</td>
+                                        <td> ${ganancia.ganancia} </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -109,135 +131,37 @@
                         <!-- PAGE CONTENT BEGINS -->
             
 
-                        <div class="row">
-                           
+                        <div class="row" style="text-align: center;">
+                              <div class="col-md-6 sidenav" align="center" id="divfoto" >
+                        <c:if test = "${grafico_mes !=null}">
+
+                            <img  src="data:image/png;base64,${grafico_mes}"width="500px" height="500px" 
+                                  name="image" id="image" />
+                        </c:if>
+                        
+                    </div>
+                            <div class="col-md-6 sidenav" align="center" id="divfoto" >
+                        <c:if test = "${grafico_año !=null}">
+
+                            <img  src="data:image/png;base64,${grafico_año}"width="500px" height="500px" 
+                                  name="image" id="image" />
+                        </c:if>
+                        
+                    </div>
 
 
                             <div class="vspace-12-sm"></div>
 
-                            <div class="col-sm-5">
-                                <div class="widget-box">
-                                    <div class="widget-header widget-header-flat widget-header-small">
-                                        <h5 class="widget-title">
-                                            <i class="ace-icon fa fa-signal"></i>
-                                            Traffic Sources
-                                        </h5>
-
-                                        <div class="widget-toolbar no-border">
-                                            <div class="inline dropdown-hover">
-                                                <button class="btn btn-minier btn-primary">
-                                                    This Week
-                                                    <i class="ace-icon fa fa-angle-down icon-on-right bigger-110"></i>
-                                                </button>
-
-                                                <ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
-                                                    <li class="active">
-                                                        <a href="#" class="blue">
-                                                            <i class="ace-icon fa fa-caret-right bigger-110">&nbsp;</i>
-                                                            This Week
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="#">
-                                                            <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                            Last Week
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="#">
-                                                            <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                            This Month
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="#">
-                                                            <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                            Last Month
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="widget-body">
-                                        <div class="widget-main">
-                                            <div id="piechart-placeholder"></div>
-
-                                            <div class="hr hr8 hr-double"></div>
-
-                                            <div class="clearfix">
-                                                <div class="grid3">
-                                                    <span class="grey">
-                                                        <i class="ace-icon fa fa-facebook-square fa-2x blue"></i>
-                                                        &nbsp; likes
-                                                    </span>
-                                                    <h4 class="bigger pull-right">1,255</h4>
-                                                </div>
-
-                                                <div class="grid3">
-                                                    <span class="grey">
-                                                        <i class="ace-icon fa fa-twitter-square fa-2x purple"></i>
-                                                        &nbsp; tweets
-                                                    </span>
-                                                    <h4 class="bigger pull-right">941</h4>
-                                                </div>
-
-                                                <div class="grid3">
-                                                    <span class="grey">
-                                                        <i class="ace-icon fa fa-pinterest-square fa-2x red"></i>
-                                                        &nbsp; pins
-                                                    </span>
-                                                    <h4 class="bigger pull-right">1,050</h4>
-                                                </div>
-                                            </div>
-                                        </div><!-- /.widget-main -->
-                                    </div><!-- /.widget-body -->
-                                </div><!-- /.widget-box -->
-                            </div><!-- /.col -->
+                           
                         </div><!-- /.row -->
 
                      
 
-                        <div class="row">
-                            
-
-                            <div class="col-sm-7">
-                                <div class="widget-box transparent">
-                                    <div class="widget-header widget-header-flat">
-                                        <h4 class="widget-title lighter">
-                                            <i class="ace-icon fa fa-signal"></i>
-                                            Sale Stats
-                                        </h4>
-
-                                        <div class="widget-toolbar">
-                                            <a href="#" data-action="collapse">
-                                                <i class="ace-icon fa fa-chevron-up"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="widget-body">
-                                        <div class="widget-main padding-4">
-                                            <div id="sales-charts"></div>
-                                        </div><!-- /.widget-main -->
-                                    </div><!-- /.widget-body -->
-                                </div><!-- /.widget-box -->
-                            </div><!-- /.col -->
-                        </div><!-- /.row -->
+                        
 
                         <div class="hr hr32 hr-dotted"></div>
 
-                        <div class="row">
-                            <div class="col-sm-6">
-                                
-                            </div><!-- /.col -->
-
-                            
-                        </div><!-- /.row -->
+             
 
                         <!-- PAGE CONTENT ENDS -->
                     </div><!-- /.col -->

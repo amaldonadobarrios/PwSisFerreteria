@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import logica.LogicCliente;
 import logica.LogicCompra;
+import logica.LogicGanancia;
 import logica.LogicInventario;
 import logica.LogicPerfil;
 import logica.LogicProducto;
@@ -28,6 +29,7 @@ import logica.LogicUsuario;
 import logica.LogicVenta;
 import model.dto.ComprobanteCompra;
 import model.dto.ComprobanteVenta;
+import model.dto.Ganancia;
 import model.dto.Usuario;
 import util.GraficoJFChart;
 
@@ -375,7 +377,42 @@ public class ServMenu extends HttpServletConf {
         forwar("template.jsp", request, response);
     }
 
-    private void pageReporteGanancias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pageReporteGanancias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, Exception {
+        String fechaini = null;
+        String fechafin = null;
+        fechaini = request.getParameter("fecha1");
+        fechafin = request.getParameter("fecha2");
+        List<Ganancia> listagananciamensual = null;
+        List<Ganancia> listagananciaanual = null;
+        if (fechaini != null && fechafin != null) {
+            SimpleDateFormat parseador = new SimpleDateFormat("dd-MM-yy");
+            SimpleDateFormat formateador = new SimpleDateFormat("YYYY-MM-dd");
+            Date date1 = parseador.parse(fechaini);
+            Date date2 = parseador.parse(fechafin);
+            String fecha1 = formateador.format(date1);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date2);
+            cal.add(Calendar.DATE, 1);
+            String fecha2 = formateador.format(cal.getTime());
+            System.out.println("control.ServMenu.pageReporteGanancia()FECHAS: " + fecha1 + " FECHA 2 :" + fecha2);
+            listagananciaanual = LogicGanancia.getInstance().PNGReporteGananciaAnual(fecha1, fecha2);
+            listagananciamensual=LogicGanancia.getInstance().PNGReporteGananciaMensual(fecha1, fecha2);
+            String b64mensual = GraficoJFChart.getInstance().B64graficoLineaxmesxyearGanancia(listagananciamensual);
+            String b64anual = GraficoJFChart.getInstance().B64graficoLineaxyearGanancia(listagananciaanual);
+            if (listagananciamensual != null) {
+                if (listagananciamensual.size() > 0) {
+                    request.setAttribute("listagananciaMes", listagananciamensual);
+                    request.setAttribute("grafico_mes", b64mensual);
+                }
+            }
+             if (listagananciaanual != null) {
+                if (listagananciaanual.size() > 0) {
+                    request.setAttribute("listagananciaAño", listagananciaanual);
+                    request.setAttribute("grafico_año", b64anual);
+                }
+            }
+        }
         request.setAttribute("body", "reporte_ganancia");
         forwar("template.jsp", request, response);
     }

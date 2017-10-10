@@ -61,7 +61,7 @@ LEFT JOIN producto d on (b.id_producto = d.id_producto) where a.numero_comproban
 			<staticText>
 				<reportElement x="59" y="24" width="171" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font fontName="Engravers MT" size="6" isUnderline="false" isStrikeThrough="false"/>
+					<font fontName="SansSerif" size="6" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
 				<text><![CDATA[Novafonte del Perú S.A.C]]></text>
 			</staticText>
@@ -75,7 +75,7 @@ LEFT JOIN producto d on (b.id_producto = d.id_producto) where a.numero_comproban
 			<staticText>
 				<reportElement x="59" y="3" width="171" height="22"/>
 				<textElement textAlignment="Center">
-					<font fontName="Engravers MT" size="16"/>
+					<font fontName="SansSerif" size="16"/>
 				</textElement>
 				<text><![CDATA[NOVACEL]]></text>
 			</staticText>

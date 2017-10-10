@@ -52,8 +52,8 @@ public class GananciaDaoImpl implements GananciaDao{
                     while (rs.next()) {
 
                         temp = new Ganancia();
-                        temp.setFecha(rs.getString("FECHA"));
-                        temp.setGanancia(rs.getDouble("ganancia_mensual"));
+                        temp.setFecha(rs.getString(1));
+                        temp.setGanancia(rs.getDouble(2));
                         listTemp.add(temp);
                     }
                 }
@@ -107,8 +107,8 @@ public class GananciaDaoImpl implements GananciaDao{
                     while (rs.next()) {
 
                         temp = new Ganancia();
-                        temp.setFecha(rs.getString("FECHA"));
-                        temp.setGanancia(rs.getDouble("ganancia_mensual"));
+                        temp.setFecha(rs.getString(1));
+                        temp.setGanancia(rs.getDouble(2));
                         listTemp.add(temp);
                     }
                 }

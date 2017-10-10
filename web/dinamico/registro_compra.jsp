@@ -184,6 +184,7 @@
     } else {
     mensaje('ERROR', 'NO HAY SUFICIENTES PRODUCTOS');
     document.getElementById("cantidad").value = '';
+    document.getElementById("precio").value = '';
     $('#cantidad').focus();
     }
     } else {
@@ -223,13 +224,12 @@
     fnEjecutarPeticion(vruta, jqdata, vevento);
     } else {
     document.getElementById("precio").value = '';
-    document.getElementById("stock").value = '';
     var contexto = document.getElementById("contexto").value;
     document.getElementById("image").src = contexto + "/assets/images/sinfoto.png";
     document.getElementById("cantidad").value = '';
     }
-
-
+document.getElementById("precio").value = '';
+document.getElementById("cantidad").value = '';
     }
     function fn_pintaprod(response) {
     if (response == 'NOSESION') {
@@ -634,7 +634,7 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Subtotal</label>
                     <div class="col-sm-9">
-                        <input type="text" id="precio" name="precio" placeholder="precio" class="col-xs-10 col-sm-9" />
+                        <input type="text" id="precio" name="precio" placeholder="Subtotal" class="col-xs-10 col-sm-9" />
                     </div>
                 </div>
                 <div class="form-group">
