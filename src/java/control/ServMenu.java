@@ -398,8 +398,8 @@ public class ServMenu extends HttpServletConf {
             System.out.println("control.ServMenu.pageReporteGanancia()FECHAS: " + fecha1 + " FECHA 2 :" + fecha2);
             listagananciaanual = LogicGanancia.getInstance().PNGReporteGananciaAnual(fecha1, fecha2);
             listagananciamensual=LogicGanancia.getInstance().PNGReporteGananciaMensual(fecha1, fecha2);
-            String b64mensual = GraficoJFChart.getInstance().B64graficoLineaxmesxyearGanancia(listagananciamensual);
-            String b64anual = GraficoJFChart.getInstance().B64graficoLineaxyearGanancia(listagananciaanual);
+            String b64mensual = GraficoJFChart.getInstance().B64graficoBarraxmesxyearGanancia(listagananciamensual);
+            String b64anual = GraficoJFChart.getInstance().B64graficoBarraxyearGanancia(listagananciaanual);
             if (listagananciamensual != null) {
                 if (listagananciamensual.size() > 0) {
                     request.setAttribute("listagananciaMes", listagananciamensual);

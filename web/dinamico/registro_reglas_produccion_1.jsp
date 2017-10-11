@@ -21,55 +21,87 @@
     </h1>
 </div><!-- /.page-header -->
 <div class="row">
-    <div class="container-fluid">
+    <div class="col-xs-12">
         <div class="col-sm-12">
-            <div class="col-sm-8">
-                <fieldset>
-                    <legend>Producto a Fabricar</legend>   
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Nombre Producto</label>
-                        <div class="col-sm-9">
-                            <input type="text" id="txtproducto" name="txtproducto"  class="col-xs-10 col-sm-9"  disabled/>
-                            <input type="hidden" id="txtidproducto" name="txtidproducto"  class="col-xs-10 col-sm-9"  />
-                        </div>
+            <div class="widget-box">
+                <div class="widget-header">
+                    <h4 class="widget-title">Producto a Fabricar</h4>
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main no-padding">
+                        <form>
+                            <!-- <legend>Form</legend> -->
+                            <fieldset>
+                                <form action="Usuario" method="POST" class="form-horizontal" role="form">
+                                    <input name="action" type="hidden" value="registrarUsuario">
+                                    <div class="col-xs-6 col-sm-6" >
+                                      <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"> Unidad de Medida </label>
+                                        <div class="col-sm-9 ">
+                                            <input type="text" id="form-field-1" name="unidad" placeholder="Unidad de Medida" class="col-xs-10 col-sm-5" disabled  />
+                                        </div>
+                                    </div>
+                                        <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"> Unidad de Medida </label>
+                                        <div class="col-sm-9 ">
+                                            <input type="text" id="form-field-1" name="unidad" placeholder="Unidad de Medida" class="col-xs-10 col-sm-5" disabled  />
+                                        </div>
+                                    </div>
+                                        
+                                        
+                                        
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6" >
+                                      <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"> Unidad de Medida </label>
+                                        <div class="col-sm-9 ">
+                                            <input type="text" id="form-field-1" name="unidad" placeholder="Unidad de Medida" class="col-xs-10 col-sm-5" disabled  />
+                                        </div>
+                                    </div>
+                                        <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"> Unidad de Medida </label>
+                                        <div class="col-sm-9 ">
+                                            <input type="text" id="form-field-1" name="unidad" placeholder="Unidad de Medida" class="col-xs-10 col-sm-5" disabled  />
+                                        </div>
+                                    </div>
+                                        
+                                     <input class="btn btn-default" type="button" onclick="$('#MD_BuscarProducto').modal('show');" value="Seleccionar Producto"></input>   
+                                    </div>
+                                    
+                                    <div class="form-group ">
+                                        <label class="col-sm-3 control-label no-padding-right"> Nombre del Producto </label>
+                                        <div class="col-sm-9" >
+                                            <input type="text" id="form-field-1" name="marca" placeholder="Nombre del Producto" class="col-xs-10 col-sm-5" disabled/>
+                                            <span class="input-group-btn">
+                                                
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"> Unidad de Medida </label>
+                                        <div class="col-sm-9 ">
+                                            <input type="text" id="form-field-1" name="unidad" placeholder="Unidad de Medida" class="col-xs-10 col-sm-5" disabled  />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"> Cantidad en una Vuelta </label>
+                                        <div class="col-sm-9 ">
+                                            <input type="text" id="form-field-1" name="unidad" placeholder="Cantidad en una Vuelta" class="col-xs-10 col-sm-5" disabled/>
+                                        </div>
+                                    </div>
+                            </fieldset>
+
+
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Marca del Producto</label>
-                        <div class="col-sm-9">
-                            <input type="text" id="txtmarca" name="txtmarca"  class="col-xs-10 col-sm-9" disabled />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Presentación</label>
-                        <div class="col-sm-9">
-                            <input type="text" id="txtpresentacion" name="txtpresentacion"  class="col-xs-10 col-sm-9" disabled/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Unidad de medida</label>
-                        <div class="col-sm-9">
-                            <input type="text" id="txtmedida" name="txtmedida"  class="col-xs-10 col-sm-9" disabled/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Cantidad minimo</label>
-                        <div class="col-sm-9">
-                            <input type="text" id="txtminimo" name="txtminimo"  value="1" class="col-xs-10 col-sm-9" disabled/>
-                        </div>
-                    </div>
-                    <div  class="col-sm-12" align="center"> <input class="btn btn-default" type="button" onclick="$('#MD_BuscarProducto').modal('show');" value="Seleccionar Producto"></input>   </div>
-                </fieldset>
-            </div>
-            <div class="col-sm-4">
-                <div  align="center" id="divfoto" >
-                    <img src="assets/images/sinfoto.png" width="200px"  height="200px" class="img-thumbnail"
-                         name="image" id="image" />
                 </div>
             </div>
-        </div>    
+        </div>
 
-        <div class="col-sm-12">
-            <div class="col-sm-6">
+        <!-- PAGE CONTENT BEGINS -->
+
+        <div class="col-sm-6">
             <div class="widget-box">
                 <div class="widget-header">
                     <h4 class="widget-title">Seleccionar Insumos</h4>
@@ -131,7 +163,7 @@
                 </div>
             </div>
         </div>
-            <div class="col-sm-6">
+        <div class="col-sm-6">
             <div class="widget-box">
                 <div class="widget-header">
                     <h4 class="widget-title">Insumos Añadidos</h4>
@@ -179,8 +211,19 @@
                 </div>
             </div>
         </div>
+        <div class="col-sm-6">
+
+
+
         </div>
-          <div class="space-4"></div>
+
+
+
+
+
+
+
+        <div class="space-4"></div>
 
         <div class="clearfix form-actions col-md-12 " align="center" >
             <div class="col-md-offset-3 col-md-6" >
@@ -196,7 +239,9 @@
                 </button>
             </div>
         </div>
-    </div></div>
+        </form>
+    </div>
+</div>
 <div class="hr hr-24"></div>
 
 <div class="row">
@@ -244,13 +289,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
 <div class="modal fade bs-example-modal-lg" id="MD_BuscarProducto" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div  class="panel panel-success" id="panel-tipoMsj">

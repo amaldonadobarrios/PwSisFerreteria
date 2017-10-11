@@ -507,3 +507,30 @@ union select b.fecha,b.total,b.estado from comprobante_compra b where  b.fecha B
  where l.FECHA=m.FECHA;
  END$$
 DELIMITER ;
+
+
+CREATE TABLE `regla_produccion` (
+  `id_regla` int(11) NOT NULL AUTO_INCREMENT,
+  `id_producto` int(11) NOT NULL,
+  `cantidad_insumo` int(11) NOT NULL,
+  `fecha_reg` datetime NOT NULL,
+  `fecha_mod` datetime DEFAULT NULL,
+  `usuario_reg` int(11) NOT NULL,
+  `usuario_mod` int(11) DEFAULT NULL,
+  `estado` int(11) NOT NULL COMMENT '1= activo\n0= desactivado',
+  PRIMARY KEY (`id_regla`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci COMMENT='Tabla registro de reglas de produccion ';
+
+CREATE TABLE `detalle_regla_produccion` (
+  `id_detalle_regla` int(11) NOT NULL AUTO_INCREMENT,
+  `id_producto` int(11) NOT NULL,
+  `id_regla` int(11) NOT NULL,
+  `id_insumo` int(11) NOT NULL,
+  `cantidad` double NOT NULL,
+  `fecha_reg` datetime NOT NULL,
+  `fecha_mod` datetime DEFAULT NULL,
+  `usuario_reg` int(11) NOT NULL,
+  `usuario_mod` int(11) DEFAULT NULL,
+  `estado` int(11) NOT NULL COMMENT '1 = activo\n0= desactivado',
+  PRIMARY KEY (`id_detalle_regla`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci COMMENT='Tabla de detalle de reglas de produccion , insumos necesarios para fabircacion de un producto';

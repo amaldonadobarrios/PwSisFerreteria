@@ -119,5 +119,43 @@ public class GraficoJFChart {
         b64 = code.encodeToString(img);
         return b64;
     }
+        public String B64graficoBarraxyearGanancia(List<Ganancia> lista) throws IOException, NoSuchFieldException {
+        String b64 = null;
+        // Fuente de Datos
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        if (lista != null) {
+            if (lista.size() > 0) {
+                for (Ganancia list : lista) {
+                    dataset.setValue(list.getGanancia(), "GANANCIA", list.getFecha());
+                }
+            }
+        }
+        // Creando el Grafico
+         JFreeChart chart = ChartFactory.createBarChart3D("Ganancias Anuales","Año", "Ganancia (S/)",
+        dataset, PlotOrientation.VERTICAL, true,true, false);
+        byte[] img = ChartUtilities.encodeAsPNG(chart.createBufferedImage(500, 500));
+        Base64.Encoder code = Base64.getEncoder();
+        b64 = code.encodeToString(img);
+        return b64;
+    }
+         public String B64graficoBarraxmesxyearGanancia(List<Ganancia> lista) throws IOException, NoSuchFieldException {
+        String b64 = null;
+        // Fuente de Datos
+         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        if (lista != null) {
+            if (lista.size() > 0) {
+                for (Ganancia list : lista) {
+                    dataset.setValue(list.getGanancia(), "GANANCIA", list.getFecha());
+                }
+            }
+        }
+        // Creando el Grafico
+         JFreeChart chart = ChartFactory.createBarChart3D("Ganancias Mensuales","Mes", "Ganancia (S/)",
+        dataset, PlotOrientation.VERTICAL, true,true, false);
+        byte[] img = ChartUtilities.encodeAsPNG(chart.createBufferedImage(500, 500));
+        Base64.Encoder code = Base64.getEncoder();
+        b64 = code.encodeToString(img);
+        return b64;
+    }
 
 }
