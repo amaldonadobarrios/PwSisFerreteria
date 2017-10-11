@@ -510,4 +510,127 @@ public class ProductoDaoImpl implements ProductoDao {
         return listTemp;
     }
 
+    @Override
+    public List<Producto> listainsumos() throws Exception {
+        String sqlResult = "";
+        List<Producto> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectInsumo.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    Producto temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new Producto();
+                        temp.setDescripcion(rs.getString("descripcion"));
+                        temp.setId_producto(rs.getInt("id_producto"));
+                        temp.setMarca(rs.getString("marca"));
+                        temp.setPresentacion(rs.getString("presentacion"));
+                        temp.setMedida(rs.getString("medida"));
+                        temp.setProd_insu(rs.getString("producto_insumo"));
+                        temp.setExistencia(rs.getDouble("existencia"));
+                        listTemp.add(temp);
+
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
+    }
+
+    @Override
+    public List<Producto> listaProductosFinales(String parametro) throws Exception {
+        String sqlResult = "";
+        List<Producto> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectProductoFinal.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                for (int i = 1; i < 5; i++) {
+                    ps.setString(i,parametro); 
+                }
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    Producto temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+                        Base64.Encoder code = Base64.getEncoder();
+                        temp = new Producto();
+                        temp.setDescripcion(rs.getString("descripcion"));
+                        temp.setId_producto(rs.getInt("id_producto"));
+                        temp.setMarca(rs.getString("marca"));
+                        temp.setPresentacion(rs.getString("presentacion"));
+                        temp.setMedida(rs.getString("medida"));
+                        temp.setProd_insu(rs.getString("producto_insumo"));
+                        temp.setFoto(rs.getBytes("foto"));
+                        if (temp.getFoto()!=null) {
+                         temp.setStringBase64(code.encodeToString(temp.getFoto()));   
+                        }
+                        listTemp.add(temp);
+
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
+    }
+
 }

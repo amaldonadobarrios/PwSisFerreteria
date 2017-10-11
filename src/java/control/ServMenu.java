@@ -23,6 +23,7 @@ import logica.LogicCompra;
 import logica.LogicGanancia;
 import logica.LogicInventario;
 import logica.LogicPerfil;
+import logica.LogicProduccion;
 import logica.LogicProducto;
 import logica.LogicProveedor;
 import logica.LogicUsuario;
@@ -247,7 +248,8 @@ public class ServMenu extends HttpServletConf {
 
     }
 
-    private void pageRegistroReglasProduccion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pageRegistroReglasProduccion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
+        request.setAttribute("lista_insumos", LogicProduccion.getInstance().listarInsumos());
         request.setAttribute("body", "registro_reglas_produccion");
         forwar("template.jsp", request, response);
     }

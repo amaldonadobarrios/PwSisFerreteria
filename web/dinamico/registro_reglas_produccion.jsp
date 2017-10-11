@@ -1,4 +1,62 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="context" value="${pageContext.request.contextPath}" />
+<input type="hidden" id="contexto" value="${context}">
+<script>
+    function fn_buscarProducto(parametro) {
+       $('#lblparametro').css("color", "black");
+    $('#tablabusquedaCli').html('');
+    if (parametro == '') {
+    $('#lblaperazbusc').css("color", "red");
+    } else {
+    var vruta = '/ServProduccion';
+    var vevento = 'BuscarProductoFinal';
+    var jqdata = {
+    evento: 'BuscarProductoFinal',
+            parametro: parametro
+    };
+    fnEjecutarPeticion(vruta, jqdata, vevento);
+    }  
+    }
+    function fn_pintalistaProdFinal(response) {
+    if (response == 'NOSESION') {
+    mensaje('ERROR', 'SESION EXPIRADA');
+    location.href = "login.jsp";
+    } else {
+    $('#tablaProductosFinales').html(response);
+    $('#dataTables-example').DataTable({
+    responsive: true
+    });
+    $('#dataTables-example').stacktable();
+    }
+    }
+//CONTROLADOR AJAX
+
+    function fnEjecutarPeticion(ruta, jdata, evento) {
+    var contexto = document.getElementById('contexto').value;
+    var vservlet = contexto + ruta;
+    $.ajax({
+    url: vservlet,
+            method: 'POST',
+            data: jdata,
+            success: function (responseText) {
+            fnControlEvento(evento, responseText + '');
+            }
+    });
+    }
+    function fnControlEvento(vevento, vvrespuesta) {
+    if (vevento == 'BuscarProductoFinal') {
+    fn_pintalistaProdFinal(vvrespuesta);
+    }
+   
+    }
+</script>
+
+
+
+
+
+
+
 <style>
     fieldset { 
         display: block;
@@ -68,119 +126,101 @@
             </div>
         </div>    
 
-        <div class="col-sm-12">
-            <div class="col-sm-6">
-            <div class="widget-box">
-                <div class="widget-header">
-                    <h4 class="widget-title">Seleccionar Insumos</h4>
+        <div class="col-sm-12 col-md-12 col-xs-12">
+            <div class="col-sm-6 col-md-6 col-xs-6">
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h4 class="widget-title">Seleccionar Insumos</h4>
+                    </div>
+
+                    <div class="widget-body">
+                        <div class="widget-main no-padding">
+                            <form>
+                                <!-- <legend>Form</legend> -->
+                                <fieldset>
+                                    <div class="form-group">
+                                        <label for="form-field-select-3" class="col-sm-3 col-md-3 col-xs-3 control-label no-padding-right">Seleccione Insumo</label>
+                                        <div class="col-sm-9 col-md-9 col-xs-9" >
+                                            <select class="chosen-select form-control" id="form-field-select-1" data-placeholder="Choose a State..." class="col-xs-10 col-sm-5" onchange="document.getElementById('txtcantidad_insumo').value = '';" >
+                                                <option value=""selected>Seleccione</option>
+                                                <c:forEach var="insumo" items="${lista_insumos}" varStatus="loop">
+                                                    <option value="${insumo.id_producto}">${insumo.descripcion} ${insumo.marca} ${insumo.presentacion}  en : ${insumo.medida}</option>
+                                                </c:forEach>
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Cantidad</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtcantidad_insumo" name="txtcantidad_insumo"  value="" class="col-xs-10 col-sm-5"/>
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+
+                                <div class="form-actions center">
+                                    <button type="button" class="btn btn-sm btn-success">
+                                        Añadir
+                                        <i class="ace-icon fa fa-arrow-right icon-on-right bigger-110"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h4 class="widget-title">Insumos Añadidos</h4>
+                    </div>
 
-                <div class="widget-body">
-                    <div class="widget-main no-padding">
-                        <form>
-                            <!-- <legend>Form</legend> -->
-                            <fieldset>
-                                <div class="form-group">
-                                    <label for="form-field-select-3" class="col-sm-3 control-label no-padding-right">Seleccione Insumo</label>
-                                    <div class="col-sm-9" >
-                                        <select class="chosen-select form-control" id="form-field-select-3" data-placeholder="Choose a State...">
-                                            <option value="">  </option>
-                                            <option value="AL">Alabama</option>
-                                            <option value="AK">Alaska</option>
-                                            <option value="AZ">Arizona</option>
-                                            <option value="AR">Arkansas</option>
-                                            <option value="CA">California</option>
-                                            <option value="CO">Colorado</option>
-                                            <option value="CT">Connecticut</option>
-                                            <option value="DE">Delaware</option>
-                                            <option value="FL">Florida</option>
-                                            <option value="GA">Georgia</option>
-                                            <option value="HI">Hawaii</option>
-                                            <option value="ID">Idaho</option>
-                                            <option value="IL">Illinois</option>
-                                            <option value="IN">Indiana</option>
-                                            <option value="IA">Iowa</option>
-                                            <option value="KS">Kansas</option>
-                                            <option value="KY">Kentucky</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Unidad de Medida </label>
-                                    <div class="col-sm-9">
-                                        <input type="text" id="form-field-1" name="unidad" placeholder="Unidad de medida" class="col-xs-10 col-sm-5" disabled  />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Cantidad</label>
-                                    <div class="col-sm-9 ">
-                                        <input type="number" id="form-field-1" min="0" value="0"  name="Cantidad" placeholder="Cantidad" class="col-xs-10 col-sm-5"  />
-                                    </div>
-                                </div>
+                    <div class="widget-body">
+                        <div class="widget-main no-padding">
+                            <form>
+                                <!-- <legend>Form</legend> -->
+                                <fieldset>
+                                    <div class="table-responsive">
+                                        <table id="simple-table" class="table  table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="center">Nº
+                                                    </th>
+                                                    <th>Nombre del Insumo</th>
+                                                    <th>Marca</th>
+                                                    <th>Presentación</th>
+                                                    <th>Unidad de medida</th>
+                                                    <th>Foto</th>
+                                                    <th>x</th>
+                                                </tr>
+                                            </thead>
 
-                            </fieldset>
+                                            <tbody>
+                                                <tr>
+                                                    <td> XXX</td>
+                                                    <td> XXX</td>
+                                                    <td> XXX</td>
+                                                    <td> XXX</td>
+                                                    <td>XXXX</td>
+                                                    <td>XXXX</td>
+                                                    <td>SELECCIONAR</td>
+                                                </tr>
 
-                            <div class="form-actions center">
-                                <button type="button" class="btn btn-sm btn-success">
-                                    Añadir
-                                    <i class="ace-icon fa fa-arrow-right icon-on-right bigger-110"></i>
-                                </button>
-                            </div>
-                        </form>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </fieldset>
+
+
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-            <div class="col-sm-6">
-            <div class="widget-box">
-                <div class="widget-header">
-                    <h4 class="widget-title">Insumos Añadidos</h4>
-                </div>
-
-                <div class="widget-body">
-                    <div class="widget-main no-padding">
-                        <form>
-                            <!-- <legend>Form</legend> -->
-                            <fieldset>
-                                <div class="table-responsive">
-                                    <table id="simple-table" class="table  table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th class="center">Nº
-                                                </th>
-                                                <th>Nombre del Insumo</th>
-                                                <th>Marca</th>
-                                                <th>Presentación</th>
-                                                <th>Unidad de medida</th>
-                                                <th>Foto</th>
-                                                <th>x</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            <tr>
-                                                <td> XXX</td>
-                                                <td> XXX</td>
-                                                <td> XXX</td>
-                                                <td> XXX</td>
-                                                <td>XXXX</td>
-                                                <td>XXXX</td>
-                                                <td>SELECCIONAR</td>
-                                            </tr>
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </fieldset>
-
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-          <div class="space-4"></div>
+        <div class="space-4"></div>
 
         <div class="clearfix form-actions col-md-12 " align="center" >
             <div class="col-md-offset-3 col-md-6" >
@@ -259,11 +299,11 @@
                 <div class="row">
                     <div class="container">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Nombre del Producto </label>
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblparametro"> Nombre del Producto </label>
                             <div class="col-sm-9 col-md-6" >
-                                <input type="text" id="form-field-1" name="marca" placeholder="Marca delProducto" class="col-xs-10 col-sm-5 form-control" />
+                                <input type="text" id="txtparametroProducto" name="txtparametroProducto" placeholder="producto" class="col-xs-10 col-sm-5 form-control" />
                                 <span class="input-group-btn">
-                                    <input class="btn btn-default" type="button" onclick="$('#MD_BuscarProducto').modal('show');" value="Buscar"></input>
+                                    <input class="btn btn-default" type="button" onclick="fn_buscarProducto($('#txtparametroProducto').val());" value="Buscar"></input>
                                 </span>
                             </div>
                         </div>   
@@ -273,49 +313,9 @@
 
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="clearfix">
-                            <div class="pull-right tableTools-container"></div>
-                        </div>
-                        <div class="table-header">
-                            Resultado para "Insumos Registrados"
-                        </div>
-
-                        <!-- div.table-responsive -->
-
-                        <!-- div.dataTables_borderWrap -->
-                        <div>
-                            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="center">Nº
-                                        </th>
-                                        <th>Nombre del Insumo</th>
-                                        <th>Marca</th>
-                                        <th>Presentación</th>
-                                        <th>Unidad de medida</th>
-                                        <th>Foto</th>
-                                        <th>x</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    <tr>
-                                        <td> XXX</td>
-                                        <td> XXX</td>
-                                        <td> XXX</td>
-                                        <td> XXX</td>
-                                        <td>XXXX</td>
-                                        <td>XXXX</td>
-                                        <td>SELECCIONAR</td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>    
+                <div id="tablaProductosFinales">
+                </div>
+          
 
 
 

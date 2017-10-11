@@ -28,4 +28,6 @@ public interface ProductoDao {
     public String getfotoId(String id) throws  Exception;
 
     public List<Producto> listarproductoscombocompra() throws Exception;
+    public List<Producto> listainsumos() throws Exception;
+    public List<Producto> listaProductosFinales(String parametro) throws Exception;
 }
