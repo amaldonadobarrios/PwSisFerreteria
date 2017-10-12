@@ -53,10 +53,10 @@ public class ProductoDaoImpl implements ProductoDao {
             try {
 
                 PreparedStatement ps = cn.prepareStatement(sqlResult);
-                ps.setString(1, pro.getDescripcion());
-                ps.setString(2, pro.getMarca());
-                ps.setString(3, pro.getPresentacion());
-                ps.setString(4, pro.getMedida());
+                ps.setString(1, pro.getDescripcion().toUpperCase());
+                ps.setString(2, pro.getMarca().toUpperCase());
+                ps.setString(3, pro.getPresentacion().toUpperCase());
+                ps.setString(4, pro.getMedida().toUpperCase());
                 ps.setBytes(5, pro.getFoto());
                 ps.setInt(6, pro.getUsuario_reg());
                 ps.setString(7, pro.getType());
@@ -210,9 +210,9 @@ public class ProductoDaoImpl implements ProductoDao {
                 PreparedStatement ps = cn.prepareStatement(sqlResult);
 
                 ps.setString(1, pro.getDescripcion().toUpperCase());
-                ps.setString(2, pro.getMarca());
+                ps.setString(2, pro.getMarca().toUpperCase());
                 ps.setString(3, pro.getPresentacion().toUpperCase());
-                ps.setString(4, pro.getMedida());
+                ps.setString(4, pro.getMedida().toUpperCase());
                 ps.setString(5, pro.getProd_insu().toUpperCase());
                 ps.setInt(6, pro.getUsuario_mod());
                 if (pro.getType().equals("image/jpeg")) {
@@ -590,7 +590,7 @@ public class ProductoDaoImpl implements ProductoDao {
             try {
                 PreparedStatement ps = cn.prepareStatement(sqlResult);
                 for (int i = 1; i < 5; i++) {
-                    ps.setString(i,parametro); 
+                    ps.setString(i,parametro.toUpperCase()); 
                 }
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
@@ -611,9 +611,11 @@ public class ProductoDaoImpl implements ProductoDao {
                         temp.setProd_insu(rs.getString("producto_insumo"));
                         temp.setFoto(rs.getBytes("foto"));
                         if (temp.getFoto()!=null) {
-                         temp.setStringBase64(code.encodeToString(temp.getFoto()));   
+                         temp.setStringBase64(code.encodeToString(temp.getFoto()));  
+                         temp.setFoto(null);
                         }
                         listTemp.add(temp);
+                        temp=null;
 
                     }
                 }

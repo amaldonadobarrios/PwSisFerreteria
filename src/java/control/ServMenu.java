@@ -54,6 +54,8 @@ public class ServMenu extends HttpServletConf {
                 session.removeAttribute("comboprod");
                 session.removeAttribute("listaventa");
                 session.removeAttribute("listacompra");
+                session.removeAttribute("listainsumos");
+                
                 switch (action) {
 
                     case "pagehome":

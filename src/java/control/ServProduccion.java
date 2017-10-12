@@ -7,6 +7,7 @@ package control;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,9 +16,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import logica.LogicProducto;
 import logica.grilla.LogicTablaProducto;
+import logica.grilla.LogicTablaReglaProduccion;
 import model.dao.ProductoDao;
 import model.dao.impl.ProductoDaoImpl;
+import model.dto.ListaReglaProduccion;
 import model.dto.Producto;
 import model.dto.Usuario;
 import util.HtmlUtil;
@@ -39,25 +43,28 @@ public class ServProduccion extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-   int respuesta = this.validaSesion(request, response);
+        int respuesta = this.validaSesion(request, response);
         if (respuesta == 1) {
             try {
                 String evento = null;
                 evento = request.getParameter("evento");
-                System.out.println("ServProduccion  evento : "+evento);
+                System.out.println("ServProduccion  evento : " + evento);
                 if (evento != null) {
                     if (evento.equals("BuscarProductoFinal")) {
                         BuscarProductoFinal(request, response);
-                    } 
+                    } else if (evento.equals("AñadirInsumo")) {
+                        AñadirInsumo(request, response);
+                    }else if (evento.equals("EliminarInsumoAJAX")) {
+                        EliminarInsumoAJAX(request,response);    
+                    }
+ 
 
                 }
             } catch (Exception ex) {
                 Logger.getLogger(ServVenta.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -98,7 +105,8 @@ public class ServProduccion extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-private int validaSesion(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+    private int validaSesion(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         int respuesta = 1;
 
         HttpSession session = request.getSession();
@@ -128,16 +136,94 @@ private int validaSesion(HttpServletRequest request, HttpServletResponse respons
 
     private void BuscarProductoFinal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("control.ServProduccion.BuscarProductoFinal()");
-        String parametro=null;
-        parametro=request.getParameter("parametro");
-        List<Producto> lista=null;
-        if (parametro!=null) {
-          ProductoDao dao= new ProductoDaoImpl();
-        lista=dao.listaProductosFinales(parametro)  ;
-        String respuesta=null;
-        respuesta=LogicTablaProducto.getInstance().construirGrillaProducto(lista); 
-        HtmlUtil.getInstance().escrituraHTML(response, respuesta);
+        String parametro = null;
+        parametro = request.getParameter("parametro");
+        List<Producto> lista = null;
+        if (parametro != null) {
+            ProductoDao dao = new ProductoDaoImpl();
+            lista = dao.listaProductosFinales(parametro);
+            String respuesta = null;
+            respuesta = LogicTablaProducto.getInstance().construirGrillaProducto(lista);
+            HtmlUtil.getInstance().escrituraHTML(response, respuesta);
         }
-        
+
+    }
+
+    private void AñadirInsumo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        System.out.println("control.ServProduccion.AñadirInsumo()");
+        HttpSession session = request.getSession();
+        List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
+        List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
+        try {
+            lista = (List<ListaReglaProduccion>) session.getAttribute("listainsumos");
+        } catch (Exception e) {
+        }
+        if (lista != null) {
+            listatemp = lista;
+        }
+        String id_prod = request.getParameter("id_prod");
+        String id_insumo = request.getParameter("id_insumo");
+        String cantidad_insumo = request.getParameter("cantidad_insumo");
+        Producto insumo = LogicProducto.getInstance().buscarProductoID(Integer.parseInt(id_insumo));
+        ListaReglaProduccion reglas = new ListaReglaProduccion();
+        reglas.setId_producto(Integer.parseInt(id_prod));
+        reglas.setDescripcion(insumo.getDescripcion());
+        reglas.setId_insumo(insumo.getId_producto());
+        reglas.setMarca(insumo.getMarca());
+        reglas.setPresentacion(insumo.getPresentacion());
+        reglas.setMedida(insumo.getMedida());
+        reglas.setCantidad(Double.parseDouble(cantidad_insumo));
+        boolean validacion = false;
+        String msg = null;
+        String respuesta = null;
+        if (listatemp != null) {
+            if (listatemp.size() > 0) {
+                for (ListaReglaProduccion listaRegla : listatemp) {
+                     if (listaRegla.getId_producto()==reglas.getId_producto()) {
+                        validacion = true;
+                    } else {
+                        validacion = false;
+                        msg = "ERROR%HA CAMBIADO PRODUCTO FINAL DURANTE LA TRANSACCION";
+                        HtmlUtil.getInstance().escrituraHTML(response, msg);
+                        return;
+                    }
+                    if (listaRegla.getId_insumo()==reglas.getId_insumo()) {
+                        validacion = false;
+                        msg = "ERROR%EL INSUMO YA SE ENCUENTRA REGISTRADO";
+                        HtmlUtil.getInstance().escrituraHTML(response, msg);
+                        return;
+                    } else {
+                        validacion = true;
+                    }
+                }
+            }
+
+        }
+        listatemp.add(reglas);
+        session.setAttribute("listainsumos", listatemp);
+        respuesta=LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
+        HtmlUtil.getInstance().escrituraHTML(response, "OK%" +respuesta);
+       
+    }
+
+    private void EliminarInsumoAJAX(HttpServletRequest request, HttpServletResponse response) {
+          HttpSession session = request.getSession();
+        double subtotal = 0;
+        String item = request.getParameter("item");
+        List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
+        List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
+        try {
+            lista = (List<ListaReglaProduccion>) session.getAttribute("listainsumos");
+        } catch (Exception e) {
+        }
+        if (lista != null) {
+            listatemp = lista;
+
+        }
+        listatemp.remove(Integer.parseInt(item));
+        session.setAttribute("listainsumos", listatemp);
+       String respuesta=LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
+       HtmlUtil.getInstance().escrituraHTML(response, "OK%"+ respuesta);
+
     }
 }

@@ -2,52 +2,170 @@
 <c:set var="context" value="${pageContext.request.contextPath}" />
 <input type="hidden" id="contexto" value="${context}">
 <script>
+    //-----------------------INSUMO
+    function fneliminarItem(item) {
+        var it = Number(item - 1);
+        var vruta = '/ServProduccion';
+        var vevento = 'EliminarInsumoAJAX';
+        var jqdata = {
+            evento: 'EliminarInsumoAJAX',
+            item: it
+        };
+        fnEjecutarPeticion(vruta, jqdata, vevento);
+    }
+
+
+
+    function fn_pintarlistaInsumos(response) {
+        // alert(response);
+        var v_resultado = response + "";
+        var respuesta = v_resultado.split('%');
+        var estado = respuesta[0];
+        var tabla = respuesta[1];
+        if (estado == 'ERROR') {
+            mensajeERROR(estado, tabla);
+        } else {
+            $('#tablainsumos').html(tabla);
+            $('#dynamic-table2').DataTable({
+                responsive: true
+            });
+            $('#dynamic-table2').stacktable();
+        }
+    }
+
+    function fn_ejecutarAñadirInsumo(jdatos) {
+        var vruta = '/ServProduccion';
+        var vevento = 'AñadirInsumo';
+        fnEjecutarPeticion(vruta, jdatos, vevento);
+
+    }
+    function fn_añadirInsumo(a, b) {
+        $('#lblcbxinsumo').css("color", "black");
+        $('#lblcantidadinsumo').css("color", "black");
+        $('#lblnombre').css("color", "black");
+        $('#lblmarca').css("color", "black");
+        $('#lblpresentacion').css("color", "black");
+        $('#lblmedida').css("color", "black");
+        if (a != '' && a != '0' && b != '') {
+            var prod = $("#txtidproducto").val();
+            if (prod != '') {
+                if (b != prod) {
+                    var jdatos = {
+                        evento: 'AñadirInsumo',
+                        id_prod: prod,
+                        id_insumo: b,
+                        cantidad_insumo: a
+                    };
+                    fn_ejecutarAñadirInsumo(jdatos);
+                } else {
+                    mensajeERROR('INSUMO IGUAL AL PRODUCTO FINAL', 'El insumo seleccionado es igual al producto a fabricar');
+                }
+            } else {
+                $('#lblnombre').css("color", "red");
+                $('#lblmarca').css("color", "red");
+                $('#lblpresentacion').css("color", "red");
+                $('#lblmedida').css("color", "red");
+            }
+        } else {
+            $('#lblcbxinsumo').css("color", "red");
+            $('#lblcantidadinsumo').css("color", "red");
+        }
+    }
+
+
+
+
+
+
+
+    ///-----------------------PRODUCTO FINAL
+    function limpiarmodalprod() {
+        $("#txtparametroProducto").val('');
+        $('#tablaProductosFinales').html('');
+    }
+
+
+    function fn_pintar_producto(a, b, c, d, e, f) {
+
+        $("#txtidproducto").val(a);
+        $("#txtproducto").val(b);
+        $("#txtmarca").val(c);
+        $("#txtpresentacion").val(d);
+        $("#txtmedida").val(e);
+        $('#lblnombre').css("color", "black");
+        $('#lblmarca').css("color", "black");
+        $('#lblpresentacion').css("color", "black");
+        $('#lblmedida').css("color", "black");
+        if (f != 'null') {
+            document.getElementById("image").src = "data:image/jpg;base64," + f;
+        } else {
+            var contexto = document.getElementById("contexto").value;
+            document.getElementById("image").src = contexto + "/assets/images/sinfoto.png";
+        }
+        $('#MD_BuscarProducto').modal('hide');
+    }
+
+
     function fn_buscarProducto(parametro) {
-       $('#lblparametro').css("color", "black");
-    $('#tablabusquedaCli').html('');
-    if (parametro == '') {
-    $('#lblaperazbusc').css("color", "red");
-    } else {
-    var vruta = '/ServProduccion';
-    var vevento = 'BuscarProductoFinal';
-    var jqdata = {
-    evento: 'BuscarProductoFinal',
-            parametro: parametro
-    };
-    fnEjecutarPeticion(vruta, jqdata, vevento);
-    }  
+        $('#lblparametro').css("color", "black");
+        $('#tablaProductosFinales').html('');
+        if (parametro == '') {
+            $('#lblparametro').css("color", "red");
+        } else {
+            var vruta = '/ServProduccion';
+            var vevento = 'BuscarProductoFinal';
+            var jqdata = {
+                evento: 'BuscarProductoFinal',
+                parametro: parametro
+            };
+            fnEjecutarPeticion(vruta, jqdata, vevento);
+        }
     }
     function fn_pintalistaProdFinal(response) {
-    if (response == 'NOSESION') {
-    mensaje('ERROR', 'SESION EXPIRADA');
-    location.href = "login.jsp";
-    } else {
-    $('#tablaProductosFinales').html(response);
-    $('#dataTables-example').DataTable({
-    responsive: true
-    });
-    $('#dataTables-example').stacktable();
-    }
+        if (response == 'NOSESION') {
+            mensaje('ERROR', 'SESION EXPIRADA');
+            location.href = "login.jsp";
+        } else {
+            $('#tablaProductosFinales').html(response);
+            $('#dynamic-table1').DataTable({
+                responsive: true
+            });
+            $('#dynamic-table1').stacktable();
+        }
     }
 //CONTROLADOR AJAX
 
     function fnEjecutarPeticion(ruta, jdata, evento) {
-    var contexto = document.getElementById('contexto').value;
-    var vservlet = contexto + ruta;
-    $.ajax({
-    url: vservlet,
+        var contexto = document.getElementById('contexto').value;
+        var vservlet = contexto + ruta;
+        $.ajax({
+            url: vservlet,
             method: 'POST',
             data: jdata,
             success: function (responseText) {
-            fnControlEvento(evento, responseText + '');
+                fnControlEvento(evento, responseText + '');
             }
-    });
+        });
     }
     function fnControlEvento(vevento, vvrespuesta) {
-    if (vevento == 'BuscarProductoFinal') {
-    fn_pintalistaProdFinal(vvrespuesta);
+        if (vevento == 'BuscarProductoFinal') {
+            fn_pintalistaProdFinal(vvrespuesta);
+        } else if (vevento == 'AñadirInsumo') {
+            fn_pintarlistaInsumos(vvrespuesta);
+        } else if (vevento == 'EliminarInsumoAJAX') {
+            fn_pintarlistaInsumos(vvrespuesta);
+        }
+
     }
-   
+    //-----------------MENSAJE EMERGENTE
+    function mensajeERROR(titulo, mensaje) {
+        swal({
+            type: 'warning',
+            title: titulo,
+            text: mensaje,
+            timer: 2000,
+            showConfirmButton: false
+        });
     }
 </script>
 
@@ -85,26 +203,26 @@
                 <fieldset>
                     <legend>Producto a Fabricar</legend>   
                     <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Nombre Producto</label>
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblnombre"> Nombre Producto</label>
                         <div class="col-sm-9">
                             <input type="text" id="txtproducto" name="txtproducto"  class="col-xs-10 col-sm-9"  disabled/>
                             <input type="hidden" id="txtidproducto" name="txtidproducto"  class="col-xs-10 col-sm-9"  />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Marca del Producto</label>
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblmarca"> Marca del Producto</label>
                         <div class="col-sm-9">
                             <input type="text" id="txtmarca" name="txtmarca"  class="col-xs-10 col-sm-9" disabled />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Presentación</label>
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblpresentacion"> Presentación</label>
                         <div class="col-sm-9">
                             <input type="text" id="txtpresentacion" name="txtpresentacion"  class="col-xs-10 col-sm-9" disabled/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Unidad de medida</label>
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblmedida"> Unidad de medida</label>
                         <div class="col-sm-9">
                             <input type="text" id="txtmedida" name="txtmedida"  class="col-xs-10 col-sm-9" disabled/>
                         </div>
@@ -115,7 +233,8 @@
                             <input type="text" id="txtminimo" name="txtminimo"  value="1" class="col-xs-10 col-sm-9" disabled/>
                         </div>
                     </div>
-                    <div  class="col-sm-12" align="center"> <input class="btn btn-default" type="button" onclick="$('#MD_BuscarProducto').modal('show');" value="Seleccionar Producto"></input>   </div>
+                    <div  class="col-sm-12" align="center"> <input class="btn btn-default" type="button" onclick="limpiarmodalprod();
+                            $('#MD_BuscarProducto').modal('show');" value="Seleccionar Producto"></input>   </div>
                 </fieldset>
             </div>
             <div class="col-sm-4">
@@ -139,9 +258,9 @@
                                 <!-- <legend>Form</legend> -->
                                 <fieldset>
                                     <div class="form-group">
-                                        <label for="form-field-select-3" class="col-sm-3 col-md-3 col-xs-3 control-label no-padding-right">Seleccione Insumo</label>
+                                        <label for="form-field-select-3" class="col-sm-3 col-md-3 col-xs-3 control-label no-padding-right" id="lblcbxinsumo">Seleccione Insumo</label>
                                         <div class="col-sm-9 col-md-9 col-xs-9" >
-                                            <select class="chosen-select form-control" id="form-field-select-1" data-placeholder="Choose a State..." class="col-xs-10 col-sm-5" onchange="document.getElementById('txtcantidad_insumo').value = '';" >
+                                            <select class="chosen-select form-control" id="cbxinsumo" data-placeholder="Choose a State..." class="col-xs-10 col-sm-5" onchange="document.getElementById('txtcantidad_insumo').value = '';" >
                                                 <option value=""selected>Seleccione</option>
                                                 <c:forEach var="insumo" items="${lista_insumos}" varStatus="loop">
                                                     <option value="${insumo.id_producto}">${insumo.descripcion} ${insumo.marca} ${insumo.presentacion}  en : ${insumo.medida}</option>
@@ -152,16 +271,16 @@
                                     </div>
                                     <br>
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Cantidad</label>
+                                        <label class="col-sm-3 control-label no-padding-right" id="lblcantidadinsumo" for="form-field-1"> Cantidad</label>
                                         <div class="col-sm-9">
-                                            <input type="text" id="txtcantidad_insumo" name="txtcantidad_insumo"  value="" class="col-xs-10 col-sm-5"/>
+                                            <input type="number" id="txtcantidad_insumo" name="txtcantidad_insumo" min="0"  value="" step="any"class="col-xs-10 col-sm-5"/>
                                         </div>
                                     </div>
 
                                 </fieldset>
 
                                 <div class="form-actions center">
-                                    <button type="button" class="btn btn-sm btn-success">
+                                    <button type="button" class="btn btn-sm btn-success" onclick="fn_añadirInsumo(document.getElementById('txtcantidad_insumo').value, document.getElementById('cbxinsumo').value, );">
                                         Añadir
                                         <i class="ace-icon fa fa-arrow-right icon-on-right bigger-110"></i>
                                     </button>
@@ -183,33 +302,8 @@
                                 <!-- <legend>Form</legend> -->
                                 <fieldset>
                                     <div class="table-responsive">
-                                        <table id="simple-table" class="table  table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th class="center">Nº
-                                                    </th>
-                                                    <th>Nombre del Insumo</th>
-                                                    <th>Marca</th>
-                                                    <th>Presentación</th>
-                                                    <th>Unidad de medida</th>
-                                                    <th>Foto</th>
-                                                    <th>x</th>
-                                                </tr>
-                                            </thead>
+                                        <div id="tablainsumos"></div> 
 
-                                            <tbody>
-                                                <tr>
-                                                    <td> XXX</td>
-                                                    <td> XXX</td>
-                                                    <td> XXX</td>
-                                                    <td> XXX</td>
-                                                    <td>XXXX</td>
-                                                    <td>XXXX</td>
-                                                    <td>SELECCIONAR</td>
-                                                </tr>
-
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </fieldset>
 
@@ -307,24 +401,13 @@
                                 </span>
                             </div>
                         </div>   
-
-
-
-
                     </div>
                 </div>
                 <div id="tablaProductosFinales">
                 </div>
-          
-
-
-
-
-
             </div>
             <div class="modal-footer">
-                <input type="button" id="btnUpload" class="btn btn-success"
-                       value="REGISTRAR" >
+
                 <!-- 								<input type="button" id="btnClear" class="btn btn-default" -->
                 <!-- 									value="LIMPIAR" > -->
                 <button type="button" id="btnclose" class="btn btn-warning"

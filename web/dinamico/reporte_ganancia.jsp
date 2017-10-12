@@ -1,8 +1,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <script>
     function fn_buscar(fechaini, fechafin) {
-        alert(fechaini);
-        alert(fechafin);
         if (fechaini !== '' && fechafin !== '') {
             location.replace("SMenu?action=pageReporteGanancias&fecha1=" + fechaini + "&fecha2=" + fechafin);
         }
