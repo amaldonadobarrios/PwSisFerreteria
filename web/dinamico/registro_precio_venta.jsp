@@ -163,9 +163,9 @@
                         </th>
                         <th>Nombre producto</th>
                         <th>Tipo</th>
-                        <th>pv1</th>
-                        <th>pv2</th>
-                        <th>pv3</th>
+                        <th>P.Distribuidor</th>
+                        <th>P. Mayorista</th>
+                        <th>P.Minorista</th>
                         <th></th>
                     </tr>
                 </thead>

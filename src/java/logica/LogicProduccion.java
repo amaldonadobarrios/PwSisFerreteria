@@ -31,6 +31,13 @@ public class LogicProduccion {
         private static final LogicProduccion INSTANCE = new LogicProduccion();
     }
 
+    public String eliminarRegla(String id_regla, String id_producto) throws Exception {
+        String respuesta=null;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        respuesta = dao.EliminarRegla(Integer.parseInt(id_regla),Integer.parseInt(id_producto));
+        return respuesta;
+    }
+
     public String GrabarRegla(ListaReglaProduccion regla) throws Exception {
         String estado = null;
         ProduccionDao dao = new ProduccionDaoImpl();

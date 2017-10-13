@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package control;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -74,6 +73,7 @@ public class ServReporte extends HttpServlet {
         try {
             cn = db.getConnection();
             String jrxmlfile = getServletContext().getRealPath("/jrxml/ComprobanteVentaReporte.jrxml");
+            String rutalogo=getServletContext().getRealPath("/jrxml/img/logo.png");
             Map parameters = new HashMap();
             String sSubCadenacomprobante = respuesta.substring(0, 3);
             String TipoComprob = null;
@@ -96,6 +96,7 @@ public class ServReporte extends HttpServlet {
             parameters.put("id", respuesta.trim());
             parameters.put("tipo_documento", tipodoc);
             parameters.put("tipo_comprobante", TipoComprob);
+            parameters.put("logo", rutalogo);
             InputStream input = new FileInputStream(new File(jrxmlfile));
             JasperReport jasperReport = JasperCompileManager.compileReport(input);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, cn);

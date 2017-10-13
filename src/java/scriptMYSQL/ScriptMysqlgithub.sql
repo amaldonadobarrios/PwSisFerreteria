@@ -586,3 +586,37 @@ COMMIT;
 set rpta =1;
 END$$
 DELIMITER ;
+
+DELIMITER $$
+CREATE  PROCEDURE `EliminarRegla`(
+in idregla int,
+in idproducto int,
+out rpta int
+)
+BEGIN
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+ UPDATE regla_produccion set estado=0 where id_regla=idregla and id_producto=idproducto;
+ UPDATE detalle_regla_produccion set estado=0 where id_regla=idregla and id_producto=idproducto;
+/*Fin de transaccion*/ 
+COMMIT; 
+/*Mandamos 1 si todo salio bien*/ 
+set rpta =1;
+
+END$$
+DELIMITER ;

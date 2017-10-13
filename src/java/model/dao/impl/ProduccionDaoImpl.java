@@ -16,7 +16,6 @@ import java.util.List;
 import model.dao.ProduccionDao;
 import model.dto.ListaReglaProduccion;
 import org.apache.log4j.Logger;
-import util.DirDate;
 import util.Util;
 import util.jdbc.ConectaDB;
 
@@ -158,6 +157,56 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(6);
+                if (resultado > 0) {
+//                    cn.commit();
+                    logger.info("OK");
+                    mensaje = "OK";
+                } else {
+                    //cn.rollback();
+                    mensaje = "NOK";
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return mensaje;
+    }
+
+    @Override
+    public String EliminarRegla(int id_regla, int id_producto) throws Exception {
+         String mensaje = null;
+        String sqlResult = "";
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/callEliminarRegla.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+        }
+
+        if (cn != null) {
+
+            try {
+
+                CallableStatement ps = cn.prepareCall(sqlResult);
+                ps.setInt(1, id_regla);
+                ps.setInt(2, id_producto);
+                ps.registerOutParameter(3, Types.INTEGER);
+                ps.execute();
+                // devuelve el valor del parametro de salida del procedimiento
+                int resultado = ps.getInt(3);
                 if (resultado > 0) {
 //                    cn.commit();
                     logger.info("OK");

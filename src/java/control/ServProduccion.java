@@ -6,7 +6,6 @@
 package control;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -59,11 +58,13 @@ public class ServProduccion extends HttpServlet {
                         EliminarInsumoAJAX(request, response);
                     } else if (evento.equals("RegistrarRegla")) {
                         RegistrarRegla(request, response);
+                    }else if (evento.equals("EliminarRegla")) {
+                        EliminarRegla(request,response);
                     }
 
                 }
             } catch (Exception ex) {
-                Logger.getLogger(ServVenta.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ServProduccion.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
@@ -291,5 +292,13 @@ public class ServProduccion extends HttpServlet {
             msg = "ERROR%" + "NO SE PUDO REGISTRAR REGLA";
         }
         HtmlUtil.getInstance().escrituraHTML(response, msg);
+    }
+
+    private void EliminarRegla(HttpServletRequest request, HttpServletResponse response) throws Exception {
+         String id_producto = request.getParameter("id_producto");
+        String id_regla = request.getParameter("id_regla");
+        String respuesta=null;
+        respuesta=LogicProduccion.getInstance().eliminarRegla(id_regla,id_producto);
+        HtmlUtil.getInstance().escrituraHTML(response, respuesta); 
     }
 }

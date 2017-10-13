@@ -12,7 +12,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Bienvenido: ${sessionScope.usuario.apellidoPaterno} 
+        <h1 align="center">Bienvenido: ${sessionScope.usuario.apellidoPaterno} 
         ${sessionScope.usuario.apellidoMaterno}
         ${sessionScope.usuario.nombres}</h1>
     </body>

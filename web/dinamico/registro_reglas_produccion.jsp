@@ -2,32 +2,65 @@
 <c:set var="context" value="${pageContext.request.contextPath}" />
 <input type="hidden" id="contexto" value="${context}">
 <script>
-       function redireccionarPagina() {
-    window.location = "SMenu?action=pageRegistroReglasProduccion";
+    function redireccionarPagina() {
+        window.location = "SMenu?action=pageRegistroReglasProduccion";
     }
+    function fn_pintarEliminarRegla(response){
+      if (response == 'NOSESION') {
+            mensaje('ERROR', 'SESION EXPIRADA');
+            location.href = "login.jsp";
+        } else {
+        var v_resultado = response + "";
+        if (v_resultado == 'NOK') {
+            mensajeERROR('ERROR', 'REGLA NO PUDO SER ELIMINADA');
+        } else if (v_resultado == 'OK') {
+            mensajeOK('CORRECTO', 'REGLA ELIMINADA CON EXITO');
+            setTimeout("redireccionarPagina()", 1000);
+        }
+    }}
     //------------------------REGLA
-    function fn_pintarResultadoRegistrarRegla(response){
+    function fn_EliminarRegla(jdatos) {
+        var vruta = '/ServProduccion';
+        var vevento = 'EliminarRegla';
+        var jqdata = jdatos;
+        fnEjecutarPeticion(vruta, jqdata, vevento);
+    }
+    function fn_eliminarregla(id_regla, id_producto) {
+        if (confirm("ESTÁ SEGURO DE ELIMINAR LA REGLA N°" + id_regla)) {
+            jdatos = {
+                evento: 'EliminarRegla',
+                id_regla: id_regla,
+                id_producto: id_producto
+            };
+            fn_EliminarRegla(jdatos);
+        }
+    }
+    function fn_pintarResultadoRegistrarRegla(response) {
+        if (response === 'NOSESION') {
+            mensaje('ERROR', 'SESION EXPIRADA');
+            location.href = "login.jsp";
+        } else {
         var v_resultado = response + "";
         var respuesta = v_resultado.split('%');
         var estado = respuesta[0];
         var mensaje = respuesta[1];
         if (estado == 'ERROR') {
             mensajeERROR(estado, mensaje);
-        } else if(estado == 'OK') {
-            mensajeOK('CORRECTO',mensaje);
+        } else if (estado == 'OK') {
+            mensajeOK('CORRECTO', mensaje);
             setTimeout("redireccionarPagina()", 1000);
-           }
+        }}
     }
-    function fn_EjecutaRegistrarRegla(prod){
+    function fn_EjecutaRegistrarRegla(prod) {
         var vruta = '/ServProduccion';
         var vevento = 'RegistrarRegla';
         var jqdata = {
             evento: 'RegistrarRegla',
             id_producto: prod
         };
-        fnEjecutarPeticion(vruta, jqdata, vevento);  
+        fnEjecutarPeticion(vruta, jqdata, vevento);
     }
-    
+
     function fn_registrarRegla() {
         var prod = $("#txtidproducto").val();
         if (prod != '') {
@@ -57,7 +90,10 @@
     }
 
     function fn_pintarlistaInsumos(response) {
-        // alert(response);
+        if (response === 'NOSESION') {
+            mensaje('ERROR', 'SESION EXPIRADA');
+            location.href = "login.jsp";
+        } else {
         var v_resultado = response + "";
         var respuesta = v_resultado.split('%');
         var estado = respuesta[0];
@@ -70,7 +106,7 @@
                 responsive: true
             });
             $('#dynamic-table2').stacktable();
-        }
+        }}
     }
 
     function fn_ejecutarAñadirInsumo(jdatos) {
@@ -126,7 +162,6 @@
 
 
     function fn_pintar_producto(a, b, c, d, e, f) {
-
         $("#txtidproducto").val(a);
         $("#txtproducto").val(b);
         $("#txtmarca").val(c);
@@ -136,11 +171,11 @@
         $('#lblmarca').css("color", "black");
         $('#lblpresentacion').css("color", "black");
         $('#lblmedida').css("color", "black");
-        if (f == null ||f=='null' || f=='') {
-             var contexto = document.getElementById("contexto").value;
+        if (f == null || f == 'null' || f == '') {
+            var contexto = document.getElementById("contexto").value;
             document.getElementById("image").src = contexto + "/assets/images/sinfoto.png";
         } else {
-           document.getElementById("image").src = "data:image/jpg;base64," + f;
+            document.getElementById("image").src = "data:image/jpg;base64," + f;
         }
         $('#MD_BuscarProducto').modal('hide');
     }
@@ -194,8 +229,10 @@
             fn_pintarlistaInsumos(vvrespuesta);
         } else if (vevento == 'EliminarInsumoAJAX') {
             fn_pintarlistaInsumos(vvrespuesta);
-        }else if(vevento=='RegistrarRegla'){
+        } else if (vevento == 'RegistrarRegla') {
             fn_pintarResultadoRegistrarRegla(vvrespuesta);
+        } else if (vevento == 'EliminarRegla') {
+            fn_pintarEliminarRegla(vvrespuesta);
         }
 
     }
@@ -210,13 +247,13 @@
         });
     }
     function mensajeOK(titulo, mensaje) {
-    swal({
-    type: 'success',
+        swal({
+            type: 'success',
             title: titulo,
             text: mensaje,
             timer: 3000,
             showConfirmButton: false
-    });
+        });
     }
 </script>
 
@@ -426,7 +463,7 @@
                                     <a class="blue" href="javascript:fn_mostrarinsumos('${regla.id_regla}','${regla.id_producto}');">
                                         <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                     </a>
-                                    <a class="red" href="javascript:fn_eliminarregla('${regla.id_regla}','${regla.id_producto}');">
+                                    <a  class="red" href="javascript:fn_eliminarregla('${regla.id_regla}','${regla.id_producto}');">
                                         <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                     </a>
                                 </div></td>   
