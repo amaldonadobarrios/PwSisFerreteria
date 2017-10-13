@@ -15,4 +15,6 @@ import model.dto.ListaReglaProduccion;
 public interface ProduccionDao {
     
     public List<ListaReglaProduccion> listarreglas() throws Exception;
+    public boolean validarReglaProducto(int id_producto) throws  Exception;
+    public String GrabarRegla(ListaReglaProduccion regla) throws Exception;
 }

@@ -534,3 +534,55 @@ CREATE TABLE `detalle_regla_produccion` (
   `estado` int(11) NOT NULL COMMENT '1 = activo\n0= desactivado',
   PRIMARY KEY (`id_detalle_regla`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci COMMENT='Tabla de detalle de reglas de produccion , insumos necesarios para fabircacion de un producto';
+
+
+DELIMITER $$
+CREATE  PROCEDURE `GrabarRegla`(
+in idproducto int,
+in idusuario int, 
+in nroInsumos int,
+in cadena_id_insumo varchar(1000),
+in cadena_cantidad varchar(1000),
+out rpta int)
+BEGIN
+DECLARE v1 INT DEFAULT 1;
+DECLARE insu int DEFAULT 0;
+DECLARE cant double DEFAULT 0;
+DECLARE v_id_regla int;
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+/*Primer INSERT datos ACTA*/ 
+INSERT INTO regla_produccion (id_producto,cantidad_insumo,fecha_reg,usuario_reg,estado)
+VALUES
+(idproducto,nroInsumos,now(),idusuario,1);
+SET v_id_regla =(SELECT LAST_INSERT_ID());
+/*SECOND INSERT datos ACTA*/ 
+WHILE v1 <= nroInsumos DO
+SET insu = (SELECT strSplit (cadena_id_insumo, '@', v1));
+SET cant = (SELECT strSplit (cadena_cantidad, '@', v1));
+INSERT INTO detalle_regla_produccion(id_producto,id_regla,id_insumo,cantidad,fecha_reg,usuario_reg,estado)
+VALUES
+(idproducto,v_id_regla,insu,FORMAT(cant, 2),now(),idusuario,1);
+SET v1 = v1+1;
+END WHILE;
+/*Fin de transaccion*/ 
+COMMIT; 
+/*Mandamos 0 si todo salio bien*/ 
+set rpta =1;
+END$$
+DELIMITER ;

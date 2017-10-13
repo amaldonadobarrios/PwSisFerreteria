@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import logica.LogicProduccion;
 import logica.LogicProducto;
 import logica.grilla.LogicTablaProducto;
 import logica.grilla.LogicTablaReglaProduccion;
@@ -54,10 +55,11 @@ public class ServProduccion extends HttpServlet {
                         BuscarProductoFinal(request, response);
                     } else if (evento.equals("AñadirInsumo")) {
                         AñadirInsumo(request, response);
-                    }else if (evento.equals("EliminarInsumoAJAX")) {
-                        EliminarInsumoAJAX(request,response);    
+                    } else if (evento.equals("EliminarInsumoAJAX")) {
+                        EliminarInsumoAJAX(request, response);
+                    } else if (evento.equals("RegistrarRegla")) {
+                        RegistrarRegla(request, response);
                     }
- 
 
                 }
             } catch (Exception ex) {
@@ -179,7 +181,7 @@ public class ServProduccion extends HttpServlet {
         if (listatemp != null) {
             if (listatemp.size() > 0) {
                 for (ListaReglaProduccion listaRegla : listatemp) {
-                     if (listaRegla.getId_producto()==reglas.getId_producto()) {
+                    if (listaRegla.getId_producto() == reglas.getId_producto()) {
                         validacion = true;
                     } else {
                         validacion = false;
@@ -187,7 +189,7 @@ public class ServProduccion extends HttpServlet {
                         HtmlUtil.getInstance().escrituraHTML(response, msg);
                         return;
                     }
-                    if (listaRegla.getId_insumo()==reglas.getId_insumo()) {
+                    if (listaRegla.getId_insumo() == reglas.getId_insumo()) {
                         validacion = false;
                         msg = "ERROR%EL INSUMO YA SE ENCUENTRA REGISTRADO";
                         HtmlUtil.getInstance().escrituraHTML(response, msg);
@@ -201,13 +203,13 @@ public class ServProduccion extends HttpServlet {
         }
         listatemp.add(reglas);
         session.setAttribute("listainsumos", listatemp);
-        respuesta=LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
-        HtmlUtil.getInstance().escrituraHTML(response, "OK%" +respuesta);
-       
+        respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
+        HtmlUtil.getInstance().escrituraHTML(response, "OK%" + respuesta);
+
     }
 
     private void EliminarInsumoAJAX(HttpServletRequest request, HttpServletResponse response) {
-          HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
         double subtotal = 0;
         String item = request.getParameter("item");
         List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
@@ -222,8 +224,72 @@ public class ServProduccion extends HttpServlet {
         }
         listatemp.remove(Integer.parseInt(item));
         session.setAttribute("listainsumos", listatemp);
-       String respuesta=LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
-       HtmlUtil.getInstance().escrituraHTML(response, "OK%"+ respuesta);
+        String respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
+        HtmlUtil.getInstance().escrituraHTML(response, "OK%" + respuesta);
 
+    }
+
+    private void RegistrarRegla(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        System.out.println("control.ServProduccion.RegistrarRegla()");
+        String id_producto_formulario = request.getParameter("id_producto");
+        int id_producto_frm = Integer.parseInt(id_producto_formulario);
+        HttpSession session = request.getSession();
+        List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
+        List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
+        try {
+            lista = (List<ListaReglaProduccion>) session.getAttribute("listainsumos");
+        } catch (Exception e) {
+        }
+        if (lista != null) {
+            listatemp = lista;
+        }
+        //declaro variables locales;
+        String id_insumo = "";
+        String cantidad = "";
+        int contador = 0;
+        //verificar regla
+        String msg = null;
+        ListaReglaProduccion regla = null;
+        if (listatemp.size() > 0) {
+            boolean ReglaOK = LogicProduccion.getInstance().verificarRegla(id_producto_frm);
+            if (ReglaOK == false) {
+                msg = "ERROR%" + "EL PRODUCTO A FABRICAR YA TIENE  UNA REGLA ACTIVA";
+                HtmlUtil.getInstance().escrituraHTML(response, msg);
+                return;
+            }
+            for (ListaReglaProduccion listaInsumos : listatemp) {
+                if (listaInsumos.getId_producto() == id_producto_frm) {
+
+                } else {
+                    msg = "ERROR%" + "HA CAMBIADO PRODUCTO A FABRICAR DURANTE LA TRANSACCION";
+                    HtmlUtil.getInstance().escrituraHTML(response, msg);
+                    return;
+                }
+
+                id_insumo = id_insumo + String.valueOf(listaInsumos.getId_insumo() + "@");
+                cantidad = cantidad + String.valueOf(listaInsumos.getCantidad() + "@");
+                contador = contador + 1;
+            }
+            Usuario usuario = usuario = new Usuario();
+            usuario = (Usuario) session.getAttribute("usuario");
+            int usuario_mod = usuario.getIdUsuario();
+            regla = new ListaReglaProduccion();
+            regla.setNro_insumos(contador);
+            regla.setId_producto(id_producto_frm);
+            regla.setId_usuario(usuario_mod);
+            regla.setCadena_cantidad(cantidad);
+            regla.setCandena_Id_insumo(id_insumo);
+        } else {
+            msg = "ERROR%" + "LISTA DE INSUMOS VACIA";
+            HtmlUtil.getInstance().escrituraHTML(response, msg);
+            return;
+        }
+        String respuesta = LogicProduccion.getInstance().GrabarRegla(regla);
+        if (respuesta.equals("OK")) {
+            msg = "OK%" + "REGLA REGISTRADA EXITOSAMENTE";
+        } else if (respuesta.equals("NOK")) {
+            msg = "ERROR%" + "NO SE PUDO REGISTRAR REGLA";
+        }
+        HtmlUtil.getInstance().escrituraHTML(response, msg);
     }
 }

@@ -6,8 +6,11 @@
 package logica;
 
 import java.util.List;
+import model.dao.ProduccionDao;
 import model.dao.ProductoDao;
+import model.dao.impl.ProduccionDaoImpl;
 import model.dao.impl.ProductoDaoImpl;
+import model.dto.ListaReglaProduccion;
 import model.dto.Producto;
 
 /**
@@ -15,29 +18,51 @@ import model.dto.Producto;
  * @author Alexander
  */
 public class LogicProduccion {
-    
+
     private LogicProduccion() {
     }
-    
+
     public static LogicProduccion getInstance() {
         return LogicProduccionHolder.INSTANCE;
     }
-    
+
     private static class LogicProduccionHolder {
 
         private static final LogicProduccion INSTANCE = new LogicProduccion();
     }
-    
-    public List<Producto> listarInsumos() throws Exception{
-       List<Producto> lista=null;
-       ProductoDao dao=new ProductoDaoImpl();
-       lista=dao.listainsumos();
-       return lista;
+
+    public String GrabarRegla(ListaReglaProduccion regla) throws Exception {
+        String estado = null;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        estado = dao.GrabarRegla(regla);
+        return estado;
     }
-     public List<Producto> listarProductoFinalLike(String parametro) throws Exception{
-       List<Producto> lista=null;
-       ProductoDao dao=new ProductoDaoImpl();
-       lista=dao.listaProductosFinales(parametro);
-       return lista;
+
+    public boolean verificarRegla(int id_producto) throws Exception {
+        boolean validacion = false;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        validacion = dao.validarReglaProducto(id_producto);
+        return validacion;
+    }
+
+    public List<Producto> listarInsumos() throws Exception {
+        List<Producto> lista = null;
+        ProductoDao dao = new ProductoDaoImpl();
+        lista = dao.listainsumos();
+        return lista;
+    }
+
+    public List<Producto> listarProductoFinalLike(String parametro) throws Exception {
+        List<Producto> lista = null;
+        ProductoDao dao = new ProductoDaoImpl();
+        lista = dao.listaProductosFinales(parametro);
+        return lista;
+    }
+
+    public List<ListaReglaProduccion> listarReglasActivas() throws Exception {
+        List<ListaReglaProduccion> lista = null;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        lista = dao.listarreglas();
+        return lista;
     }
 }

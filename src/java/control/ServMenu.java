@@ -251,6 +251,7 @@ public class ServMenu extends HttpServletConf {
     }
 
     private void pageRegistroReglasProduccion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
+        request.setAttribute("lista_reglasActivas", LogicProduccion.getInstance().listarReglasActivas());
         request.setAttribute("lista_insumos", LogicProduccion.getInstance().listarInsumos());
         request.setAttribute("body", "registro_reglas_produccion");
         forwar("template.jsp", request, response);
