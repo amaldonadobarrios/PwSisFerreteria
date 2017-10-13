@@ -18,4 +18,5 @@ public interface ProduccionDao {
     public boolean validarReglaProducto(int id_producto) throws  Exception;
     public String GrabarRegla(ListaReglaProduccion regla) throws Exception;
     public String EliminarRegla(int id_regla,int id_producto) throws Exception;
+    public List<ListaReglaProduccion> MostrarInsumo(int id_regla,int id_producto) throws Exception;
 }

@@ -60,7 +60,10 @@ public class ServProduccion extends HttpServlet {
                         RegistrarRegla(request, response);
                     }else if (evento.equals("EliminarRegla")) {
                         EliminarRegla(request,response);
+                    }else if (evento.equals("ListarInsumosxReglaxProd")) {
+                        ListarInsumosxReglaxProd(request,response);
                     }
+                    
 
                 }
             } catch (Exception ex) {
@@ -300,5 +303,13 @@ public class ServProduccion extends HttpServlet {
         String respuesta=null;
         respuesta=LogicProduccion.getInstance().eliminarRegla(id_regla,id_producto);
         HtmlUtil.getInstance().escrituraHTML(response, respuesta); 
+    }
+
+    private void ListarInsumosxReglaxProd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String id_producto = request.getParameter("id_producto");
+        String id_regla = request.getParameter("id_regla");
+        String respuesta=null;
+        respuesta=LogicProduccion.getInstance().MostrarInsumos(id_regla,id_producto);
+        HtmlUtil.getInstance().escrituraHTML(response, respuesta);    
     }
 }

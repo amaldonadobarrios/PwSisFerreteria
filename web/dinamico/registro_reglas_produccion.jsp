@@ -5,20 +5,60 @@
     function redireccionarPagina() {
         window.location = "SMenu?action=pageRegistroReglasProduccion";
     }
-    function fn_pintarEliminarRegla(response){
-      if (response == 'NOSESION') {
+    //------------------------REGLA
+    function fn_pintarMostrarInsumos(response) {
+        
+        if (response === 'NOSESION') {
             mensaje('ERROR', 'SESION EXPIRADA');
             location.href = "login.jsp";
         } else {
-        var v_resultado = response + "";
-        if (v_resultado == 'NOK') {
-            mensajeERROR('ERROR', 'REGLA NO PUDO SER ELIMINADA');
-        } else if (v_resultado == 'OK') {
-            mensajeOK('CORRECTO', 'REGLA ELIMINADA CON EXITO');
-            setTimeout("redireccionarPagina()", 1000);
+            var v_resultado = response + "";
+            var respuesta = v_resultado.split('%');
+            var tabla = respuesta[0];
+            var id_regla = respuesta[1];
+           
+            if (tabla !== '') {
+                $('#nroregla').text('INSUMOS DE LA REGLA N° '+id_regla);
+                $('#tablamostrarInsumos').html(tabla);
+                $('#dynamic-table3').DataTable({
+                    responsive: true
+                });
+                $('#dynamic-table3').stacktable();
+                $('#modal').modal('show');
+            }
         }
-    }}
-    //------------------------REGLA
+    }
+
+    function fn_ListarInsumosxReglaxProd(jdatos) {
+        var vruta = '/ServProduccion';
+        var vevento = 'ListarInsumosxReglaxProd';
+        var jqdata = jdatos;
+        fnEjecutarPeticion(vruta, jqdata, vevento);
+    }
+    function fn_mostrarinsumos(idregla, idprod) {
+        jdatos = {
+            evento: 'ListarInsumosxReglaxProd',
+            id_regla: idregla,
+            id_producto: idprod
+        };
+        fn_ListarInsumosxReglaxProd(jdatos);
+    }
+
+    function fn_pintarEliminarRegla(response) {
+        if (response == 'NOSESION') {
+            mensaje('ERROR', 'SESION EXPIRADA');
+            location.href = "login.jsp";
+        } else {
+            var v_resultado = response + "";
+            if (v_resultado == 'NOK') {
+                mensajeERROR('ERROR', 'REGLA NO PUDO SER ELIMINADA');
+            } else if (v_resultado == 'OK') {
+                mensajeOK('CORRECTO', 'REGLA ELIMINADA CON EXITO');
+                setTimeout("redireccionarPagina()", 1000);
+            }
+        }
+    }
+
     function fn_EliminarRegla(jdatos) {
         var vruta = '/ServProduccion';
         var vevento = 'EliminarRegla';
@@ -40,16 +80,17 @@
             mensaje('ERROR', 'SESION EXPIRADA');
             location.href = "login.jsp";
         } else {
-        var v_resultado = response + "";
-        var respuesta = v_resultado.split('%');
-        var estado = respuesta[0];
-        var mensaje = respuesta[1];
-        if (estado == 'ERROR') {
-            mensajeERROR(estado, mensaje);
-        } else if (estado == 'OK') {
-            mensajeOK('CORRECTO', mensaje);
-            setTimeout("redireccionarPagina()", 1000);
-        }}
+            var v_resultado = response + "";
+            var respuesta = v_resultado.split('%');
+            var estado = respuesta[0];
+            var mensaje = respuesta[1];
+            if (estado == 'ERROR') {
+                mensajeERROR(estado, mensaje);
+            } else if (estado == 'OK') {
+                mensajeOK('CORRECTO', mensaje);
+                setTimeout("redireccionarPagina()", 1000);
+            }
+        }
     }
     function fn_EjecutaRegistrarRegla(prod) {
         var vruta = '/ServProduccion';
@@ -94,19 +135,20 @@
             mensaje('ERROR', 'SESION EXPIRADA');
             location.href = "login.jsp";
         } else {
-        var v_resultado = response + "";
-        var respuesta = v_resultado.split('%');
-        var estado = respuesta[0];
-        var tabla = respuesta[1];
-        if (estado == 'ERROR') {
-            mensajeERROR(estado, tabla);
-        } else {
-            $('#tablainsumos').html(tabla);
-            $('#dynamic-table2').DataTable({
-                responsive: true
-            });
-            $('#dynamic-table2').stacktable();
-        }}
+            var v_resultado = response + "";
+            var respuesta = v_resultado.split('%');
+            var estado = respuesta[0];
+            var tabla = respuesta[1];
+            if (estado == 'ERROR') {
+                mensajeERROR(estado, tabla);
+            } else {
+                $('#tablainsumos').html(tabla);
+                $('#dynamic-table2').DataTable({
+                    responsive: true
+                });
+                $('#dynamic-table2').stacktable();
+            }
+        }
     }
 
     function fn_ejecutarAñadirInsumo(jdatos) {
@@ -233,6 +275,8 @@
             fn_pintarResultadoRegistrarRegla(vvrespuesta);
         } else if (vevento == 'EliminarRegla') {
             fn_pintarEliminarRegla(vvrespuesta);
+        } else if (vevento == 'ListarInsumosxReglaxProd') {
+            fn_pintarMostrarInsumos(vvrespuesta);
         }
 
     }
@@ -453,7 +497,7 @@
                 <tbody>
                     <c:forEach var="regla" items="${lista_reglasActivas}" varStatus="loop">
                         <tr>
-                            <td class="center">  ${loop.count} </td>
+                            <td class="center">  ${regla.id_regla} </td>
                             <td> ${regla.descripcion}  </td>
                             <td> ${regla.marca} </td>
                             <td> ${regla.presentacion} </td>
@@ -515,3 +559,23 @@
     </div>
 
 </div>  
+ <div class="modal fade bs-example-modal-lg" id="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div  class="panel panel-success" id="panel-tipoMsj">
+            <div class="panel-heading"><h4 class="modal-title" id="nroregla"> 
+            </h4></div>
+            <div class="panel-body">
+                 <div  align="center" id="tablamostrarInsumos"/> 
+            </div>
+            <div class="modal-footer">
+
+                <!-- 								<input type="button" id="btnClear" class="btn btn-default" -->
+                <!-- 									value="LIMPIAR" > -->
+                <button type="button" id="btnclose" class="btn btn-warning"
+                        data-dismiss="modal">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+
+</div>

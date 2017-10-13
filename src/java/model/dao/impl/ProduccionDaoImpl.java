@@ -230,4 +230,65 @@ public class ProduccionDaoImpl implements ProduccionDao {
 
         return mensaje;
     }
+
+    @Override
+    public List<ListaReglaProduccion> MostrarInsumo(int id_regla, int id_producto) throws Exception {
+       String sqlResult = "";
+        List<ListaReglaProduccion> listTemp = null;
+        
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectReglaInsumos.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+        
+        if (cn != null) {
+            
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setInt(1, id_regla);
+                ps.setInt(2, id_producto);
+                ResultSet rs = ps.executeQuery();
+                
+                if (rs.next()) {
+                    
+                    listTemp = new ArrayList<>();
+                    ListaReglaProduccion temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+                        
+                        temp = new ListaReglaProduccion();
+                        temp.setId_regla(rs.getInt("id_regla"));
+                        temp.setId_insumo(rs.getInt("id_insumo"));
+                        temp.setCantidad(rs.getDouble("cantidad"));
+                        temp.setDescripcion(rs.getString("descripcion"));
+                        temp.setMarca(rs.getString("marca"));
+                        temp.setPresentacion(rs.getString("presentacion"));
+                        temp.setMedida(rs.getString("medida"));
+                        listTemp.add(temp);
+                        
+                    }
+                }
+                
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+        
+        return listTemp;  
+    }
 }

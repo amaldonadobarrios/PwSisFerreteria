@@ -6,6 +6,7 @@
 package logica;
 
 import java.util.List;
+import logica.grilla.LogicTablaReglaProduccion;
 import model.dao.ProduccionDao;
 import model.dao.ProductoDao;
 import model.dao.impl.ProduccionDaoImpl;
@@ -31,10 +32,19 @@ public class LogicProduccion {
         private static final LogicProduccion INSTANCE = new LogicProduccion();
     }
 
-    public String eliminarRegla(String id_regla, String id_producto) throws Exception {
+    public String MostrarInsumos(String id_regla, String id_producto) throws Exception {
+        List<ListaReglaProduccion> lista = null;
         String respuesta=null;
         ProduccionDao dao = new ProduccionDaoImpl();
-        respuesta = dao.EliminarRegla(Integer.parseInt(id_regla),Integer.parseInt(id_producto));
+        lista = dao.MostrarInsumo(Integer.parseInt(id_regla), Integer.parseInt(id_producto));
+        respuesta=LogicTablaReglaProduccion.getInstance().construirGrillaMostrarInsumos(lista);
+        return respuesta;
+    }
+
+    public String eliminarRegla(String id_regla, String id_producto) throws Exception {
+        String respuesta = null;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        respuesta = dao.EliminarRegla(Integer.parseInt(id_regla), Integer.parseInt(id_producto));
         return respuesta;
     }
 
