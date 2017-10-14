@@ -55,6 +55,7 @@ public class ServMenu extends HttpServletConf {
                 session.removeAttribute("listaventa");
                 session.removeAttribute("listacompra");
                 session.removeAttribute("listainsumos");
+                session.removeAttribute("listaproduccion");
                 
                 switch (action) {
 
@@ -422,7 +423,8 @@ public class ServMenu extends HttpServletConf {
         forwar("template.jsp", request, response);
     }
 
-    private void pagRegistroProduccion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void pagRegistroProduccion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
+        request.setAttribute("comboreglas", LogicProduccion.getInstance().listarReglasActivas());
         request.setAttribute("body", "registro_produccion");
         forwar("template.jsp", request, response);
     }

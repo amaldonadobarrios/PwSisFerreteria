@@ -291,4 +291,61 @@ public class ProduccionDaoImpl implements ProduccionDao {
         
         return listTemp;  
     }
+
+    @Override
+    public ListaReglaProduccion BuscarRegla(int id_regla) throws Exception {
+        String sqlResult = "";
+        ListaReglaProduccion temp = null;
+        
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectReglaxId.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+        
+        if (cn != null) {
+            
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ps.setInt(1, id_regla);
+                 ResultSet rs = ps.executeQuery();
+                
+                if (rs.next()) {
+                    
+                    temp = new ListaReglaProduccion();
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+                        
+                        
+                        temp.setId_regla(rs.getInt("id_regla"));
+                        temp.setId_producto(rs.getInt("id_producto"));
+                        temp.setNro_insumos(rs.getInt("cantidad_insumo"));
+                        temp.setDescripcion(rs.getString("descripcion"));
+                        temp.setMarca(rs.getString("marca"));
+                        temp.setPresentacion(rs.getString("presentacion"));
+                        temp.setMedida(rs.getString("medida"));
+  
+                    }
+                }
+                
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+        
+        return temp; 
+    }
 }

@@ -62,6 +62,10 @@ public class ServProduccion extends HttpServlet {
                         EliminarRegla(request,response);
                     }else if (evento.equals("ListarInsumosxReglaxProd")) {
                         ListarInsumosxReglaxProd(request,response);
+                    }else if (evento.equals("AñadirProduccion")) {
+                        AñadirProduccion(request,response);
+                    }else if (evento.equals("EliminarProductofinal")) {
+                        EliminarProductofinal(request,response);
                     }
                     
 
@@ -214,7 +218,6 @@ public class ServProduccion extends HttpServlet {
 
     private void EliminarInsumoAJAX(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        double subtotal = 0;
         String item = request.getParameter("item");
         List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
         List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
@@ -311,5 +314,64 @@ public class ServProduccion extends HttpServlet {
         String respuesta=null;
         respuesta=LogicProduccion.getInstance().MostrarInsumos(id_regla,id_producto);
         HtmlUtil.getInstance().escrituraHTML(response, respuesta);    
+    }
+
+    private void AñadirProduccion(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
+        List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
+        try {
+            lista = (List<ListaReglaProduccion>) session.getAttribute("listaproduccion");
+        } catch (Exception e) {
+        }
+        if (lista != null) {
+            listatemp = lista;
+        }
+        String id_regla = request.getParameter("id_regla");
+        String cantidad = request.getParameter("cantidad");
+        ListaReglaProduccion productofinal = LogicProduccion.getInstance().buscarRegla(Integer.parseInt(id_regla));
+        productofinal.setCantidad(Double.parseDouble(cantidad));
+        boolean validacion = false;
+        String msg = null;
+        String respuesta = null;
+        if (listatemp != null) {
+            if (listatemp.size() > 0) {
+                for (ListaReglaProduccion listaRegla : listatemp) {
+                    if (listaRegla.getId_regla()== productofinal.getId_regla()) {
+                        validacion = false;
+                        msg = "ERROR%EL EL PRODUCTO A FABRICAR YA SE ENCUENTRA REGISTRADO";
+                        HtmlUtil.getInstance().escrituraHTML(response, msg);
+                        return;
+                    } else {
+                        validacion = true;
+                    }
+                }
+            }
+
+        }
+        listatemp.add(productofinal);
+        session.setAttribute("listaproduccion", listatemp);
+        respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
+        HtmlUtil.getInstance().escrituraHTML(response, "OK%" + respuesta);    
+    }
+
+    private void EliminarProductofinal(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        String item = request.getParameter("item");
+        List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
+        List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
+        try {
+            lista = (List<ListaReglaProduccion>) session.getAttribute("listaproduccion");
+        } catch (Exception e) {
+        }
+        if (lista != null) {
+            listatemp = lista;
+
+        }
+        listatemp.remove(Integer.parseInt(item));
+        session.setAttribute("listaproduccion", listatemp);
+        String respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
+        HtmlUtil.getInstance().escrituraHTML(response, "OK%" + respuesta);
+
     }
 }

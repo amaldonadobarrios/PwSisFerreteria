@@ -55,8 +55,8 @@ function solo_numeros(e) {
 		e.keyCode = te.charCodeAt(0);
 	    return patron.test(te); 
 	} 
- 
- 
+
+
  function fnConvertirMayuscula(txtinput)
  {
 	return txtinput.toUpperCase();

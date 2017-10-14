@@ -32,12 +32,19 @@ public class LogicProduccion {
         private static final LogicProduccion INSTANCE = new LogicProduccion();
     }
 
+    public ListaReglaProduccion buscarRegla(int id_regla) throws Exception {
+        ListaReglaProduccion regla=null;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        regla = dao.BuscarRegla(id_regla);
+        return regla;
+    }
+
     public String MostrarInsumos(String id_regla, String id_producto) throws Exception {
         List<ListaReglaProduccion> lista = null;
-        String respuesta=null;
+        String respuesta = null;
         ProduccionDao dao = new ProduccionDaoImpl();
         lista = dao.MostrarInsumo(Integer.parseInt(id_regla), Integer.parseInt(id_producto));
-        respuesta=LogicTablaReglaProduccion.getInstance().construirGrillaMostrarInsumos(lista);
+        respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaMostrarInsumos(lista);
         return respuesta;
     }
 

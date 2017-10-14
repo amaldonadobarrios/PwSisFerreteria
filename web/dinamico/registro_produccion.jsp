@@ -1,4 +1,111 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="context" value="${pageContext.request.contextPath}" />
+<input type="hidden" id="contexto" value="${context}">
+
+<script>
+    function fneliminarItem(item) {
+        var it = Number(item - 1);
+        var vruta = '/ServProduccion';
+        var vevento = 'EliminarProductofinal';
+        var jqdata = {
+            evento: 'EliminarProductofinal',
+            item: it
+        };
+        fnEjecutarPeticion(vruta, jqdata, vevento);
+    }
+
+    function fn_pintarlistaProduccion(response) {
+        if (response === 'NOSESION') {
+            mensaje('ERROR', 'SESION EXPIRADA');
+            location.href = "login.jsp";
+        } else {
+            var v_resultado = response + "";
+            var respuesta = v_resultado.split('%');
+            var estado = respuesta[0];
+            var tabla = respuesta[1];
+            if (estado == 'ERROR') {
+                mensajeERROR(estado, tabla);
+            } else {
+                $('#tablaProductosFinales').html(tabla);
+                $('#dynamic-table2').DataTable({
+                    responsive: true
+                });
+                $('#dynamic-table2').stacktable();
+            }
+        }
+    }
+
+    function fn_ejecutarAñadirProduccion(jdatos) {
+        var vruta = '/ServProduccion';
+        var vevento = 'AñadirProduccion';
+        fnEjecutarPeticion(vruta, jdatos, vevento);
+
+    }
+
+    function fn_añadir(id_regla, cantidad) {
+        $('#lblregla').css("color", "black");
+        $('#lblcantidad').css("color", "black");
+        if (id_regla != '' && cantidad != '' && cantidad != '0') {
+            var jdatos = {
+                evento: 'AñadirProduccion',
+                id_regla: id_regla,
+                cantidad: cantidad
+            };
+            fn_ejecutarAñadirProduccion(jdatos);
+        } else {
+            $('#lblregla').css("color", "red");
+            $('#lblcantidad').css("color", "red");
+        }
+
+    }
+//CONTROLADOR AJAX
+
+    function fnEjecutarPeticion(ruta, jdata, evento) {
+        var contexto = document.getElementById('contexto').value;
+        var vservlet = contexto + ruta;
+        $.ajax({
+            url: vservlet,
+            method: 'POST',
+            data: jdata,
+            success: function (responseText) {
+                fnControlEvento(evento, responseText + '');
+            }
+        });
+    }
+    function fnControlEvento(vevento, vvrespuesta) {
+        if (vevento == 'AñadirProduccion') {
+            fn_pintarlistaProduccion(vvrespuesta);
+        } else if (vevento == 'EliminarProductofinal') {
+            fn_pintarlistaProduccion(vvrespuesta);
+        }
+
+    }
+    //-----------------MENSAJE EMERGENTE
+    function mensajeERROR(titulo, mensaje) {
+        swal({
+            type: 'warning',
+            title: titulo,
+            text: mensaje,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+    function mensajeOK(titulo, mensaje) {
+        swal({
+            type: 'success',
+            title: titulo,
+            text: mensaje,
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }
+
+
+
+
+
+</script>
+
 <div class="page-header">
     <h1>
         PRODUCCION
@@ -11,132 +118,130 @@
 
 <div class="row">
     <div class="container">
-<div class="col-sm-12">
-    <div class="col-sm-6">
-        <fieldset>
-            <legend>OPERADOR</legend>   
-            <div class="form-group">
-                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> OPERADOR</label>
-                <div class="col-sm-9">
-                    <input type="text" id="form-field-1" name="nombre" placeholder="OPERADOR" class="col-xs-10 col-sm-9"  disabled/>
-                </div>
+        <div class="col-sm-12">
+            <div class="col-sm-6">
+                <fieldset>
+                    <legend>OPERADOR</legend>   
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> OPERADOR</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="form-field-1" name="nombre" placeholder="OPERADOR" class="col-xs-10 col-sm-9"  value="${sessionScope.usuario.apellidoPaterno} ${sessionScope.usuario.apellidoMaterno} ${sessionScope.usuario.nombres}" disabled/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> DNI</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="form-field-1" name="nombre" placeholder="DNI" class="col-xs-10 col-sm-9" value="${sessionScope.usuario.dni}"disabled/>
+                        </div>
+                    </div>
+                </fieldset>
             </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> DNI</label>
-                <div class="col-sm-9">
-                    <input type="text" id="form-field-1" name="nombre" placeholder="DNI" class="col-xs-10 col-sm-9" disabled/>
-                </div>
+            <div class="col-sm-6">             
+                <fieldset>
+                    <legend>Documento</legend>   
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Documento</label>
+                        <div class="col-sm-9">
+                            <select class="chosen-select form-control col-xs-10 col-sm-8" id="form-field-1" name="unidad" data-placeholder="Documento">
+                                <option value="">Seleccione</option>
+                                <option value="FProduccion">Formato de Produccion</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Número</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="form-field-1" name="nombre" placeholder="Número" onkeypress="return solo_numeros(event);"class="col-xs-10 col-sm-9" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Fecha</label>
+                        <div class="input-group col-sm-5" >
+                            <input class="form-control date-picker" id="fecha" name="fecha" type="text" data-date-format="yyyy-mm-dd"/>
+                            <span class="input-group-addon">
+                                <i class="fa fa-calendar bigger-110"></i>
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
             </div>
-        </fieldset>
-    </div>
-    <div class="col-sm-6">             
-        <fieldset>
-            <legend>Documento</legend>   
-            <div class="form-group">
-                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Documento</label>
-                <div class="col-sm-9">
-                    <select class="chosen-select form-control col-xs-10 col-sm-8" id="form-field-1" name="unidad"   data-placeholder="Documento">
-                        <option value="">Seleccione</option>
-                        <option value="3">Formato de Produccion</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Número</label>
-                <div class="col-sm-9">
-                    <input type="text" id="form-field-1" name="nombre" placeholder="Número" class="col-xs-10 col-sm-9" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Fecha</label>
-                <div class="col-sm-9">
-                    <input type="text" id="form-field-1" name="nombre" placeholder="Fecha" class="col-xs-10 col-sm-9" disabled/>
-                </div>
-            </div>
-        </fieldset>
-    </div>
-</div>    
+        </div>    
 
-    <div class="col-sm-12">
-      <fieldset>
-            <legend>Producto</legend>   
-            <div class="form-group">
-                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Producto</label>
-                <div class="col-sm-9">
-                    <select class="chosen-select form-control col-xs-10 col-sm-8" id="form-field-1" name="unidad"   data-placeholder="Producto">
-                        <option value="">Seleccione</option>
-                         <option value="1">Producto 1</option>
-                        <option value="2">Producto 2</option>
-                        <option value="3">Producto 3</option>
-                    </select>
+        <div class="col-sm-12">
+            <fieldset>
+                <legend>Producto</legend>   
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblregla"> Producto</label>
+                    <div class="col-sm-9">
+                        <select class="chosen-select form-control col-xs-10 col-sm-8" id="id_regla" name="unidad"   data-placeholder="Producto" onchange="document.getElementById('cantidad').value = '';">
+                            <option value=""selected>Seleccione</option>
+                            <c:forEach var="reglas" items="${comboreglas}" varStatus="loop">
+                                <option value="${reglas.id_regla}">${reglas.descripcion} ${reglas.marca} ${reglas.presentacion} EN: ${reglas.medida}</option>
+                            </c:forEach>
+                        </select> 
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Unidad</label>
-                <div class="col-sm-9">
-                    <input type="text" id="form-field-1" name="nombre" placeholder="Unidad de medida" class="col-xs-10 col-sm-9" />
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblcantidad"> Cantidad</label>
+                    <div class="col-sm-9">
+                        <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad" class="col-xs-10 col-sm-9" step="any"/>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Cantidad</label>
-                <div class="col-sm-9">
-                    <input type="text" id="form-field-1" name="nombre" placeholder="Cantidad" class="col-xs-10 col-sm-9"/>
-                </div>
-            </div>
-            <div  class="col-sm-12" align="center"> <input type="button"  class="buttons bigger-130 colorpicker-with-alpha"value="Añadir Producto"></div>
-        </fieldset>   
-    </div>
-     <div class="col-sm-12">
-      <fieldset>
-            <legend>PRODUCCION</legend>   
-            <div class="row">
-    <div class="col-xs-12">
-              <div class="clearfix">
-            <div class="pull-right tableTools-container"></div>
+                <div  class="col-sm-12" align="center"> <input type="button"  class="buttons bigger-130 colorpicker-with-alpha"value="Añadir Producto" onclick="fn_añadir(document.getElementById('id_regla').value, document.getElementById('cantidad').value);"></div>
+            </fieldset>   
         </div>
-        <div class="table-header">
-            Resultado para "Producción Registrada"
+        <div class="col-sm-12">
+            <fieldset>
+                <legend>PRODUCCION</legend>   
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="clearfix">
+                            <div class="pull-right tableTools-container"></div>
+                        </div>
+                        <div class="table-header">
+                            Resultado para "Producción Registrada"
+                        </div>
+
+                        <!-- div.table-responsive -->
+                        <!-- div.dataTables_borderWrap -->
+                        <div id="tablaProductosFinales">
+                            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+
+                                        <th>Código</th>
+                                        <th>Cantidad</th>
+                                        <th>Detalle de Producto</th>
+                                        <th>Cantidad</th>
+                                        <th></th>
+                                        <th>Eliminar</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td class="center">  </td>
+                                        <td>  </td>
+                                        <td>  </td>
+                                        <td>  </td>
+                                        <td>  </td>
+                                        <td> 
+
+                                        </td>
+                                        <td></td>
+
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
         </div>
-
-        <!-- div.table-responsive -->
-        <!-- div.dataTables_borderWrap -->
-        <div>
-            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        
-                        <th>Código</th>
-                        <th>Cantidad</th>
-                        <th>Detalle de Producto</th>
-                        <th>Cantidad</th>
-                        <th></th>
-                        <th>Eliminar</th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                        <tr>
-                            <td class="center">  1</td>
-                            <td> 20 </td>
-                            <td> fragua </td>
-                            <td> 50 </td>
-                            <td> 100 </td>
-                            <td> 
-                                <button>Eliminar</button>
-                            </td>
-                            <td></td>
-
-                        </tr>
-                   
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
         </fieldset>   
     </div>  
-   </div></div>
+</div></div>
 
 <!-- PAGE CONTENT BEGINS -->
 
