@@ -32,8 +32,15 @@ public class LogicProduccion {
         private static final LogicProduccion INSTANCE = new LogicProduccion();
     }
 
+    public String GrabarProduccion(ListaReglaProduccion produccion) throws Exception {
+          String estado = null;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        estado = dao.GrabarProduccion(produccion);
+        return estado;  
+    }
+
     public ListaReglaProduccion buscarRegla(int id_regla) throws Exception {
-        ListaReglaProduccion regla=null;
+        ListaReglaProduccion regla = null;
         ProduccionDao dao = new ProduccionDaoImpl();
         regla = dao.BuscarRegla(id_regla);
         return regla;

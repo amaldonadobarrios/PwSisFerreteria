@@ -23,6 +23,11 @@ public class ListaReglaProduccion {
     private int estado;
     private String candena_Id_insumo;
     private String cadena_cantidad;
+    private String candena_Id_Producto;
+    private String candena_Id_Regla;
+    private String cadena_nro_insumos;
+    private int cant_regla;
+    
 
     
     public int getId_producto() {
@@ -131,6 +136,38 @@ public class ListaReglaProduccion {
 
     public void setCadena_cantidad(String cadena_cantidad) {
         this.cadena_cantidad = cadena_cantidad;
+    }
+
+    public String getCandena_Id_Producto() {
+        return candena_Id_Producto;
+    }
+
+    public void setCandena_Id_Producto(String candena_Id_Producto) {
+        this.candena_Id_Producto = candena_Id_Producto;
+    }
+
+    public String getCandena_Id_Regla() {
+        return candena_Id_Regla;
+    }
+
+    public void setCandena_Id_Regla(String candena_Id_Regla) {
+        this.candena_Id_Regla = candena_Id_Regla;
+    }
+
+    public String getCadena_nro_insumos() {
+        return cadena_nro_insumos;
+    }
+
+    public void setCadena_nro_insumos(String cadena_nro_insumos) {
+        this.cadena_nro_insumos = cadena_nro_insumos;
+    }
+
+    public int getCant_regla() {
+        return cant_regla;
+    }
+
+    public void setCant_regla(int cant_regla) {
+        this.cant_regla = cant_regla;
     }
     
 }

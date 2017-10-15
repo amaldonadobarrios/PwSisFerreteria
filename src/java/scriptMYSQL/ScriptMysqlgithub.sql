@@ -620,3 +620,101 @@ set rpta =1;
 
 END$$
 DELIMITER ;
+DELIMITER $$
+CREATE  PROCEDURE `GrabarProduccion`(
+in cantidadreglas int,
+in fecha_doc date,
+in documento varchar(45),
+in numero_doc varchar(45),
+in idusuario int, 
+in cadena_cant_insumos varchar(1000),
+in cadena_id_regla varchar(1000),
+in cadena_id_producto varchar(1000),
+in cadena_cantidad_produccion varchar(1000),
+out rpta int,
+out veristock int)
+BEGIN
+DECLARE v1 INT DEFAULT 1;
+DECLARE idregla int DEFAULT 0;
+DECLARE cantinsumo int DEFAULT 0;
+DECLARE idproducto int DEFAULT 0;
+DECLARE cantproduccion double DEFAULT 0;
+DECLARE v_id_produccion int;
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+/*Primer INSERT datos ACTA*/ 
+CREATE TEMPORARY TABLE REQ_INSUMOS (id_insumo int, requerimiento double,existencias double);
+CREATE TEMPORARY TABLE RESUMEN_REQ_INSUMOS (id_insumo int, requerimiento double,existencias double);
+WHILE v1 <= cantidadreglas DO
+SET idregla = (SELECT strSplit (cadena_id_regla, '@', v1));
+SET idproducto = (SELECT strSplit (cadena_id_producto, '@', v1));
+SET cantproduccion = (SELECT strSplit (cadena_cantidad_produccion, '@', v1));
+SET cantinsumo = (SELECT strSplit (cadena_cant_insumos, '@', v1));
+INSERT INTO  REQ_INSUMOS (select a.id_insumo,(a.cantidad *cantproduccion),b.existencia from detalle_regla_produccion a, producto b where a.id_regla=idregla and a.id_producto=idproducto and a.estado=1 and a.id_insumo=b.id_producto);
+SET v1 = v1+1;
+END WHILE;
+INSERT INTO  RESUMEN_REQ_INSUMOS (SELECT id_insumo,sum(requerimiento), existencias from REQ_INSUMOS group by id_insumo);
+set veristock=(select count(id_insumo) from RESUMEN_REQ_INSUMOS where existencias<requerimiento);
+if(veristock>0)
+then rollback;
+end if;
+select * from RESUMEN_REQ_INSUMOS;
+UPDATE producto INNER JOIN RESUMEN_REQ_INSUMOS on producto.id_producto=RESUMEN_REQ_INSUMOS.id_insumo SET producto.existencia = producto.existencia - RESUMEN_REQ_INSUMOS.requerimiento, producto.fecha_mod = now(), producto.usuario_mod = idusuario;
+INSERT INTO produccion (fecha_reg,fecha,usuario_reg,doc,numero,cantidad_reglas,estado)VALUES(now(),fecha_doc,idusuario,documento,numero_doc,cantidadreglas,1);
+SET v_id_produccion =(SELECT LAST_INSERT_ID());
+SET v1 = 1;
+WHILE v1 <= cantidadreglas DO
+SET idregla = (SELECT strSplit (cadena_id_regla, '@', v1));
+SET cantinsumo = (SELECT strSplit (cadena_cant_insumos, '@', v1));
+SET idproducto = (SELECT strSplit (cadena_id_producto, '@', v1));
+SET cantproduccion = (SELECT strSplit (cadena_cantidad_produccion, '@', v1));
+UPDATE producto set existencia = existencia + cantproduccion, fecha_mod = now(), usuario_mod = idusuario WHERE id_producto=idproducto;
+INSERT INTO detalle_produccion (id_produccion,id_regla,id_producto,cantidad_insumos,cantidad_produccion,fecha_reg,estado)
+VALUES (v_id_produccion,idregla,idproducto,cantinsumo,cantproduccion,now(),1);
+SET v1 = v1+1;
+END WHILE;
+/*Fin de transaccion*/ 
+COMMIT; 
+/*Mandamos 0 si todo salio bien*/ 
+set rpta =1;
+END$$
+DELIMITER ;
+
+
+CREATE TABLE `produccion` (
+  `id_produccion` int(11) NOT NULL AUTO_INCREMENT,
+  `fecha_reg` datetime NOT NULL,
+  `fecha` date DEFAULT NULL,
+  `usuario_reg` int(11) DEFAULT NULL,
+  `doc` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `numero` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `cantidad_reglas` int(11) DEFAULT NULL,
+  `estado` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_produccion`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+CREATE TABLE `detalle_produccion` (
+  `id_detalle_produccion` int(11) NOT NULL AUTO_INCREMENT,
+  `id_produccion` int(11) NOT NULL,
+  `id_regla` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `cantidad_insumos` int(11) NOT NULL,
+  `cantidad_produccion` double NOT NULL,
+  `fecha_reg` datetime NOT NULL,
+  `estado` int(11) NOT NULL,
+  PRIMARY KEY (`id_detalle_produccion`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;

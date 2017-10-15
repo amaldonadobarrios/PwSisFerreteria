@@ -348,4 +348,52 @@ public class ProduccionDaoImpl implements ProduccionDao {
         
         return temp; 
     }
+
+    @Override
+    public String GrabarProduccion(ListaReglaProduccion produccion) throws Exception {
+        String mensaje = null;
+        String sqlResult = "";
+        System.out.println("model.dao.impl.ProduccionDaoImpl.GrabarProduccion()"+produccion.toString());
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/insertProduccion.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+        }
+
+        if (cn != null) {
+
+            try {
+                CallableStatement ps = cn.prepareCall(sqlResult);
+                ps.setInt(1, produccion.getId_producto());
+                ps.registerOutParameter(6, Types.INTEGER);
+                ps.execute();
+                // devuelve el valor del parametro de salida del procedimiento
+                int resultado = ps.getInt(6);
+                if (resultado > 0) {
+//                    cn.commit();
+                    logger.info("OK");
+                    mensaje = "OK";
+                } else {
+                    //cn.rollback();
+                    mensaje = "NOK";
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return mensaje;
+    }
 }

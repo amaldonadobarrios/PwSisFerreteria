@@ -25,4 +25,6 @@ public interface ProduccionDao {
     public List<ListaReglaProduccion> MostrarInsumo(int id_regla, int id_producto) throws Exception;
 
     public ListaReglaProduccion BuscarRegla(int id_regla) throws Exception;
+
+    public String GrabarProduccion(ListaReglaProduccion produccion) throws Exception;
 }

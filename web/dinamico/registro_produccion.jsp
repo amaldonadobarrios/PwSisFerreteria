@@ -3,6 +3,52 @@
 <input type="hidden" id="contexto" value="${context}">
 
 <script>
+    //-------------------REGISTRAR PRODUCCION
+    function fn_pintar_RegitrarProduccion(response) {
+        alert(response);
+    }
+
+    function fn_ejecutarRegistrarProduccion(jdatos) {
+        var vruta = '/ServProduccion';
+        var vevento = 'RegitrarProduccion';
+        fnEjecutarPeticion(vruta, jdatos, vevento);
+
+    }
+
+    function fn_RegistrarProduccion() {
+        var numero = $('#numero').val();
+        var fecha = $('#fecha').val();
+        var doc = $('#cbxdoc').val();
+        $('#lblnumero').css("color", "black");
+        $('#lblfecha').css("color", "black");
+        $('#lbldoc').css("color", "black");
+        if (numero != '' && fecha != '' && doc != '') {
+            var jdatos = {
+                evento: 'RegitrarProduccion',
+                numero: numero,
+                fecha: fecha,
+                documento: doc
+            };
+            fn_ejecutarRegistrarProduccion(jdatos);
+        } else {
+            $('#lblnumero').css("color", "red");
+            $('#lblfecha').css("color", "red");
+            $('#lbldoc').css("color", "red");
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    //---------------------Poductos finales a fabricar
     function fneliminarItem(item) {
         var it = Number(item - 1);
         var vruta = '/ServProduccion';
@@ -78,6 +124,10 @@
         } else if (vevento == 'EliminarProductofinal') {
             fn_pintarlistaProduccion(vvrespuesta);
         }
+        elsse if (vevento == 'RegitrarProduccion') {
+            fn_pintar_RegitrarProduccion(vvrespuesta);
+
+        }
 
     }
     //-----------------MENSAJE EMERGENTE
@@ -140,22 +190,22 @@
                 <fieldset>
                     <legend>Documento</legend>   
                     <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Documento</label>
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lbldoc"> Documento</label>
                         <div class="col-sm-9">
-                            <select class="chosen-select form-control col-xs-10 col-sm-8" id="form-field-1" name="unidad" data-placeholder="Documento">
+                            <select class="chosen-select form-control col-xs-10 col-sm-8" id="cbxdoc" name="cbxdoc" data-placeholder="Documento">
                                 <option value="">Seleccione</option>
-                                <option value="FProduccion">Formato de Produccion</option>
+                                <option value="FProduccion" selected="">Formato de Produccion</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Número</label>
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblnumero"> Número</label>
                         <div class="col-sm-9">
-                            <input type="text" id="form-field-1" name="nombre" placeholder="Número" onkeypress="return solo_numeros(event);"class="col-xs-10 col-sm-9" />
+                            <input type="text" id="numero" name="numero" placeholder="Número" onkeypress="return solo_numeros(event);"class="col-xs-10 col-sm-9" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Fecha</label>
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1" id="lblfecha"> Fecha</label>
                         <div class="input-group col-sm-5" >
                             <input class="form-control date-picker" id="fecha" name="fecha" type="text" data-date-format="yyyy-mm-dd"/>
                             <span class="input-group-addon">
@@ -254,7 +304,7 @@
 
 <div class="clearfix form-actions">
     <div class="col-md-12" align="center">
-        <button class="btn btn-info" type="submit">
+        <button class="btn btn-info" type="button" onclick="fn_RegistrarProduccion();">
             <i class="ace-icon fa fa-check bigger-110"></i>
             Registrar
         </button>
