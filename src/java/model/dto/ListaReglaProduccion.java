@@ -27,7 +27,9 @@ public class ListaReglaProduccion {
     private String candena_Id_Regla;
     private String cadena_nro_insumos;
     private int cant_regla;
-    
+    private String fecha;
+    private String documento;
+    private String numero_doc;
 
     
     public int getId_producto() {
@@ -168,6 +170,30 @@ public class ListaReglaProduccion {
 
     public void setCant_regla(int cant_regla) {
         this.cant_regla = cant_regla;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public String getNumero_doc() {
+        return numero_doc;
+    }
+
+    public void setNumero_doc(String numero_doc) {
+        this.numero_doc = numero_doc;
     }
     
 }

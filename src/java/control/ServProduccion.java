@@ -420,6 +420,9 @@ public class ServProduccion extends HttpServlet {
             produccion.setCadena_cantidad(cantidad);
             produccion.setCandena_Id_Producto(id_producto);
             produccion.setCandena_Id_Regla(id_regla);
+            produccion.setDocumento(doc);
+            produccion.setFecha(fecha);
+            produccion.setNumero_doc(numero);
         } else {
             msg = "ERROR%" + "LISTA DE PRODCCION VACIA";
             HtmlUtil.getInstance().escrituraHTML(response, msg);

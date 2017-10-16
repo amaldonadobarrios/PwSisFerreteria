@@ -367,12 +367,36 @@ public class ProduccionDaoImpl implements ProduccionDao {
         if (cn != null) {
 
             try {
+
+//in fecha_doc date,
+//in documento varchar(45),
+//in numero_doc varchar(45),
+//in idusuario int, 
+//in cadena_cant_insumos varchar(1000),
+//in cadena_id_regla varchar(1000),
+//in cadena_id_producto varchar(1000),
+//in cadena_cantidad_produccion varchar(1000),
+//out rpta int,
+//out veristock int,
+//out idproduccion int
+                
                 CallableStatement ps = cn.prepareCall(sqlResult);
-                ps.setInt(1, produccion.getId_producto());
-                ps.registerOutParameter(6, Types.INTEGER);
+                ps.setInt(1, produccion.getCant_regla());
+                ps.setString(2, produccion.getFecha());
+                ps.setString(3, produccion.getDocumento());
+                ps.setString(4, produccion.getNumero_doc());
+                ps.setInt(5, produccion.getId_usuario());
+                ps.setString(6, produccion.getCadena_nro_insumos());
+                ps.setString(7, produccion.getCandena_Id_Regla());
+                ps.setString(8, produccion.getCandena_Id_Producto());
+                ps.setString(9, produccion.getCadena_cantidad());
+                ps.registerOutParameter(10, Types.INTEGER);
+                ps.registerOutParameter(11, Types.INTEGER);
+                ps.registerOutParameter(12, Types.INTEGER);
                 ps.execute();
                 // devuelve el valor del parametro de salida del procedimiento
-                int resultado = ps.getInt(6);
+                int resultado = ps.getInt(10);
+                int verificado= ps.getInt(11);
                 if (resultado > 0) {
 //                    cn.commit();
                     logger.info("OK");

@@ -620,6 +620,7 @@ set rpta =1;
 
 END$$
 DELIMITER ;
+
 DELIMITER $$
 CREATE  PROCEDURE `GrabarProduccion`(
 in cantidadreglas int,
@@ -632,7 +633,9 @@ in cadena_id_regla varchar(1000),
 in cadena_id_producto varchar(1000),
 in cadena_cantidad_produccion varchar(1000),
 out rpta int,
-out veristock int)
+out veristock int,
+out idproduccion int
+)
 BEGIN
 DECLARE v1 INT DEFAULT 1;
 DECLARE idregla int DEFAULT 0;
@@ -676,6 +679,7 @@ select * from RESUMEN_REQ_INSUMOS;
 UPDATE producto INNER JOIN RESUMEN_REQ_INSUMOS on producto.id_producto=RESUMEN_REQ_INSUMOS.id_insumo SET producto.existencia = producto.existencia - RESUMEN_REQ_INSUMOS.requerimiento, producto.fecha_mod = now(), producto.usuario_mod = idusuario;
 INSERT INTO produccion (fecha_reg,fecha,usuario_reg,doc,numero,cantidad_reglas,estado)VALUES(now(),fecha_doc,idusuario,documento,numero_doc,cantidadreglas,1);
 SET v_id_produccion =(SELECT LAST_INSERT_ID());
+set idproduccion=v_id_produccion;
 SET v1 = 1;
 WHILE v1 <= cantidadreglas DO
 SET idregla = (SELECT strSplit (cadena_id_regla, '@', v1));
@@ -693,6 +697,7 @@ COMMIT;
 set rpta =1;
 END$$
 DELIMITER ;
+
 
 
 CREATE TABLE `produccion` (
