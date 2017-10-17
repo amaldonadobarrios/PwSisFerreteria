@@ -634,15 +634,20 @@ in cadena_id_producto varchar(1000),
 in cadena_cantidad_produccion varchar(1000),
 out rpta int,
 out veristock int,
-out idproduccion int
+out idproduccion int,
+out requerimientos varchar(1000)
 )
 BEGIN
+DECLARE cur_json varchar(1000);
 DECLARE v1 INT DEFAULT 1;
 DECLARE idregla int DEFAULT 0;
 DECLARE cantinsumo int DEFAULT 0;
 DECLARE idproducto int DEFAULT 0;
 DECLARE cantproduccion double DEFAULT 0;
 DECLARE v_id_produccion int;
+
+
+
 /*Handler para error SQL*/ 
 DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 BEGIN 
@@ -672,10 +677,14 @@ SET v1 = v1+1;
 END WHILE;
 INSERT INTO  RESUMEN_REQ_INSUMOS (SELECT id_insumo,sum(requerimiento), existencias from REQ_INSUMOS group by id_insumo);
 set veristock=(select count(id_insumo) from RESUMEN_REQ_INSUMOS where existencias<requerimiento);
+			
+set cur_json=(select concat(a.id_insumo,'%',a.requerimiento,'%',a.existencias,'%',b.descripcion) from RESUMEN_REQ_INSUMOS a, producto b where a.existencias<a.requerimiento and a.id_insumo=b.id_producto limit 1);
+set requerimientos=concat(cur_json);
+
 if(veristock>0)
 then rollback;
 end if;
-select * from RESUMEN_REQ_INSUMOS;
+
 UPDATE producto INNER JOIN RESUMEN_REQ_INSUMOS on producto.id_producto=RESUMEN_REQ_INSUMOS.id_insumo SET producto.existencia = producto.existencia - RESUMEN_REQ_INSUMOS.requerimiento, producto.fecha_mod = now(), producto.usuario_mod = idusuario;
 INSERT INTO produccion (fecha_reg,fecha,usuario_reg,doc,numero,cantidad_reglas,estado)VALUES(now(),fecha_doc,idusuario,documento,numero_doc,cantidadreglas,1);
 SET v_id_produccion =(SELECT LAST_INSERT_ID());
@@ -697,6 +706,7 @@ COMMIT;
 set rpta =1;
 END$$
 DELIMITER ;
+
 
 
 

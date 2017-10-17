@@ -12,7 +12,6 @@
         var vruta = '/ServProduccion';
         var vevento = 'RegitrarProduccion';
         fnEjecutarPeticion(vruta, jdatos, vevento);
-
     }
 
     function fn_RegistrarProduccion() {
@@ -35,19 +34,7 @@
             $('#lblfecha').css("color", "red");
             $('#lbldoc').css("color", "red");
         }
-
-
     }
-
-
-
-
-
-
-
-
-
-
     //---------------------Poductos finales a fabricar
     function fneliminarItem(item) {
         var it = Number(item - 1);
@@ -88,7 +75,9 @@
 
     }
 
-    function fn_añadir(id_regla, cantidad) {
+    function fn_añadir() {
+        var id_regla = document.getElementById('id_regla').value;
+        var cantidad = document.getElementById('cantidad').value;
         $('#lblregla').css("color", "black");
         $('#lblcantidad').css("color", "black");
         if (id_regla != '' && cantidad != '' && cantidad != '0') {
@@ -102,7 +91,6 @@
             $('#lblregla').css("color", "red");
             $('#lblcantidad').css("color", "red");
         }
-
     }
 //CONTROLADOR AJAX
 
@@ -123,8 +111,7 @@
             fn_pintarlistaProduccion(vvrespuesta);
         } else if (vevento == 'EliminarProductofinal') {
             fn_pintarlistaProduccion(vvrespuesta);
-        }
-        elsse if (vevento == 'RegitrarProduccion') {
+        } else if (vevento == 'RegitrarProduccion') {
             fn_pintar_RegitrarProduccion(vvrespuesta);
 
         }
@@ -237,7 +224,7 @@
                         <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad" class="col-xs-10 col-sm-9" step="any"/>
                     </div>
                 </div>
-                <div  class="col-sm-12" align="center"> <input type="button"  class="buttons bigger-130 colorpicker-with-alpha"value="Añadir Producto" onclick="fn_añadir(document.getElementById('id_regla').value, document.getElementById('cantidad').value);"></div>
+                <div  class="col-sm-12" align="center"> <input type="button"  class="buttons bigger-130 colorpicker-with-alpha" value="Añadir Producto" onclick="fn_añadir()"></div>
             </fieldset>   
         </div>
         <div class="col-sm-12">

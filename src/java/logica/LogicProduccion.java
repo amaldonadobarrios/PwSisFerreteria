@@ -33,7 +33,7 @@ public class LogicProduccion {
     }
 
     public String GrabarProduccion(ListaReglaProduccion produccion) throws Exception {
-          String estado = null;
+        String estado = null;
         ProduccionDao dao = new ProduccionDaoImpl();
         estado = dao.GrabarProduccion(produccion);
         return estado;  

@@ -352,6 +352,7 @@ public class ProduccionDaoImpl implements ProduccionDao {
     @Override
     public String GrabarProduccion(ListaReglaProduccion produccion) throws Exception {
         String mensaje = null;
+        String validacion=null;
         String sqlResult = "";
         System.out.println("model.dao.impl.ProduccionDaoImpl.GrabarProduccion()"+produccion.toString());
         try {
@@ -367,19 +368,6 @@ public class ProduccionDaoImpl implements ProduccionDao {
         if (cn != null) {
 
             try {
-
-//in fecha_doc date,
-//in documento varchar(45),
-//in numero_doc varchar(45),
-//in idusuario int, 
-//in cadena_cant_insumos varchar(1000),
-//in cadena_id_regla varchar(1000),
-//in cadena_id_producto varchar(1000),
-//in cadena_cantidad_produccion varchar(1000),
-//out rpta int,
-//out veristock int,
-//out idproduccion int
-                
                 CallableStatement ps = cn.prepareCall(sqlResult);
                 ps.setInt(1, produccion.getCant_regla());
                 ps.setString(2, produccion.getFecha());
@@ -393,17 +381,27 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 ps.registerOutParameter(10, Types.INTEGER);
                 ps.registerOutParameter(11, Types.INTEGER);
                 ps.registerOutParameter(12, Types.INTEGER);
+                ps.registerOutParameter(13, Types.VARCHAR);
                 ps.execute();
+                
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(10);
                 int verificado= ps.getInt(11);
+                int idproduccion= ps.getInt(12);
+                String requerimiento_json="";
+               requerimiento_json =ps.getString(13);
+                if (verificado>0) {
+                     validacion= "EXISTEN "+verificado+ " INSUMOS QUE NO CUBREN EL REQUERIMIENTO" ;
+                    }else{
+                     validacion="CORRECTO";
+                 }
                 if (resultado > 0) {
 //                    cn.commit();
                     logger.info("OK");
-                    mensaje = "OK";
+                    mensaje = "OK%"+validacion+"%"+requerimiento_json+"%"+idproduccion;
                 } else {
                     //cn.rollback();
-                    mensaje = "NOK";
+                    mensaje = "NOK%"+validacion+"%"+requerimiento_json;
                 }
 
             } catch (SQLException e) {
@@ -417,7 +415,6 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 }
             }
         }
-
-        return mensaje;
+       return mensaje;
     }
 }
