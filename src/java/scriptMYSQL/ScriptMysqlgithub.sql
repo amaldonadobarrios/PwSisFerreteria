@@ -639,6 +639,7 @@ out requerimientos varchar(1000)
 )
 BEGIN
 DECLARE cur_json varchar(1000);
+DECLARE cur_json2 varchar(1000) default "";
 DECLARE v1 INT DEFAULT 1;
 DECLARE idregla int DEFAULT 0;
 DECLARE cantinsumo int DEFAULT 0;
@@ -646,7 +647,9 @@ DECLARE idproducto int DEFAULT 0;
 DECLARE cantproduccion double DEFAULT 0;
 DECLARE v_id_produccion int;
 
-
+DECLARE _START INTEGER default 0;
+DECLARE _LIMIT INTEGER default 1;
+DECLARE _SIZEREQ INTEGER default 0;
 
 /*Handler para error SQL*/ 
 DECLARE EXIT HANDLER FOR SQLEXCEPTION 
@@ -667,6 +670,9 @@ START TRANSACTION;
 /*Primer INSERT datos ACTA*/ 
 CREATE TEMPORARY TABLE REQ_INSUMOS (id_insumo int, requerimiento double,existencias double);
 CREATE TEMPORARY TABLE RESUMEN_REQ_INSUMOS (id_insumo int, requerimiento double,existencias double);
+INSERT INTO produccion (fecha_reg,fecha,usuario_reg,doc,numero,cantidad_reglas,estado)VALUES(now(),fecha_doc,idusuario,documento,numero_doc,cantidadreglas,1);
+SET v_id_produccion =(SELECT LAST_INSERT_ID());
+set idproduccion=v_id_produccion;
 WHILE v1 <= cantidadreglas DO
 SET idregla = (SELECT strSplit (cadena_id_regla, '@', v1));
 SET idproducto = (SELECT strSplit (cadena_id_producto, '@', v1));
@@ -677,18 +683,21 @@ SET v1 = v1+1;
 END WHILE;
 INSERT INTO  RESUMEN_REQ_INSUMOS (SELECT id_insumo,sum(requerimiento), existencias from REQ_INSUMOS group by id_insumo);
 set veristock=(select count(id_insumo) from RESUMEN_REQ_INSUMOS where existencias<requerimiento);
-			
-set cur_json=(select concat(a.id_insumo,'%',a.requerimiento,'%',a.existencias,'%',b.descripcion) from RESUMEN_REQ_INSUMOS a, producto b where a.existencias<a.requerimiento and a.id_insumo=b.id_producto limit 1);
-set requerimientos=concat(cur_json);
-
+set _SIZEREQ=(select count(id_insumo) from RESUMEN_REQ_INSUMOS where existencias<requerimiento);
+SET _LIMIT=1;
+WHILE _START <_SIZEREQ DO
+Set cur_json=(select concat('El insumo : ',b.descripcion,' ',b.marca,' requiere de : ',FORMAT(a.requerimiento,2),' ',b.medida,' Pero existe en inventario: ',FORMAT(a.existencias,2),' ',b.medida,'\n') from RESUMEN_REQ_INSUMOS a, producto b where a.existencias<a.requerimiento and a.id_insumo=b.id_producto limit _START,_LIMIT);
+set cur_json2= concat(cur_json2,cur_json);
+SET _START = _START+1;
+SET _LIMIT=_LIMIT+1;
+END WHILE;
+set requerimientos=cur_json2;
 if(veristock>0)
 then rollback;
 end if;
 
 UPDATE producto INNER JOIN RESUMEN_REQ_INSUMOS on producto.id_producto=RESUMEN_REQ_INSUMOS.id_insumo SET producto.existencia = producto.existencia - RESUMEN_REQ_INSUMOS.requerimiento, producto.fecha_mod = now(), producto.usuario_mod = idusuario;
-INSERT INTO produccion (fecha_reg,fecha,usuario_reg,doc,numero,cantidad_reglas,estado)VALUES(now(),fecha_doc,idusuario,documento,numero_doc,cantidadreglas,1);
-SET v_id_produccion =(SELECT LAST_INSERT_ID());
-set idproduccion=v_id_produccion;
+
 SET v1 = 1;
 WHILE v1 <= cantidadreglas DO
 SET idregla = (SELECT strSplit (cadena_id_regla, '@', v1));
@@ -700,12 +709,15 @@ INSERT INTO detalle_produccion (id_produccion,id_regla,id_producto,cantidad_insu
 VALUES (v_id_produccion,idregla,idproducto,cantinsumo,cantproduccion,now(),1);
 SET v1 = v1+1;
 END WHILE;
+
+INSERT INTO descuento_produccion (SELECT v_id_produccion,id_insumo,format(requerimiento,2), format(existencias,2) ,format((existencias-requerimiento),2) as inventario,now() from RESUMEN_REQ_INSUMOS);
 /*Fin de transaccion*/ 
 COMMIT; 
 /*Mandamos 0 si todo salio bien*/ 
 set rpta =1;
 END$$
 DELIMITER ;
+
 
 
 
@@ -733,3 +745,12 @@ CREATE TABLE `detalle_produccion` (
   `estado` int(11) NOT NULL,
   PRIMARY KEY (`id_detalle_produccion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+CREATE TABLE `descuento_produccion` (
+  `id_produccion` int(11) DEFAULT NULL,
+  `id_insumo` int(11) DEFAULT NULL,
+  `requerimiento` double DEFAULT NULL,
+  `existencias` double DEFAULT NULL,
+  `inventario` double DEFAULT NULL,
+  `fecha_reg` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;

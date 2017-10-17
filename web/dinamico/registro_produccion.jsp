@@ -6,14 +6,33 @@
     //-------------------REGISTRAR PRODUCCION
     function fn_pintar_RegitrarProduccion(response) {
         alert(response);
-    }
+        if (response === 'NOSESION') {
+            mensaje('ERROR', 'SESION EXPIRADA');
+            location.href = "login.jsp";
+        } else {
+            var v_resultado = response + "";
+            var respuesta = v_resultado.split('%');
+            var estado = respuesta[0];
+            var validacion = respuesta[1];
+            var detalleerror = respuesta[2];
+            var id = respuesta[3];
+            if (estado == 'NOK') {
+                mensajeERROR('ERROR'+'\n'+validacion, detalleerror);
+            } else if (estado == 'OK') {
+              mensajeOK("CORRECTO", "SE REGISTRO LA PRODCCION EXISTOSAMENTE");   
+            }
 
+        }
+        
+        
+    }
+    
     function fn_ejecutarRegistrarProduccion(jdatos) {
         var vruta = '/ServProduccion';
         var vevento = 'RegitrarProduccion';
         fnEjecutarPeticion(vruta, jdatos, vevento);
     }
-
+    
     function fn_RegistrarProduccion() {
         var numero = $('#numero').val();
         var fecha = $('#fecha').val();
@@ -46,7 +65,7 @@
         };
         fnEjecutarPeticion(vruta, jqdata, vevento);
     }
-
+    
     function fn_pintarlistaProduccion(response) {
         if (response === 'NOSESION') {
             mensaje('ERROR', 'SESION EXPIRADA');
@@ -67,14 +86,14 @@
             }
         }
     }
-
+    
     function fn_ejecutarAñadirProduccion(jdatos) {
         var vruta = '/ServProduccion';
         var vevento = 'AñadirProduccion';
         fnEjecutarPeticion(vruta, jdatos, vevento);
-
+        
     }
-
+    
     function fn_añadir() {
         var id_regla = document.getElementById('id_regla').value;
         var cantidad = document.getElementById('cantidad').value;
@@ -93,7 +112,7 @@
         }
     }
 //CONTROLADOR AJAX
-
+    
     function fnEjecutarPeticion(ruta, jdata, evento) {
         var contexto = document.getElementById('contexto').value;
         var vservlet = contexto + ruta;
@@ -113,9 +132,9 @@
             fn_pintarlistaProduccion(vvrespuesta);
         } else if (vevento == 'RegitrarProduccion') {
             fn_pintar_RegitrarProduccion(vvrespuesta);
-
+            
         }
-
+        
     }
     //-----------------MENSAJE EMERGENTE
     function mensajeERROR(titulo, mensaje) {
@@ -123,8 +142,7 @@
             type: 'warning',
             title: titulo,
             text: mensaje,
-            timer: 2000,
-            showConfirmButton: false
+            showConfirmButton: true
         });
     }
     function mensajeOK(titulo, mensaje) {
@@ -136,11 +154,11 @@
             showConfirmButton: false
         });
     }
-
-
-
-
-
+    
+    
+    
+    
+    
 </script>
 
 <div class="page-header">

@@ -391,7 +391,7 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 String requerimiento_json="";
                requerimiento_json =ps.getString(13);
                 if (verificado>0) {
-                     validacion= "EXISTEN "+verificado+ " INSUMOS QUE NO CUBREN EL REQUERIMIENTO" ;
+                     validacion= "EXISTEN "+verificado+ " INSUMOS SIN STOCK \n" ;
                     }else{
                      validacion="CORRECTO";
                  }
