@@ -3,13 +3,13 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="idproduccion" class="java.lang.Integer">
+	<parameter name="Subid_produccion" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT a.id_produccion,a.id_insumo,format(a.requerimiento,2),format(a.existencias,2),format(a.inventario,2), b.descripcion,b.marca,b.presentacion,b.medida FROM descuento_produccion a
 left join producto b on a.id_insumo=b.id_producto
-where a.id_produccion=$P{idproduccion}]]>
+where a.id_produccion=$P{Subid_produccion};]]>
 	</queryString>
 	<field name="id_produccion" class="java.lang.Integer"/>
 	<field name="id_insumo" class="java.lang.Integer"/>

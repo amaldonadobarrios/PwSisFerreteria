@@ -3,9 +3,15 @@
 <input type="hidden" id="contexto" value="${context}">
 
 <script>
+      function redireccionarPagina() {
+    window.location = "SMenu?action=pagRegistroProduccion";
+    }
+    
+    
     //-------------------REGISTRAR PRODUCCION
     function fn_pintar_RegitrarProduccion(response) {
         alert(response);
+        $('#modalLoaging').modal('hide');
         if (response === 'NOSESION') {
             mensaje('ERROR', 'SESION EXPIRADA');
             location.href = "login.jsp";
@@ -17,22 +23,30 @@
             var detalleerror = respuesta[2];
             var id = respuesta[3];
             if (estado == 'NOK') {
-                mensajeERROR('ERROR'+'\n'+validacion, detalleerror);
+                mensajeERROR('ERROR' + '\n' + validacion, detalleerror);
             } else if (estado == 'OK') {
-              mensajeOK("CORRECTO", "SE REGISTRO LA PRODCCION EXISTOSAMENTE");   
+                mensajeOK("CORRECTO", "SE REGISTRO LA PRODCCION EXISTOSAMENTE");
+                var popUp = window.open('ServReporte?evento=produccion&estado=1&id_produccion=' + id, 'ventana1', "width=700,height=500,scrollbars=SI");
+                if (popUp == null || typeof (popUp) == 'undefined') {
+                    $('#modalLoaging').modal('show');
+                    setTimeout("redireccionarPagina()", 20000);
+                } else {
+                    $('#modalLoaging').modal('hide');
+                    setTimeout("redireccionarPagina()", 5000);
+                }
             }
 
         }
-        
-        
+
+
     }
-    
+
     function fn_ejecutarRegistrarProduccion(jdatos) {
         var vruta = '/ServProduccion';
         var vevento = 'RegitrarProduccion';
         fnEjecutarPeticion(vruta, jdatos, vevento);
     }
-    
+
     function fn_RegistrarProduccion() {
         var numero = $('#numero').val();
         var fecha = $('#fecha').val();
@@ -47,6 +61,7 @@
                 fecha: fecha,
                 documento: doc
             };
+            $('#modalLoaging').modal('show');
             fn_ejecutarRegistrarProduccion(jdatos);
         } else {
             $('#lblnumero').css("color", "red");
@@ -65,7 +80,7 @@
         };
         fnEjecutarPeticion(vruta, jqdata, vevento);
     }
-    
+
     function fn_pintarlistaProduccion(response) {
         if (response === 'NOSESION') {
             mensaje('ERROR', 'SESION EXPIRADA');
@@ -86,14 +101,14 @@
             }
         }
     }
-    
+
     function fn_ejecutarAñadirProduccion(jdatos) {
         var vruta = '/ServProduccion';
         var vevento = 'AñadirProduccion';
         fnEjecutarPeticion(vruta, jdatos, vevento);
-        
+
     }
-    
+
     function fn_añadir() {
         var id_regla = document.getElementById('id_regla').value;
         var cantidad = document.getElementById('cantidad').value;
@@ -112,7 +127,7 @@
         }
     }
 //CONTROLADOR AJAX
-    
+
     function fnEjecutarPeticion(ruta, jdata, evento) {
         var contexto = document.getElementById('contexto').value;
         var vservlet = contexto + ruta;
@@ -132,9 +147,9 @@
             fn_pintarlistaProduccion(vvrespuesta);
         } else if (vevento == 'RegitrarProduccion') {
             fn_pintar_RegitrarProduccion(vvrespuesta);
-            
+
         }
-        
+
     }
     //-----------------MENSAJE EMERGENTE
     function mensajeERROR(titulo, mensaje) {
@@ -154,11 +169,11 @@
             showConfirmButton: false
         });
     }
-    
-    
-    
-    
-    
+
+
+
+
+
 </script>
 
 <div class="page-header">
@@ -315,11 +330,18 @@
         </button>
 
         &nbsp; &nbsp; &nbsp;
-        <button class="btn" type="reset">
+        <button class="btn" type="button" onclick="redireccionarPagina();">
             <i class="ace-icon fa fa-undo bigger-110"></i>
             Limpiar
         </button>
     </div>
 </div>
 
+<div class="modal fade container-fluid" id="modalLoaging" role="dialog" data-backdrop="static" data-keyboard="false" >
+    <div class="modal-dialog modal-sm container-fluid">
+        <br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div class="loader  container-fluid">
+        </div>
+    </div>
+</div>
 

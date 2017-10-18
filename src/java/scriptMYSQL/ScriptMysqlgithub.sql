@@ -621,6 +621,46 @@ set rpta =1;
 END$$
 DELIMITER ;
 
+
+
+
+
+
+
+CREATE TABLE `produccion` (
+  `id_produccion` int(11) NOT NULL AUTO_INCREMENT,
+  `fecha_reg` datetime NOT NULL,
+  `fecha` date DEFAULT NULL,
+  `usuario_reg` int(11) DEFAULT NULL,
+  `doc` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `numero` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `cantidad_reglas` int(11) DEFAULT NULL,
+  `estado` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_produccion`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+CREATE TABLE `detalle_produccion` (
+  `id_detalle_produccion` int(11) NOT NULL AUTO_INCREMENT,
+  `id_produccion` int(11) NOT NULL,
+  `id_regla` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `cantidad_insumos` int(11) NOT NULL,
+  `cantidad_produccion` double NOT NULL,
+  `fecha_reg` datetime NOT NULL,
+  `estado` int(11) NOT NULL,
+  PRIMARY KEY (`id_detalle_produccion`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+CREATE TABLE `descuento_produccion` (
+  `id_produccion` int(11) DEFAULT NULL,
+  `id_insumo` int(11) DEFAULT NULL,
+  `requerimiento` double DEFAULT NULL,
+  `existencias` double DEFAULT NULL,
+  `inventario` double DEFAULT NULL,
+  `fecha_reg` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+
 DELIMITER $$
 CREATE  PROCEDURE `GrabarProduccion`(
 in cantidadreglas int,
@@ -709,48 +749,10 @@ INSERT INTO detalle_produccion (id_produccion,id_regla,id_producto,cantidad_insu
 VALUES (v_id_produccion,idregla,idproducto,cantinsumo,cantproduccion,now(),1);
 SET v1 = v1+1;
 END WHILE;
-
-INSERT INTO descuento_produccion (SELECT v_id_produccion,id_insumo,format(requerimiento,2), format(existencias,2) ,format((existencias-requerimiento),2) as inventario,now() from RESUMEN_REQ_INSUMOS);
+INSERT INTO descuento_produccion (SELECT v_id_produccion as id_produccion ,id_insumo,requerimiento, existencias  ,(existencias-requerimiento) as inventario,now() as fecha_reg from RESUMEN_REQ_INSUMOS);
 /*Fin de transaccion*/ 
 COMMIT; 
 /*Mandamos 0 si todo salio bien*/ 
 set rpta =1;
 END$$
 DELIMITER ;
-
-
-
-
-
-CREATE TABLE `produccion` (
-  `id_produccion` int(11) NOT NULL AUTO_INCREMENT,
-  `fecha_reg` datetime NOT NULL,
-  `fecha` date DEFAULT NULL,
-  `usuario_reg` int(11) DEFAULT NULL,
-  `doc` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `numero` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `cantidad_reglas` int(11) DEFAULT NULL,
-  `estado` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id_produccion`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
-CREATE TABLE `detalle_produccion` (
-  `id_detalle_produccion` int(11) NOT NULL AUTO_INCREMENT,
-  `id_produccion` int(11) NOT NULL,
-  `id_regla` int(11) NOT NULL,
-  `id_producto` int(11) NOT NULL,
-  `cantidad_insumos` int(11) NOT NULL,
-  `cantidad_produccion` double NOT NULL,
-  `fecha_reg` datetime NOT NULL,
-  `estado` int(11) NOT NULL,
-  PRIMARY KEY (`id_detalle_produccion`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
-CREATE TABLE `descuento_produccion` (
-  `id_produccion` int(11) DEFAULT NULL,
-  `id_insumo` int(11) DEFAULT NULL,
-  `requerimiento` double DEFAULT NULL,
-  `existencias` double DEFAULT NULL,
-  `inventario` double DEFAULT NULL,
-  `fecha_reg` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
