@@ -11,6 +11,7 @@ import model.dao.ProduccionDao;
 import model.dao.ProductoDao;
 import model.dao.impl.ProduccionDaoImpl;
 import model.dao.impl.ProductoDaoImpl;
+import model.dto.ListaProduccion;
 import model.dto.ListaReglaProduccion;
 import model.dto.Producto;
 
@@ -27,20 +28,36 @@ public class LogicProduccion {
         return LogicProduccionHolder.INSTANCE;
     }
 
+    public String VerificarErrorProduccion(int contador, String id_regla, String id_producto, String cantidad, String cant_insumos) throws Exception{
+         String estado = null;
+         List<ListaReglaProduccion> list;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        list = dao.VerificarErrorProduccion(contador,  id_regla,  id_producto,  cantidad,  cant_insumos);
+        
+        return "hola"; 
+    }
+
     private static class LogicProduccionHolder {
 
         private static final LogicProduccion INSTANCE = new LogicProduccion();
+    }
+
+    public int VerificarProduccion(int contador, String id_regla, String id_producto, String cantidad, String cant_insumos)throws Exception {
+        int estado = 1;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        estado = dao.VerificarProduccion(contador,  id_regla,  id_producto,  cantidad,  cant_insumos);
+        return estado; 
     }
 
     public String GrabarProduccion(ListaReglaProduccion produccion) throws Exception {
         String estado = null;
         ProduccionDao dao = new ProduccionDaoImpl();
         estado = dao.GrabarProduccion(produccion);
-        return estado;  
+        return estado;
     }
 
-    public ListaReglaProduccion buscarRegla(int id_regla) throws Exception {
-        ListaReglaProduccion regla = null;
+    public ListaProduccion buscarRegla(int id_regla) throws Exception {
+        ListaProduccion regla = null;
         ProduccionDao dao = new ProduccionDaoImpl();
         regla = dao.BuscarRegla(id_regla);
         return regla;

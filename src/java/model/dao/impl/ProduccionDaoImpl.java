@@ -14,6 +14,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import model.dao.ProduccionDao;
+import model.dto.ListaProduccion;
 import model.dto.ListaReglaProduccion;
 import org.apache.log4j.Logger;
 import util.Util;
@@ -28,13 +29,13 @@ public class ProduccionDaoImpl implements ProduccionDao {
     final static Logger logger = Logger.getLogger(ProduccionDaoImpl.class);
     Util uti = new Util();
     Connection cn = null;
-    ConectaDB db = new ConectaDB();    
-    
+    ConectaDB db = new ConectaDB();
+
     @Override
     public List<ListaReglaProduccion> listarreglas() throws Exception {
         String sqlResult = "";
         List<ListaReglaProduccion> listTemp = null;
-        
+
         try {
             cn = db.getConnection();
             sqlResult = uti.getLocalResource("/sql/selectReglaProduccion.sql");
@@ -45,22 +46,22 @@ public class ProduccionDaoImpl implements ProduccionDao {
             logger.error(ex);
             throw new Exception("Problemas del sistema...");
         }
-        
+
         if (cn != null) {
-            
+
             try {
                 PreparedStatement ps = cn.prepareStatement(sqlResult);
                 ResultSet rs = ps.executeQuery();
-                
+
                 if (rs.next()) {
-                    
+
                     listTemp = new ArrayList<>();
                     ListaReglaProduccion temp;
 
                     // regresa el puntero al principio
                     rs.beforeFirst();
                     while (rs.next()) {
-                        
+
                         temp = new ListaReglaProduccion();
                         temp.setId_regla(rs.getInt("id_regla"));
                         temp.setId_producto(rs.getInt("id_producto"));
@@ -70,10 +71,10 @@ public class ProduccionDaoImpl implements ProduccionDao {
                         temp.setPresentacion(rs.getString("presentacion"));
                         temp.setMedida(rs.getString("medida"));
                         listTemp.add(temp);
-                        
+
                     }
                 }
-                
+
             } catch (SQLException e) {
                 logger.error(e);
                 throw new Exception("Problemas del sistema...");
@@ -85,13 +86,13 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 }
             }
         }
-        
+
         return listTemp;
     }
 
     @Override
     public boolean validarReglaProducto(int id_producto) throws Exception {
-         boolean estado = false;
+        boolean estado = false;
         String sqlResult = "";
         try {
             cn = db.getConnection();
@@ -131,9 +132,9 @@ public class ProduccionDaoImpl implements ProduccionDao {
 
     @Override
     public String GrabarRegla(ListaReglaProduccion regla) throws Exception {
-         String mensaje = null;
+        String mensaje = null;
         String sqlResult = "";
-        System.out.println("model.dao.impl.ProduccionDaoImpl.GrabarRegla()"+regla.toString());
+        System.out.println("model.dao.impl.ProduccionDaoImpl.GrabarRegla()" + regla.toString());
         try {
             cn = db.getConnection();
             sqlResult = uti.getLocalResource("/sql/insertRegla.sql");
@@ -183,7 +184,7 @@ public class ProduccionDaoImpl implements ProduccionDao {
 
     @Override
     public String EliminarRegla(int id_regla, int id_producto) throws Exception {
-         String mensaje = null;
+        String mensaje = null;
         String sqlResult = "";
 
         try {
@@ -233,9 +234,9 @@ public class ProduccionDaoImpl implements ProduccionDao {
 
     @Override
     public List<ListaReglaProduccion> MostrarInsumo(int id_regla, int id_producto) throws Exception {
-       String sqlResult = "";
+        String sqlResult = "";
         List<ListaReglaProduccion> listTemp = null;
-        
+
         try {
             cn = db.getConnection();
             sqlResult = uti.getLocalResource("/sql/selectReglaInsumos.sql");
@@ -246,24 +247,24 @@ public class ProduccionDaoImpl implements ProduccionDao {
             logger.error(ex);
             throw new Exception("Problemas del sistema...");
         }
-        
+
         if (cn != null) {
-            
+
             try {
                 PreparedStatement ps = cn.prepareStatement(sqlResult);
                 ps.setInt(1, id_regla);
                 ps.setInt(2, id_producto);
                 ResultSet rs = ps.executeQuery();
-                
+
                 if (rs.next()) {
-                    
+
                     listTemp = new ArrayList<>();
                     ListaReglaProduccion temp;
 
                     // regresa el puntero al principio
                     rs.beforeFirst();
                     while (rs.next()) {
-                        
+
                         temp = new ListaReglaProduccion();
                         temp.setId_regla(rs.getInt("id_regla"));
                         temp.setId_insumo(rs.getInt("id_insumo"));
@@ -273,10 +274,10 @@ public class ProduccionDaoImpl implements ProduccionDao {
                         temp.setPresentacion(rs.getString("presentacion"));
                         temp.setMedida(rs.getString("medida"));
                         listTemp.add(temp);
-                        
+
                     }
                 }
-                
+
             } catch (SQLException e) {
                 logger.error(e);
                 throw new Exception("Problemas del sistema...");
@@ -288,15 +289,15 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 }
             }
         }
-        
-        return listTemp;  
+
+        return listTemp;
     }
 
     @Override
-    public ListaReglaProduccion BuscarRegla(int id_regla) throws Exception {
+    public ListaProduccion BuscarRegla(int id_regla) throws Exception {
         String sqlResult = "";
-        ListaReglaProduccion temp = null;
-        
+        ListaProduccion temp = null;
+
         try {
             cn = db.getConnection();
             sqlResult = uti.getLocalResource("/sql/selectReglaxId.sql");
@@ -307,22 +308,21 @@ public class ProduccionDaoImpl implements ProduccionDao {
             logger.error(ex);
             throw new Exception("Problemas del sistema...");
         }
-        
+
         if (cn != null) {
-            
+
             try {
                 PreparedStatement ps = cn.prepareStatement(sqlResult);
                 ps.setInt(1, id_regla);
-                 ResultSet rs = ps.executeQuery();
-                
+                ResultSet rs = ps.executeQuery();
+
                 if (rs.next()) {
-                    
-                    temp = new ListaReglaProduccion();
+
+                    temp = new ListaProduccion();
                     // regresa el puntero al principio
                     rs.beforeFirst();
                     while (rs.next()) {
-                        
-                        
+
                         temp.setId_regla(rs.getInt("id_regla"));
                         temp.setId_producto(rs.getInt("id_producto"));
                         temp.setNro_insumos(rs.getInt("cantidad_insumo"));
@@ -330,10 +330,10 @@ public class ProduccionDaoImpl implements ProduccionDao {
                         temp.setMarca(rs.getString("marca"));
                         temp.setPresentacion(rs.getString("presentacion"));
                         temp.setMedida(rs.getString("medida"));
-  
+
                     }
                 }
-                
+
             } catch (SQLException e) {
                 logger.error(e);
                 throw new Exception("Problemas del sistema...");
@@ -345,16 +345,16 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 }
             }
         }
-        
-        return temp; 
+
+        return temp;
     }
 
     @Override
     public String GrabarProduccion(ListaReglaProduccion produccion) throws Exception {
         String mensaje = null;
-        String validacion=null;
+        String validacion = null;
         String sqlResult = "";
-        System.out.println("model.dao.impl.ProduccionDaoImpl.GrabarProduccion()"+produccion.toString());
+        System.out.println("model.dao.impl.ProduccionDaoImpl.GrabarProduccion()" + produccion.toString());
         try {
             cn = db.getConnection();
             sqlResult = uti.getLocalResource("/sql/insertProduccion.sql");
@@ -383,25 +383,25 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 ps.registerOutParameter(12, Types.INTEGER);
                 ps.registerOutParameter(13, Types.VARCHAR);
                 ps.execute();
-                
+
                 // devuelve el valor del parametro de salida del procedimiento
                 int resultado = ps.getInt(10);
-                int verificado= ps.getInt(11);
-                int idproduccion= ps.getInt(12);
-                String requerimiento_json="";
-               requerimiento_json =ps.getString(13);
-                if (verificado>0) {
-                     validacion= "EXISTEN "+verificado+ " INSUMOS SIN STOCK \n" ;
-                    }else{
-                     validacion="CORRECTO";
-                 }
+                int verificado = ps.getInt(11);
+                int idproduccion = ps.getInt(12);
+                String requerimiento_json = "";
+                requerimiento_json = ps.getString(13);
+                if (verificado > 0) {
+                    validacion = "EXISTEN " + verificado + " INSUMOS SIN STOCK \n";
+                } else {
+                    validacion = "CORRECTO";
+                }
                 if (resultado > 0) {
 //                    cn.commit();
                     logger.info("OK");
-                    mensaje = "OK%"+validacion+"%"+requerimiento_json+"%"+idproduccion;
+                    mensaje = "OK%" + validacion + "%" + requerimiento_json + "%" + idproduccion;
                 } else {
                     //cn.rollback();
-                    mensaje = "NOK%"+validacion+"%"+requerimiento_json;
+                    mensaje = "NOK%" + validacion + "%" + requerimiento_json;
                 }
 
             } catch (SQLException e) {
@@ -415,6 +415,109 @@ public class ProduccionDaoImpl implements ProduccionDao {
                 }
             }
         }
-       return mensaje;
+        return mensaje;
+    }
+
+    @Override
+    public int VerificarProduccion(int contador, String id_regla, String id_producto, String cantidad, String cant_insumos) throws Exception {
+        int rpta = 1;
+        int validacion = 999;
+        String sqlResult = "";
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/verificarProduccion.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+        }
+
+        if (cn != null) {
+
+            try {
+                CallableStatement ps = cn.prepareCall(sqlResult);
+                ps.setInt(1, contador);
+                ps.setString(2, cant_insumos);
+                ps.setString(3, id_regla);
+                ps.setString(4, id_producto);
+                ps.setString(5, cantidad);
+                ps.registerOutParameter(6, Types.INTEGER);
+                ps.registerOutParameter(7, Types.INTEGER);
+                ps.execute();
+                // devuelve el valor del parametro de salida del procedimiento
+                validacion = ps.getInt(6);
+                rpta = ps.getInt(7);
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+        System.out.println("model.dao.impl.ProduccionDaoImpl.VerificarProduccion()" + "RESULTADO DE SP" + rpta);
+        return validacion;
+    }
+
+    @Override
+    public List<ListaReglaProduccion> VerificarErrorProduccion(int contador, String id_regla, String id_producto, String cantidad, String cant_insumos) throws Exception {
+        List<ListaReglaProduccion> listTemp = null;
+        String sqlResult = "";
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/verificarErrorProduccion.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+        }
+
+        if (cn != null) {
+
+            try {
+                CallableStatement ps = cn.prepareCall(sqlResult);
+                ps.setInt(1, contador);
+                ps.setString(2, cant_insumos);
+                ps.setString(3, id_regla);
+                ps.setString(4, id_producto);
+                ps.setString(5, cantidad);
+                ps.execute();
+
+                ResultSet rs = ps.getResultSet();
+                // devuelve el valor del parametro de salida del procedimiento
+                          if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    ListaReglaProduccion temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new ListaReglaProduccion();
+                        temp.setId_insumo(rs.getInt(1));
+                        temp.setCantidad(rs.getDouble(2));
+                        listTemp.add(temp);
+
+                    }
+                }
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
     }
 }

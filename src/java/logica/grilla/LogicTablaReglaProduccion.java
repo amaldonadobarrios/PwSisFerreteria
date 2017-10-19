@@ -7,6 +7,7 @@ package logica.grilla;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import model.dto.ListaProduccion;
 import model.dto.ListaReglaProduccion;
 
 /**
@@ -35,6 +36,76 @@ public class LogicTablaReglaProduccion {
 
     public static LogicTablaReglaProduccion getInstance() {
         return LogicTablaReglaProduccionHolder.INSTANCE;
+    }
+
+    public String construirGrillaListaProduccion(List<ListaProduccion> lista) {
+        StringBuilder str = new StringBuilder();
+        str.append("<div class=\"table-responsive\">");
+        str.append(INI_TABLA);
+        StringBuilder cabecera = new StringBuilder();
+        cabecera.append(INI_THEAD);
+        cabecera.append(INI_TR);
+        cabecera.append(INI_TH);
+        cabecera.append("N°");
+        cabecera.append(FINI_TH);
+        cabecera.append(INI_TH);
+        cabecera.append("DESCRIPCION ");
+        cabecera.append(FINI_TH);
+        cabecera.append(INI_TH);
+        cabecera.append("MARCA");
+        cabecera.append(FINI_TH);
+        cabecera.append(INI_TH);
+        cabecera.append("PRESENTACION");
+        cabecera.append(FINI_TH);
+        cabecera.append(INI_TH);
+        cabecera.append("MEDIDA");
+        cabecera.append(FINI_TH);
+        cabecera.append(INI_TH);
+        cabecera.append("CANTIDAD");
+        cabecera.append(FINI_TH);
+        cabecera.append(INI_TH);
+        cabecera.append("SELECCIONAR");
+        cabecera.append(FINI_TH);
+        cabecera.append(FINI_TR);
+        cabecera.append(FIN_THEAD);
+
+        str.append(cabecera.toString());
+        str.append(INI_TBODY);
+        if (lista != null && lista.size() > 0) {
+            int i = 1;
+            for (ListaProduccion fila : lista) {
+                str.append(INI_TR);
+                str.append(INI_TD);
+                str.append(i);
+                str.append(FIN_TD);
+                str.append(INI_TD);
+                str.append(fila.getDescripcion());
+                str.append(FIN_TD);
+                str.append(INI_TD);
+                str.append(fila.getMarca());
+                str.append(FIN_TD);
+                str.append(INI_TD);
+                str.append(fila.getPresentacion());
+                str.append(FIN_TD);
+                str.append(INI_TD);
+                str.append(fila.getMedida());
+                str.append(FIN_TD);
+                str.append(INI_TD);
+                str.append(fila.getCantidad_produccion());
+                str.append(FIN_TD);
+                str.append(INI_TD);
+                str.append("<input type=\"button\" value=\"Eliminar\" onclick=\"fneliminarItem('" + i + "');\"");
+                str.append(FIN_TD);
+//				str.append(INI_TD);	str.append( "<input type=\"button\" value=\"Seleccionar\" onclick=\"fnSeleccionarCliente('"+fila.getRazonSocial()+"','"+fila.getApellidoPaterno()+"','"+fila.getApellidoMaterno()+"','"+fila.getNombres()+"','"+fila.getDniRuc()+"','"+fila.getDireccion()+"','"+fila.getNaturalezaCliente()+"','"+fila.getIdTipoCliente()+"','"+fila.getIdCliente()+"')\" />");		str.append(FIN_TD);
+                str.append(FINI_TR);
+                i++;
+            }
+
+        }
+        str.append(FIN_TBODY);
+        str.append(FIN_TABLA);
+        str.append("</div>");
+        return str.toString();
     }
 
     private static class LogicTablaReglaProduccionHolder {
@@ -95,7 +166,7 @@ public class LogicTablaReglaProduccion {
                 str.append(fila.getMedida());
                 str.append(FIN_TD);
                 str.append(INI_TD);
-                str.append(fila.getCantidad());
+                str.append(fila.getCadena_cantidad());
                 str.append(FIN_TD);
                 str.append(INI_TD);
                 str.append("<input type=\"button\" value=\"Eliminar\" onclick=\"fneliminarItem('" + i + "');\"");

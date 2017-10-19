@@ -90,8 +90,10 @@ public class ListaReglaProduccion {
 
     @Override
     public String toString() {
-        return "ListaReglaProduccion{" + "id_producto=" + id_producto + ", id_insumo=" + id_insumo + ", descripcion=" + descripcion + ", marca=" + marca + ", presentacion=" + presentacion + ", medida=" + medida + ", cantidad=" + cantidad + ", nro_insumos=" + nro_insumos + ", id_regla=" + id_regla + ", id_usuario=" + id_usuario + ", estado=" + estado + ", candena_Id_insumo=" + candena_Id_insumo + ", cadena_cantidad=" + cadena_cantidad + '}';
+        return "ListaReglaProduccion{" + "id_producto=" + id_producto + ", id_insumo=" + id_insumo + ", descripcion=" + descripcion + ", marca=" + marca + ", presentacion=" + presentacion + ", medida=" + medida + ", cantidad=" + cantidad + ", nro_insumos=" + nro_insumos + ", id_regla=" + id_regla + ", id_usuario=" + id_usuario + ", estado=" + estado + ", candena_Id_insumo=" + candena_Id_insumo + ", cadena_cantidad=" + cadena_cantidad + ", candena_Id_Producto=" + candena_Id_Producto + ", candena_Id_Regla=" + candena_Id_Regla + ", cadena_nro_insumos=" + cadena_nro_insumos + ", cant_regla=" + cant_regla + ", fecha=" + fecha + ", documento=" + documento + ", numero_doc=" + numero_doc + '}';
     }
+
+  
     public int getNro_insumos() {
         return nro_insumos;
     }

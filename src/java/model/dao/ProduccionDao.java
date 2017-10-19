@@ -6,6 +6,7 @@
 package model.dao;
 
 import java.util.List;
+import model.dto.ListaProduccion;
 import model.dto.ListaReglaProduccion;
 
 /**
@@ -24,7 +25,11 @@ public interface ProduccionDao {
 
     public List<ListaReglaProduccion> MostrarInsumo(int id_regla, int id_producto) throws Exception;
 
-    public ListaReglaProduccion BuscarRegla(int id_regla) throws Exception;
+    public ListaProduccion BuscarRegla(int id_regla) throws Exception;
 
     public String GrabarProduccion(ListaReglaProduccion produccion) throws Exception;
+
+    public int VerificarProduccion(int contador, String id_regla, String id_producto, String cantidad, String cant_insumos) throws Exception;
+
+    public List<ListaReglaProduccion> VerificarErrorProduccion(int contador, String id_regla, String id_producto, String cantidad, String cant_insumos) throws Exception;
 }

@@ -158,6 +158,7 @@
           <script src="assets/js/myjs/stacktable.js"></script>
           <script src="assets/js/myjs/sweetalert.min.js"></script>
           <script src="assets/js/myjs/jquery.magnific-popup.min.js" type="text/javascript"></script>
+          <script src="assets/js/myjs/dialog.js" type="text/javascript"></script>
         <!-- inline scripts related to this page            MALDONADO-->
         <script type="text/javascript">
                 jQuery(function ($) {

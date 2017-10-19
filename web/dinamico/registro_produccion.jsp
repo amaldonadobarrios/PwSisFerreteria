@@ -3,11 +3,11 @@
 <input type="hidden" id="contexto" value="${context}">
 
 <script>
-      function redireccionarPagina() {
-    window.location = "SMenu?action=pagRegistroProduccion";
+    function redireccionarPagina() {
+        window.location = "SMenu?action=pagRegistroProduccion";
     }
-    
-    
+
+
     //-------------------REGISTRAR PRODUCCION
     function fn_pintar_RegitrarProduccion(response) {
         alert(response);
@@ -68,6 +68,59 @@
             $('#lblfecha').css("color", "red");
             $('#lbldoc').css("color", "red");
         }
+    }
+    function fn_EjecutarMostarErrorProduccion() {
+        var jqdata = {
+            evento: 'verificarErrorProduccion'
+        };
+        var contexto = document.getElementById('contexto').value;
+        var vruta = '/ServProduccion';
+        var vservlet = contexto + vruta;
+        $.ajax({
+            url: vservlet,
+            method: 'POST',
+            data: jqdata,
+            success: function (responseText) {
+                mensajeERROR('ERROR', responseText);
+            }
+        });
+    }
+    function fn_mostarerror() {
+        fn_EjecutarMostarErrorProduccion();
+    }
+    function fn_grabar(estado) {
+        $('#msg').html(estado);
+    }
+    function fn_EjecutarVerificarProduccion() {
+        var jqdata = {
+            evento: 'verificarProduccion'
+        };
+        var contexto = document.getElementById('contexto').value;
+        var vruta = '/ServProduccion';
+        var vservlet = contexto + vruta;
+        $.ajax({
+            url: vservlet,
+            method: 'POST',
+            data: jqdata,
+            success: function (responseText) {
+                var v_resultado = responseText + "";
+                var respuesta = v_resultado.split('%');
+                var estado = respuesta[0];
+                var mensaje = respuesta[1];
+                if (estado === 'NOK') {
+                    fn_mostarerror();
+                    //mensajeERROR('ERROR', mensaje);
+                } else if (estado === 'OK') {
+                    fn_grabar(estado);
+                }
+            }
+        });
+    }
+
+    function fn_VerificarProduccion() {
+        waitingDialog.show('Verificando Existencias . . .');
+        setTimeout("waitingDialog.hide();fn_EjecutarVerificarProduccion();", 3000);
+        setTimeout("fn_EjecutarVerificarProduccion();", 4000);
     }
     //---------------------Poductos finales a fabricar
     function fneliminarItem(item) {
@@ -157,7 +210,8 @@
             type: 'warning',
             title: titulo,
             text: mensaje,
-            showConfirmButton: true
+            timer: 3000,
+            showConfirmButton: false
         });
     }
     function mensajeOK(titulo, mensaje) {
@@ -181,9 +235,9 @@
         PRODUCCION
         <small>
             <i class="ace-icon fa fa-angle-double-right"></i>
-            Registro de Producción
+            Registro de Producción 
         </small>
-    </h1>
+    </h1><div id="msg"></div>
 </div><!-- /.page-header -->
 
 <div class="row">
@@ -324,7 +378,7 @@
 
 <div class="clearfix form-actions">
     <div class="col-md-12" align="center">
-        <button class="btn btn-info" type="button" onclick="fn_RegistrarProduccion();">
+        <button class="btn btn-info" type="button" onclick="fn_VerificarProduccion();">
             <i class="ace-icon fa fa-check bigger-110"></i>
             Registrar
         </button>

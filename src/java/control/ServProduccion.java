@@ -21,6 +21,7 @@ import logica.grilla.LogicTablaProducto;
 import logica.grilla.LogicTablaReglaProduccion;
 import model.dao.ProductoDao;
 import model.dao.impl.ProductoDaoImpl;
+import model.dto.ListaProduccion;
 import model.dto.ListaReglaProduccion;
 import model.dto.Producto;
 import model.dto.Usuario;
@@ -66,7 +67,11 @@ public class ServProduccion extends HttpServlet {
                         AñadirProduccion(request, response);
                     } else if (evento.equals("EliminarProductofinal")) {
                         EliminarProductofinal(request, response);
-                    } else if (evento.equals("RegitrarProduccion")) {
+                    } else if (evento.equals("verificarProduccion")) {
+                        verificarProduccion(request, response);
+                    }else if (evento.equals("verificarErrorProduccion")) {
+                        verificarErrorProduccion(request,response);
+                    }  else if (evento.equals("RegitrarProduccion")) {
                         RegitrarProduccion(request, response);
                     }
 
@@ -319,10 +324,10 @@ public class ServProduccion extends HttpServlet {
 
     private void AñadirProduccion(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
-        List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
+        List<ListaProduccion> listatemp = new ArrayList<ListaProduccion>();
+        List<ListaProduccion> lista = new ArrayList<ListaProduccion>();
         try {
-            lista = (List<ListaReglaProduccion>) session.getAttribute("listaproduccion");
+            lista = (List<ListaProduccion>) session.getAttribute("listaproduccion");
         } catch (Exception e) {
         }
         if (lista != null) {
@@ -330,15 +335,15 @@ public class ServProduccion extends HttpServlet {
         }
         String id_regla = request.getParameter("id_regla");
         String cantidad = request.getParameter("cantidad");
-        ListaReglaProduccion productofinal = LogicProduccion.getInstance().buscarRegla(Integer.parseInt(id_regla));
-        productofinal.setCantidad(Double.parseDouble(cantidad));
+        ListaProduccion productofinal = LogicProduccion.getInstance().buscarRegla(Integer.parseInt(id_regla));
+        productofinal.setCantidad_produccion(Double.parseDouble(cantidad));
         boolean validacion = false;
         String msg = null;
         String respuesta = null;
         if (listatemp != null) {
             if (listatemp.size() > 0) {
-                for (ListaReglaProduccion listaRegla : listatemp) {
-                    if (listaRegla.getId_regla() == productofinal.getId_regla()) {
+                for (ListaProduccion listaProduccion : listatemp) {
+                    if (listaProduccion.getId_regla() == productofinal.getId_regla()) {
                         validacion = false;
                         msg = "ERROR%EL EL PRODUCTO A FABRICAR YA SE ENCUENTRA REGISTRADO";
                         HtmlUtil.getInstance().escrituraHTML(response, msg);
@@ -352,17 +357,17 @@ public class ServProduccion extends HttpServlet {
         }
         listatemp.add(productofinal);
         session.setAttribute("listaproduccion", listatemp);
-        respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
+        respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaListaProduccion(listatemp);
         HtmlUtil.getInstance().escrituraHTML(response, "OK%" + respuesta);
     }
 
     private void EliminarProductofinal(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         String item = request.getParameter("item");
-        List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
-        List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
+        List<ListaProduccion> listatemp = new ArrayList<ListaProduccion>();
+        List<ListaProduccion> lista = new ArrayList<ListaProduccion>();
         try {
-            lista = (List<ListaReglaProduccion>) session.getAttribute("listaproduccion");
+            lista = (List<ListaProduccion>) session.getAttribute("listaproduccion");
         } catch (Exception e) {
         }
         if (lista != null) {
@@ -371,7 +376,7 @@ public class ServProduccion extends HttpServlet {
         }
         listatemp.remove(Integer.parseInt(item));
         session.setAttribute("listaproduccion", listatemp);
-        String respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaListaReglasProduccion(listatemp);
+        String respuesta = LogicTablaReglaProduccion.getInstance().construirGrillaListaProduccion(listatemp);
         HtmlUtil.getInstance().escrituraHTML(response, "OK%" + respuesta);
 
     }
@@ -382,10 +387,10 @@ public class ServProduccion extends HttpServlet {
         String numero = request.getParameter("numero");
         String fecha = request.getParameter("fecha");
 
-        List<ListaReglaProduccion> listatemp = new ArrayList<ListaReglaProduccion>();
-        List<ListaReglaProduccion> lista = new ArrayList<ListaReglaProduccion>();
+        List<ListaProduccion> listatemp = new ArrayList<ListaProduccion>();
+        List<ListaProduccion> lista = new ArrayList<ListaProduccion>();
         try {
-            lista = (List<ListaReglaProduccion>) session.getAttribute("listaproduccion");
+            lista = (List<ListaProduccion>) session.getAttribute("listaproduccion");
         } catch (Exception e) {
         }
         if (lista != null) {
@@ -402,10 +407,10 @@ public class ServProduccion extends HttpServlet {
         ListaReglaProduccion produccion = null;
         if (listatemp.size() > 0) {
 
-            for (ListaReglaProduccion listaProduccion : listatemp) {
+            for (ListaProduccion listaProduccion : listatemp) {
                 id_regla = id_regla + String.valueOf(listaProduccion.getId_regla() + "@");
                 id_producto = id_producto + String.valueOf(listaProduccion.getId_producto() + "@");
-                cantidad = cantidad + String.valueOf(listaProduccion.getCantidad() + "@");
+                cantidad = cantidad + String.valueOf(listaProduccion.getCantidad_produccion() + "@");
                 cant_insumos = cant_insumos + String.valueOf(listaProduccion.getNro_insumos() + "@");
                 contador = contador + 1;
             }
@@ -430,5 +435,83 @@ public class ServProduccion extends HttpServlet {
         msg = LogicProduccion.getInstance().GrabarProduccion(produccion);
         HtmlUtil.getInstance().escrituraHTML(response, msg);
 
+    }
+
+    private void verificarProduccion(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        List<ListaProduccion> listatemp = new ArrayList<ListaProduccion>();
+        List<ListaProduccion> lista = new ArrayList<ListaProduccion>();
+        try {
+            lista = (List<ListaProduccion>) session.getAttribute("listaproduccion");
+        } catch (Exception e) {
+        }
+        if (lista != null) {
+            listatemp = lista;
+        }
+        //declaro variables locales;
+        String id_regla = "";
+        String id_producto = "";
+        String cantidad = "";
+        int contador = 0;
+        String cant_insumos = "";
+        //verificar regla
+        String msg = null;
+        int validacion=999;
+        if (listatemp.size() > 0) {
+
+            for (ListaProduccion listaProduccion : listatemp) {
+                id_regla = id_regla + String.valueOf(listaProduccion.getId_regla() + "@");
+                id_producto = id_producto + String.valueOf(listaProduccion.getId_producto() + "@");
+                cantidad = cantidad + String.valueOf(listaProduccion.getCantidad_produccion() + "@");
+                cant_insumos = cant_insumos + String.valueOf(listaProduccion.getNro_insumos() + "@");
+                contador = contador + 1;
+            }
+        } else {
+            msg = "ERROR%" + "LISTA DE PRODCCION VACIA";
+            HtmlUtil.getInstance().escrituraHTML(response, msg);
+            return;
+        }
+        validacion = LogicProduccion.getInstance().VerificarProduccion(contador,id_regla,id_producto,cantidad,cant_insumos);
+        if (validacion==0) {
+            msg= "OK%VERIFICADO";
+        }else{
+            msg= "NOK%EXISTEN "+validacion+" insumos insuficientes";
+        }
+        HtmlUtil.getInstance().escrituraHTML(response, msg);
+    }
+
+    private void verificarErrorProduccion(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        List<ListaProduccion> listatemp = new ArrayList<ListaProduccion>();
+        List<ListaProduccion> lista = new ArrayList<ListaProduccion>();
+        try {
+            lista = (List<ListaProduccion>) session.getAttribute("listaproduccion");
+        } catch (Exception e) {
+        }
+        if (lista != null) {
+            listatemp = lista;
+        }
+        //declaro variables locales;
+        String id_regla = "";
+        String id_producto = "";
+        String cantidad = "";
+        int contador = 0;
+        String cant_insumos = "";
+        //verificar regla
+        String msg = null;
+String validacion=null;
+        if (listatemp.size() > 0) {
+
+            for (ListaProduccion listaProduccion : listatemp) {
+                id_regla = id_regla + String.valueOf(listaProduccion.getId_regla() + "@");
+                id_producto = id_producto + String.valueOf(listaProduccion.getId_producto() + "@");
+                cantidad = cantidad + String.valueOf(listaProduccion.getCantidad_produccion() + "@");
+                cant_insumos = cant_insumos + String.valueOf(listaProduccion.getNro_insumos() + "@");
+                contador = contador + 1;
+            }
+        }
+        validacion = LogicProduccion.getInstance().VerificarErrorProduccion(contador,id_regla,id_producto,cantidad,cant_insumos);
+        
+        HtmlUtil.getInstance().escrituraHTML(response, validacion);
     }
 }
