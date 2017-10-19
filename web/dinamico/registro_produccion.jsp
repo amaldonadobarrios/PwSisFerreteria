@@ -378,7 +378,7 @@
 
 <div class="clearfix form-actions">
     <div class="col-md-12" align="center">
-        <button class="btn btn-info" type="button" onclick="fn_VerificarProduccion();">
+        <button class="btn btn-info" type="button" onclick="fn_RegistrarProduccion();">
             <i class="ace-icon fa fa-check bigger-110"></i>
             Registrar
         </button>

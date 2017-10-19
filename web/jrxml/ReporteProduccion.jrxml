@@ -9,12 +9,13 @@
 	<parameter name="estado" class="java.lang.Integer"/>
 	<parameter name="in_estado" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Users\\31424836\\Documents\\D\\proyectos\\sisferreteria\\PwSisFerreteria\\PwSisFerreteria\\web\\jrxml\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT a.id_produccion, a.fecha_reg, a.fecha,  a.usuario_reg, a.doc, a.numero,a.cantidad_reglas, a.estado ,b.id_producto, b.descripcion, b.marca, b.presentacion,b.medida, c.cantidad_insumos,c.cantidad_produccion FROM produccion a 
+		<![CDATA[SELECT a.id_produccion, a.fecha_reg, a.fecha,  a.usuario_reg, a.doc, a.numero,a.cantidad_reglas, a.estado ,b.id_producto, b.descripcion, b.marca, b.presentacion,b.medida, c.cantidad_insumos,c.cantidad_produccion,concat(d.apellido_paterno,' ', d.apellido_materno,' ',d.nombres) as usu FROM produccion a 
 inner join detalle_produccion c on  a.id_produccion=c.id_produccion
 left join producto b on c.id_producto=b.id_producto
+join usuario d on id_usuario=a.usuario_reg
  where  a.id_produccion=$P{id} and a.estado=$P{estado};]]>
 	</queryString>
 	<field name="id_produccion" class="java.lang.Integer"/>
@@ -32,6 +33,7 @@ left join producto b on c.id_producto=b.id_producto
 	<field name="medida" class="java.lang.String"/>
 	<field name="cantidad_insumos" class="java.lang.Integer"/>
 	<field name="cantidad_produccion" class="java.lang.Double"/>
+	<field name="usu" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -62,16 +64,11 @@ left join producto b on c.id_producto=b.id_producto
 		</band>
 	</title>
 	<pageHeader>
-		<band height="231" splitType="Stretch">
+		<band height="199" splitType="Stretch">
 			<textField>
 				<reportElement x="296" y="7" width="100" height="20"/>
 				<textElement/>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{fecha}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="296" y="27" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{usuario_reg}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="296" y="49" width="100" height="20"/>
@@ -91,7 +88,7 @@ left join producto b on c.id_producto=b.id_producto
 			<staticText>
 				<reportElement x="82" y="27" width="187" height="20"/>
 				<textElement/>
-				<text><![CDATA[ID USUARIO]]></text>
+				<text><![CDATA[OPERADOR]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="82" y="49" width="187" height="20"/>
@@ -103,27 +100,25 @@ left join producto b on c.id_producto=b.id_producto
 				<textElement/>
 				<text><![CDATA[CANTIDAD DE PRODUCTOS FINALES]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="296" y="29" width="247" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{usu}]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="195" y="89" width="179" height="20"/>
+				<reportElement x="175" y="103" width="179" height="20"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[INSUMOS DESCONTADOS]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="185" y="211" width="189" height="20"/>
-				<textElement>
-					<font size="14"/>
-				</textElement>
-				<text><![CDATA[PRODUCTOS FABRICADOS]]></text>
-			</staticText>
 			<subreport>
-				<reportElement x="0" y="111" width="555" height="100"/>
+				<reportElement x="0" y="123" width="555" height="76"/>
 				<subreportParameter name="Subid_produccion">
 					<subreportParameterExpression><![CDATA[$P{id}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} ]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}]]></subreportExpression>
 			</subreport>
 		</band>
 	</pageHeader>
@@ -153,6 +148,13 @@ left join producto b on c.id_producto=b.id_producto
 				<reportElement x="364" y="19" width="100" height="20"/>
 				<textElement/>
 				<text><![CDATA[Medida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="175" y="0" width="189" height="20"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[PRODUCTOS FABRICADOS]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -188,7 +190,4 @@ left join producto b on c.id_producto=b.id_producto
 			</line>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="120" splitType="Stretch"/>
-	</columnFooter>
 </jasperReport>

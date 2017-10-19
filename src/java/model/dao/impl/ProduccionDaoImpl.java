@@ -503,7 +503,7 @@ public class ProduccionDaoImpl implements ProduccionDao {
                         temp.setId_insumo(rs.getInt(1));
                         temp.setCantidad(rs.getDouble(2));
                         listTemp.add(temp);
-
+                        System.out.println("model.dao.impl.ProduccionDaoImpl.VerificarErrorProduccion()"+"error"+temp.toString());
                     }
                 }
             } catch (SQLException e) {
