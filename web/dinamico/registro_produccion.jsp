@@ -22,6 +22,9 @@
             var validacion = respuesta[1];
             var detalleerror = respuesta[2];
             var id = respuesta[3];
+            if (detalleerror == 'null') {
+                detalleerror = 'Verificar cantidad de insumos';
+            }
             if (estado == 'NOK') {
                 mensajeERROR('ERROR' + '\n' + validacion, detalleerror);
             } else if (estado == 'OK') {
@@ -69,6 +72,8 @@
             $('#lbldoc').css("color", "red");
         }
     }
+    //---------------------------------------verificar beta
+    
     function fn_EjecutarMostarErrorProduccion() {
         var jqdata = {
             evento: 'verificarErrorProduccion'

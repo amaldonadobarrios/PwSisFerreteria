@@ -166,7 +166,7 @@ public class LogicTablaReglaProduccion {
                 str.append(fila.getMedida());
                 str.append(FIN_TD);
                 str.append(INI_TD);
-                str.append(fila.getCadena_cantidad());
+                str.append(fila.getCantidad());
                 str.append(FIN_TD);
                 str.append(INI_TD);
                 str.append("<input type=\"button\" value=\"Eliminar\" onclick=\"fneliminarItem('" + i + "');\"");
