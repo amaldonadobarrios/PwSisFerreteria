@@ -177,9 +177,9 @@ CREATE TABLE `usuario_historial` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci COMMENT='usuarios';
 
 INSERT INTO `perfil` (`id_perfil`, `codigo`, `tipo`, `descripcion`, `estado`) VALUES
-(1, 'ADMIN', 'ADMIN', 'ADMINISTRADOR', 'A'),
-(2, 'USER', 'USER', 'USUARIO', 'A'),
-(3, 'OPE', 'OPERADOR', 'OPERADOR', 'A');
+(1, 'ADM', 'ADMIN', 'ADMINISTRADOR', 'A'),
+(2, 'SEC', 'SEC', 'USUARIO', 'A'),
+(3, 'OPE', 'OPE', 'OPERADOR', 'A');
 
 INSERT INTO `usuario` (`id_usuario`, `usuario`, `password`, `dni`, `apellido_paterno`, `apellido_materno`, `nombres`, `telefono`, `estado`, `fecha_reg`, `fecha_mod`, `usuario_mod`, `usuario_reg`, `perfil_idperfil`) VALUES
 (3, 'ferreteria', '120c11210a181006000e', '45206131', 'MALDONADO', 'BARRIOS', 'ALEXANDER', '333333333', 'A', '2017-08-15', '2017-08-18', 3, 1, 3);
@@ -754,5 +754,73 @@ INSERT INTO descuento_produccion (SELECT v_id_produccion as id_produccion ,id_in
 COMMIT; 
 /*Mandamos 0 si todo salio bien*/ 
 set rpta =1;
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE  PROCEDURE `EliminarProduccion`(
+in id int,
+out rpta int
+)
+BEGIN
+DECLARE fin INTEGER DEFAULT 0;
+DECLARE finx INTEGER DEFAULT 0;
+DECLARE v_id_produccion int;
+DECLARE id_prod int;
+DECLARE cant double;
+DECLARE v_id_produ int;
+DECLARE id_produc int;
+DECLARE canti double;
+DECLARE v_existencia double;
+DECLARE v_existenciainsumo double;
+DECLARE cur_produccion CURSOR FOR SELECT id_produccion ,id_producto,cantidad_produccion FROM detalle_produccion where id_produccion=id and estado=1;
+DECLARE cur_descuento CURSOR FOR SELECT id_produccion, id_insumo, requerimiento FROM descuento_produccion where  id_produccion=id;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Handler para error SQL*/ 
+DECLARE EXIT HANDLER FOR SQLWARNING 
+BEGIN 
+set rpta =0;
+ROLLBACK; 
+END; 
+
+/*Inicia transaccion*/ 
+START TRANSACTION; 
+OPEN cur_descuento;
+ read_loop: LOOP
+    FETCH cur_descuento INTO v_id_produ,id_produc, canti;
+   IF fin = 1 THEN
+       LEAVE read_loop;
+    END IF;
+	SET v_existenciainsumo= (select existencia from producto where id_producto=id_produc);
+	UPDATE producto SET existencia =v_existenciainsumo+canti  WHERE id_producto=id_produc;
+  END LOOP;
+ CLOSE cur_descuento;
+ 
+ set fin=0;
+OPEN cur_produccion;
+ read_loop: LOOP
+    FETCH cur_produccion INTO v_id_produccion,id_prod, cant;
+   IF fin = 1 THEN
+       LEAVE read_loop;
+    END IF;
+	SET v_existencia= (select existencia from producto where id_producto=id_prod);
+	UPDATE producto SET existencia =v_existencia-cant  WHERE id_producto=id_prod;
+    UPDATE detalle_produccion SET estado =0  WHERE id_produccion=v_id_produccion;
+  END LOOP;
+ CLOSE cur_produccion;
+ UPDATE produccion set estado=0 where id_produccion=id;
+/*Fin de transaccion*/ 
+COMMIT; 
+/*Mandamos 1 si todo salio bien*/ 
+set rpta =1;
+
 END$$
 DELIMITER ;
