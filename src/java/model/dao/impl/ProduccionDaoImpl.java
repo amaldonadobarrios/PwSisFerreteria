@@ -16,6 +16,7 @@ import java.util.List;
 import model.dao.ProduccionDao;
 import model.dto.ListaProduccion;
 import model.dto.ListaReglaProduccion;
+import model.dto.Produccion;
 import org.apache.log4j.Logger;
 import util.Util;
 import util.jdbc.ConectaDB;
@@ -519,5 +520,175 @@ public class ProduccionDaoImpl implements ProduccionDao {
         }
 
         return listTemp;
+    }
+
+    @Override
+    public List<Produccion> ListarProduccion200() throws Exception {
+        String sqlResult = "";
+        List<Produccion> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectProduccion200.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    Produccion temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new Produccion();
+                        temp.setFecha(rs.getDate("fecha"));
+                        temp.setDoc(rs.getString("doc"));
+                        temp.setNum(rs.getString("numero"));
+                        temp.setCant_reglas(rs.getInt("cantidad_reglas"));
+                        temp.setId_produccion(rs.getInt("id_produccion"));
+                        temp.setEstado(rs.getInt("estado"));
+                        temp.setOperador(rs.getString("operador"));
+                        temp.setDes_estado(rs.getString("estado_det"));
+                        temp.setFecha_reg(rs.getDate("fecha_reg"));
+                        listTemp.add(temp);
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
+    }
+
+    @Override
+    public List<Produccion> ListarProduccionxFecha(String fecha) throws Exception {
+       String sqlResult = "";
+        List<Produccion> listTemp = null;
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/selectProduccionxFecha.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas de Conexion...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        }
+
+        if (cn != null) {
+
+            try {
+                PreparedStatement ps = cn.prepareStatement(sqlResult);
+                 ps.setString(1, fecha);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+
+                    listTemp = new ArrayList<>();
+                    Produccion temp;
+
+                    // regresa el puntero al principio
+                    rs.beforeFirst();
+                    while (rs.next()) {
+
+                        temp = new Produccion();
+                        temp.setFecha(rs.getDate("fecha"));
+                        temp.setDoc(rs.getString("doc"));
+                        temp.setNum(rs.getString("numero"));
+                        temp.setCant_reglas(rs.getInt("cantidad_reglas"));
+                        temp.setId_produccion(rs.getInt("id_produccion"));
+                        temp.setEstado(rs.getInt("estado"));
+                        temp.setOperador(rs.getString("operador"));
+                        temp.setDes_estado(rs.getString("estado_det"));
+                        temp.setFecha_reg(rs.getDate("fecha_reg"));
+                        listTemp.add(temp);
+                    }
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return listTemp;
+    }
+
+    @Override
+    public String EliminarProduccion(String id) throws Exception {
+        String mensaje = null;
+        String sqlResult = "";
+
+        try {
+            cn = db.getConnection();
+            sqlResult = uti.getLocalResource("/sql/eliminarProduccion.sql");
+        } catch (SQLException ex) {
+            logger.error(ex);
+            throw new Exception("Problemas del sistema...");
+        } catch (Throwable ex) {
+            logger.error(ex);
+        }
+
+        if (cn != null) {
+
+            try {
+
+                CallableStatement ps = cn.prepareCall(sqlResult);
+                ps.setInt(1, Integer.parseInt(id));
+                ps.registerOutParameter(2, Types.INTEGER);
+                ps.execute();
+                // devuelve el valor del parametro de salida del procedimiento
+                int resultado = ps.getInt(2);
+                if (resultado > 0) {
+//                    cn.commit();
+                    logger.info("OK");
+                    mensaje = "OK";
+                } else {
+                    //cn.rollback();
+                    mensaje = "NO OK";
+                }
+
+            } catch (SQLException e) {
+                logger.error(e);
+                throw new Exception("Problemas del sistema...");
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException ex) {
+                    logger.error(ex);
+                }
+            }
+        }
+
+        return mensaje;
     }
 }

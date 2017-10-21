@@ -13,6 +13,7 @@ import model.dao.impl.ProduccionDaoImpl;
 import model.dao.impl.ProductoDaoImpl;
 import model.dto.ListaProduccion;
 import model.dto.ListaReglaProduccion;
+import model.dto.Produccion;
 import model.dto.Producto;
 
 /**
@@ -35,6 +36,27 @@ public class LogicProduccion {
         list = dao.VerificarErrorProduccion(contador,  id_regla,  id_producto,  cantidad,  cant_insumos);
         
         return "hola"; 
+    }
+
+    public List<Produccion> listarProduccion200() throws Exception {
+        List<Produccion> list = null;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        list = dao.ListarProduccion200();
+        return list;
+    }
+
+    public List<Produccion> listarProduccionxFecha(String fecha) throws Exception {
+        List<Produccion> list = null;
+        ProduccionDao dao = new ProduccionDaoImpl();
+        list = dao.ListarProduccionxFecha(fecha);
+        return list;
+    }
+
+    public String eliminarProduccion(String id) throws Exception {
+        String respuesta=null;
+        ProduccionDao dao=new ProduccionDaoImpl();
+        respuesta=dao.EliminarProduccion(id);
+        return respuesta;
     }
 
     private static class LogicProduccionHolder {

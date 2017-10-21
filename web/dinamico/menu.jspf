@@ -1,5 +1,19 @@
 <%-- any content can be specified here e.g.: --%>
+<%@page import="model.dto.Perfil"%>
+<%@page import="model.dto.Usuario"%>
 <%@ page pageEncoding="UTF-8" %>
+<c:set var="usu" value="${sessionScope.usuario}" />
+<%
+    HttpSession sesion = request.getSession(true);
+    Usuario user = new Usuario();
+    user = (Usuario) sesion.getAttribute("usuario");
+    Perfil perf = new Perfil();
+    perf = (Perfil) user.getPerfil();
+    int id_perfil = (int) perf.getIdperfil();
+    String desc = (String) perf.getDescripcion();
+    String COD = (String) perf.getCodigo();
+%>
+
 <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
     <script type="text/javascript">
         try {
@@ -10,7 +24,8 @@
 
     <ul class="nav nav-list">
         <!--inicio-->
-         <li class="">
+        <% if (COD.equals("ADM")) {%>
+        <li class="">
             <a href="#" class="dropdown-toggle">
                 <i class="menu-icon glyphicon glyphicon-cog"></i>
                 <span class="menu-text"> Administración </span>
@@ -35,34 +50,37 @@
                 <li class="">
                     <a href="SMenu?action=pageRegistroProveedor">
                         <i class="menu-icon fa fa-industry "></i>
-                       Gestión de Proveedores
+                        Gestión de Proveedores
                     </a>
                     <b class="arrow"></b>
                 </li>
-                 <li class="">
+                <li class="">
                     <a href="SMenu?action=pageRegistroReglasProduccion">
                         <i class="menu-icon glyphicon glyphicon-wrench"></i>
-                       Gestión de Reglas de Producción
+                        Gestión de Reglas de Producción
                     </a>
                     <b class="arrow"></b>
                 </li>
-                 <li class="">
+                <li class="">
                     <a href="SMenu?action=pageRegistroProductos">
                         <i class="menu-icon fa fa-caret-right"></i>
-                       Gestión de Productos
+                        Gestión de Productos
                     </a>
                     <b class="arrow"></b>
                 </li>
                 <li class="">
                     <a href="SMenu?action=pageRegistroPrecioVenta">
                         <i class="menu-icon fa fa-caret-right"></i>
-                       Gestión del Precio de Venta
+                        Gestión del Precio de Venta
                     </a>
                     <b class="arrow"></b>
                 </li>
             </ul>
         </li>
-         <li class="">
+        <%   }
+        %>
+        <% if (COD.equals("ADM")|| COD.equals("SEC")) {%>
+        <li class="">
             <a href="#" class="dropdown-toggle">
                 <i class="menu-icon glyphicon glyphicon-shopping-cart"></i>
                 <span class="menu-text"> Venta </span>
@@ -77,6 +95,7 @@
                     </a>
                     <b class="arrow"></b>
                 </li>
+                <% if (COD.equals("ADM")) {%>
                 <li class="">
                     <a href="SMenu?action=pageConsultarVenta">
                         <i class="menu-icon fa fa-caret-right"></i>
@@ -84,9 +103,14 @@
                     </a>
                     <b class="arrow"></b>
                 </li>
-             </ul>
+                <%   }
+        %>
+            </ul>
         </li>
-         <li class="">
+         <%   }
+        %>
+        <% if (COD.equals("ADM")|| COD.equals("SEC")) {%>
+        <li class="">
             <a href="#" class="dropdown-toggle">
                 <i class="menu-icon fa fa-calculator"></i>
                 <span class="menu-text"> Compra </span>
@@ -101,6 +125,7 @@
                     </a>
                     <b class="arrow"></b>
                 </li>
+                <% if (COD.equals("ADM")) {%>
                 <li class="">
                     <a href="SMenu?action=pageConsultarCompra">
                         <i class="menu-icon fa fa-caret-right"></i>
@@ -108,8 +133,13 @@
                     </a>
                     <b class="arrow"></b>
                 </li>
+                <%   }
+        %>
             </ul>
         </li>
+         <%   }
+        %>
+        <% if (COD.equals("ADM")) {%>
         <li class="">
             <a href="#" class="dropdown-toggle">
                 <i class="menu-icon fa fa-cubes"></i>
@@ -125,9 +155,12 @@
                     </a>
                     <b class="arrow"></b>
                 </li>
-           </ul>
+            </ul>
         </li>
-         <li class="">
+         <%   }
+        %>
+        <% if (COD.equals("ADM")) {%>
+        <li class="">
             <a href="#" class="dropdown-toggle">
                 <i class="menu-icon fa fa-line-chart"></i>
                 <span class="menu-text"> Reportes </span>
@@ -158,13 +191,38 @@
                 </li>
             </ul>
         </li>
+         <%   }
+        %>
+        <% if (COD.equals("ADM")|| COD.equals("OPE")) {%>
         <li class="">
-            <a href="SMenu?action=pagRegistroProduccion">
+            <a href="#" class="dropdown-toggle">
                 <i class="menu-icon fa fa-pencil-square-o"></i>
-                <span class="menu-text"> Registro Producción </span>
+                <span class="menu-text"> Produccion </span>
+                <b class="arrow fa fa-angle-down"></b>
             </a>
             <b class="arrow"></b>
+            <ul class="submenu">
+                <li class="">
+                    <a href="SMenu?action=pagRegistroProduccion">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        Registrar Producción
+                    </a>
+                    <b class="arrow"></b>
+                </li>
+                <% if (COD.equals("ADM")) {%>
+                <li class="">
+                    <a href="SMenu?action=pageConsultarProduccion">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        Consultar Produccion
+                    </a>
+                    <b class="arrow"></b>
+                </li>
+                 <%   }
+        %>
+            </ul>
         </li>
+         <%   }
+        %>
         <li class="">
             <a href="SMenu?action=pageSalir">
                 <i class="menu-icon fa fa-close"></i>

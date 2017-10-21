@@ -191,6 +191,9 @@ public class Usuario implements java.io.Serializable {
         temp.setNombres(rs.getString("nombres"));
         temp.setPassword(BatEncriptador.getInstance().Desencripta(rs.getString("password")));
         perfilTemp.setIdperfil(rs.getInt("perfil_idperfil"));
+        perfilTemp.setCodigo(rs.getString("codigo"));
+        perfilTemp.setDescripcion(rs.getString("descripcion"));
+        perfilTemp.setTipo(rs.getString("tipo"));
         temp.setPerfil(perfilTemp);
         temp.setTelefonos(rs.getString("telefono"));
         temp.setUsuario(rs.getString("usuario"));

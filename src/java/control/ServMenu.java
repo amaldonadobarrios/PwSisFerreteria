@@ -126,6 +126,9 @@ public class ServMenu extends HttpServletConf {
                     case "pagRegistroProduccion":
                         this.pagRegistroProduccion(request, response);
                         break;
+                    case "pageConsultarProduccion":
+                        this.pageConsultarProduccion(request,response);
+                        break;
                     case "pageSalir":
                         this.pageSalir(request, response);
                         break;
@@ -431,6 +434,18 @@ public class ServMenu extends HttpServletConf {
 
     private void pagehome(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("body", "home");
+        forwar("template.jsp", request, response);
+    }
+
+    private void pageConsultarProduccion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
+         String fecha = null;
+        fecha = request.getParameter("fecha");
+        if (fecha == null) {
+            request.setAttribute("lstProduccion", LogicProduccion.getInstance().listarProduccion200());
+        } else {
+            request.setAttribute("lstProduccion", LogicProduccion.getInstance().listarProduccionxFecha(fecha));
+        }
+        request.setAttribute("body", "consultar_produccion");
         forwar("template.jsp", request, response);
     }
 

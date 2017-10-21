@@ -10,7 +10,7 @@
 
     //-------------------REGISTRAR PRODUCCION
     function fn_pintar_RegitrarProduccion(response) {
-        alert(response);
+        //alert(response);
         $('#modalLoaging').modal('hide');
         if (response === 'NOSESION') {
             mensaje('ERROR', 'SESION EXPIRADA');
@@ -28,7 +28,7 @@
             if (estado == 'NOK') {
                 mensajeERROR('ERROR' + '\n' + validacion, detalleerror);
             } else if (estado == 'OK') {
-                mensajeOK("CORRECTO", "SE REGISTRO LA PRODCCION EXISTOSAMENTE");
+                mensajeOK("CORRECTO", "SE REGISTRO LA PRODUCCION EXISTOSAMENTE");
                 var popUp = window.open('ServReporte?evento=produccion&estado=1&id_produccion=' + id, 'ventana1', "width=700,height=500,scrollbars=SI");
                 if (popUp == null || typeof (popUp) == 'undefined') {
                     $('#modalLoaging').modal('show');

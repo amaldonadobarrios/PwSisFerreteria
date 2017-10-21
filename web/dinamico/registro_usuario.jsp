@@ -234,9 +234,7 @@
                             </c:if>
                             <td>
                                 <div class="hidden-sm hidden-xs action-buttons">
-                                    <a class="blue" href="SMenu?action=pageRegistroUsuario">
-                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                    </a>
+                                    
 
                                     <a class="green" href="ServUsuario?evento=formActualizarUsuario&idusuario=${usuario.idUsuario}" >
                                         <i class="ace-icon fa fa-pencil bigger-130"></i>

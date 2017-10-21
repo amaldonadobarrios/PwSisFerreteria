@@ -73,6 +73,8 @@ public class ServProduccion extends HttpServlet {
                         verificarErrorProduccion(request,response);
                     }  else if (evento.equals("RegitrarProduccion")) {
                         RegitrarProduccion(request, response);
+                    } else if (evento.equals("EliminarProduccionAjax")) {
+                        EliminarProduccionAjax(request,response);  
                     }
 
                 }
@@ -513,5 +515,12 @@ String validacion=null;
         validacion = LogicProduccion.getInstance().VerificarErrorProduccion(contador,id_regla,id_producto,cantidad,cant_insumos);
         
         HtmlUtil.getInstance().escrituraHTML(response, validacion);
+    }
+
+    private void EliminarProduccionAjax(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String id = request.getParameter("id");
+        String respuesta=null;
+        respuesta=LogicProduccion.getInstance().eliminarProduccion(id);
+         HtmlUtil.getInstance().escrituraHTML(response, respuesta); 
     }
 }
