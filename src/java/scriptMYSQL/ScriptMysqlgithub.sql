@@ -340,7 +340,7 @@ in igv double,
 in neto double,
 in fecha date,
 out rpta int,
-out id_compra int))
+out id_compra int)
 BEGIN
 DECLARE v1 INT DEFAULT 1;
 DECLARE prod int DEFAULT 0;
