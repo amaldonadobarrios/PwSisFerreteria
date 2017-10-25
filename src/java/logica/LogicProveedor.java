@@ -61,7 +61,7 @@ public class LogicProveedor {
      public List<Proveedor> listarProveedor() throws Exception{
       
         List<Proveedor> lista=null;
-        lista=new ArrayList<>();
+        lista=new ArrayList<Proveedor>();
         try {
           ProveedorDao dao = new ProveedorDaoImpl();   
            lista= dao.getProveedor(); 

@@ -207,8 +207,8 @@ public class ServMenu extends HttpServletConf {
     private void pageRegistroUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, Exception {
         LogicPerfil logiper = new LogicPerfil();
         LogicUsuario usu = new LogicUsuario();
-        List<Usuario> lista = null;
-        lista = new ArrayList<>();
+        List<Usuario> lista;
+        lista = new ArrayList<Usuario>();
         lista = usu.listarUsuarios();
         request.setAttribute("lista_perfil", logiper.listarPerfiles());
         request.setAttribute("lista", lista);
@@ -325,8 +325,8 @@ public class ServMenu extends HttpServletConf {
         String fechafin = null;
         fechaini = request.getParameter("fecha1");
         fechafin = request.getParameter("fecha2");
-        List<ComprobanteVenta> listaventa = null;
-        List<ComprobanteVenta> listagrafico = null;
+        List<ComprobanteVenta> listaventa;
+        List<ComprobanteVenta> listagrafico;
         if (fechaini != null && fechafin != null) {
             SimpleDateFormat parseador = new SimpleDateFormat("dd-MM-yy");
             SimpleDateFormat formateador = new SimpleDateFormat("YYYY-MM-dd");
@@ -358,8 +358,8 @@ public class ServMenu extends HttpServletConf {
         String fechafin = null;
         fechaini = request.getParameter("fecha1");
         fechafin = request.getParameter("fecha2");
-        List<ComprobanteCompra> listacompra = null;
-        List<ComprobanteCompra> listagrafico = null;
+        List<ComprobanteCompra> listacompra;
+        List<ComprobanteCompra> listagrafico;
         if (fechaini != null && fechafin != null) {
             SimpleDateFormat parseador = new SimpleDateFormat("dd-MM-yy");
             SimpleDateFormat formateador = new SimpleDateFormat("YYYY-MM-dd");
@@ -391,8 +391,8 @@ public class ServMenu extends HttpServletConf {
         String fechafin = null;
         fechaini = request.getParameter("fecha1");
         fechafin = request.getParameter("fecha2");
-        List<Ganancia> listagananciamensual = null;
-        List<Ganancia> listagananciaanual = null;
+        List<Ganancia> listagananciamensual;
+        List<Ganancia> listagananciaanual;
         if (fechaini != null && fechafin != null) {
             SimpleDateFormat parseador = new SimpleDateFormat("dd-MM-yy");
             SimpleDateFormat formateador = new SimpleDateFormat("YYYY-MM-dd");

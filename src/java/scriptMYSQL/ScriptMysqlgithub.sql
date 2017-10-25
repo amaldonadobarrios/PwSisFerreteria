@@ -178,7 +178,7 @@ CREATE TABLE `usuario_historial` (
 
 INSERT INTO `perfil` (`id_perfil`, `codigo`, `tipo`, `descripcion`, `estado`) VALUES
 (1, 'ADM', 'ADMIN', 'ADMINISTRADOR', 'A'),
-(2, 'SEC', 'SEC', 'USUARIO', 'A'),
+(2, 'SEC', 'SEC', 'SECRETARIA', 'A'),
 (3, 'OPE', 'OPE', 'OPERADOR', 'A');
 
 INSERT INTO `usuario` (`id_usuario`, `usuario`, `password`, `dni`, `apellido_paterno`, `apellido_materno`, `nombres`, `telefono`, `estado`, `fecha_reg`, `fecha_mod`, `usuario_mod`, `usuario_reg`, `perfil_idperfil`) VALUES
@@ -340,7 +340,7 @@ in igv double,
 in neto double,
 in fecha date,
 out rpta int,
-out id_compra varchar(100))
+out id_compra int))
 BEGIN
 DECLARE v1 INT DEFAULT 1;
 DECLARE prod int DEFAULT 0;
@@ -353,7 +353,7 @@ DECLARE v_existenciax double default 0;
 DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 BEGIN 
 set rpta =0;
-set id_compra='ERROR';
+set id_compra=0;
 ROLLBACK; 
 END; 
 
@@ -361,7 +361,7 @@ END;
 DECLARE EXIT HANDLER FOR SQLWARNING 
 BEGIN 
 set rpta =0;
-set id_compra='ERROR';
+set id_compra=0;
 ROLLBACK; 
 END; 
 

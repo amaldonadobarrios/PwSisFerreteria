@@ -19,7 +19,7 @@ public class LogicPerfil {
         public List<Perfil> listarPerfiles() throws Exception{
       
         List<Perfil> lista=null;
-        lista=new ArrayList<>();
+        lista=new ArrayList<Perfil>();
         try {
           PerfilDao dao = new PerfilDaoImpl();   
            lista= dao.getPerfils();

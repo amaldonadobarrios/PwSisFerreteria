@@ -20,7 +20,7 @@ public class LogicUsuario {
     public List<Usuario> listarUsuarios() throws Exception{
       
         List<Usuario> lista=null;
-        lista=new ArrayList<>();
+        lista=new ArrayList<Usuario>();
         try {
           UsuarioDao dao = new UsuarioDaoImpl();   
            lista= dao.getUsuarios(); 

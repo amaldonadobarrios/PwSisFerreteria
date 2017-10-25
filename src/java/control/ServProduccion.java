@@ -156,7 +156,7 @@ public class ServProduccion extends HttpServlet {
         System.out.println("control.ServProduccion.BuscarProductoFinal()");
         String parametro = null;
         parametro = request.getParameter("parametro");
-        List<Producto> lista = null;
+        List<Producto> lista;
         if (parametro != null) {
             ProductoDao dao = new ProductoDaoImpl();
             lista = dao.listaProductosFinales(parametro);

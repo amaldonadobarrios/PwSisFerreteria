@@ -150,7 +150,7 @@ public class ServCompra extends HttpServlet {
 
     private void BuscarProveedorxDOC(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String parametro_busq = request.getParameter("parametro").trim();
-        List<Proveedor> lstcli = null;
+        List<Proveedor> lstcli;
         lstcli = BuscarProveedorxDOC(parametro_busq);
         String respuestaHTML = null;
         respuestaHTML = LogicTablaProveedor.getInstance().construirGrillaBuscarProveedor(lstcli);
@@ -159,7 +159,7 @@ public class ServCompra extends HttpServlet {
 
     private void BuscarProveedorxAPERAZ(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String parametro_busq = request.getParameter("parametro").trim();
-        List<Proveedor> lstcli = null;
+        List<Proveedor> lstcli;
         lstcli = BuscarProveedorxAPERAZ(parametro_busq);
         String respuestaHTML = null;
         respuestaHTML = LogicTablaProveedor.getInstance().construirGrillaBuscarProveedor(lstcli);
@@ -267,7 +267,7 @@ public class ServCompra extends HttpServlet {
         String direccion = request.getParameter("direccion");
         String correo = request.getParameter("correo");
         HttpSession session = request.getSession();
-        Usuario usuario = usuario = new Usuario();
+        Usuario usuario =  new Usuario();
         usuario = (Usuario) session.getAttribute("usuario");
         int usuario_reg = usuario.getIdUsuario();
 

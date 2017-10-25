@@ -96,7 +96,7 @@
             </div>
         </fieldset>
         <fieldset>
-            <legend> Ventas </legend>
+            <legend> Produccion </legend>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="clearfix">

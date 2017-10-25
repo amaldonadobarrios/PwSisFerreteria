@@ -62,7 +62,7 @@ public class LogicCliente {
      public List<Cliente> listarCliente() throws Exception{
       
         List<Cliente> lista=null;
-        lista=new ArrayList<>();
+        lista=new ArrayList<Cliente>();
         try {
           ClienteDao dao = new ClienteDaoImpl();   
            lista= dao.getCliente(); 

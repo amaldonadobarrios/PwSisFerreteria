@@ -172,7 +172,7 @@ public class ClienteDaoImpl implements ClienteDao {
 
                 if (rs.next()) {
 
-                    listTemp = new ArrayList<>();
+                    listTemp = new ArrayList<Cliente>();
                     Cliente temp;
 
                     // regresa el puntero al principio
@@ -268,7 +268,7 @@ public class ClienteDaoImpl implements ClienteDao {
 
                 if (rs.next()) {
 
-                    listTemp = new ArrayList<>();
+                    listTemp = new ArrayList<Cliente>();
                     Cliente temp;
 
                     // regresa el puntero al principio
@@ -325,7 +325,7 @@ public class ClienteDaoImpl implements ClienteDao {
 
                 if (rs.next()) {
 
-                    listTemp = new ArrayList<>();
+                    listTemp = new ArrayList<Cliente>();
                     Cliente temp;
 
                     // regresa el puntero al principio
